@@ -1,0 +1,8 @@
+C:\Users\BENOIT\source\repos\RetroBuild\RetroBuild\bin\Debug\RetroBuild.exe
+C:\Users\BENOIT\source\repos\RetroBuild\RetroBuild\bin\Debug\RetroBuild.pdb
+C:\Users\BENOIT\source\repos\RetroBuild\RetroBuild\obj\Debug\RetroBuild.csproj.AssemblyReference.cache
+C:\Users\BENOIT\source\repos\RetroBuild\RetroBuild\obj\Debug\RetroBuild.csproj.CoreCompileInputs.cache
+C:\Users\BENOIT\source\repos\RetroBuild\RetroBuild\obj\Debug\RetroBuild.exe
+C:\Users\BENOIT\source\repos\RetroBuild\RetroBuild\obj\Debug\RetroBuild.pdb
+C:\Users\BENOIT\Documents\GitHub\retrobat-setup\RetroBuild.exe
+C:\Users\BENOIT\Documents\GitHub\retrobat-setup\RetroBuild.pdb
