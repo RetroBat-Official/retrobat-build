@@ -857,7 +857,25 @@ namespace RetroBuild
 
             foreach (var emu in emulators)
             {
+                List<string> emuIgnore = new List<string>
+                {
+                    "retroarch",
+                    "eden",
+                    "3dsen",
+                    "teknoparrot",
+                    "citron",
+                    "yuzu",
+                    "pico8",
+                    "ryujinx",
+                    "steam",
+                    "sudachi",
+                    "suyu",
+                    "yuzu-early-access"
+                };
                 if (string.IsNullOrWhiteSpace(emu))
+                    continue;
+
+                if (emuIgnore.Contains(emu))
                     continue;
 
                 Thread.Sleep(3000);

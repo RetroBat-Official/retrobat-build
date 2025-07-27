@@ -7,18 +7,15 @@
       "RelativeMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|solutionrelative:retrobuild\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|c:\\users\\benoit\\documents\\github\\retrobat-build\\retrobuild\\methods.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\retrobuild\\methods.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|solutionrelative:retrobuild\\methods.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|RetroBuild||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|c:\\users\\benoit\\documents\\github\\retrobat-build\\retrobuild\\iniparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\retrobuild\\iniparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|solutionrelative:retrobuild\\iniparser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|c:\\users\\benoit\\documents\\github\\retrobat-build\\retrobuild\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|a54ad834-9219-4aa6-b589-607af21c3e26"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,19 +27,6 @@
           "DockedWidth": 200,
           "SelectedChildIndex": 5,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Methods.cs",
-              "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\Methods.cs",
-              "RelativeDocumentMoniker": "RetroBuild\\Methods.cs",
-              "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\Methods.cs",
-              "RelativeToolTip": "RetroBuild\\Methods.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAAJMAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-27T21:08:13.877Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -57,6 +41,18 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Methods.cs",
+              "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\Methods.cs",
+              "RelativeDocumentMoniker": "RetroBuild\\Methods.cs",
+              "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\Methods.cs",
+              "RelativeToolTip": "RetroBuild\\Methods.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAJMAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-27T21:08:13.877Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
               "Title": "RetroBuild",
               "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\RetroBuild.csproj",
@@ -64,8 +60,7 @@
               "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\RetroBuild.csproj",
               "RelativeToolTip": "RetroBuild\\RetroBuild.csproj",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-07-27T21:20:16.596Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-27T21:20:16.596Z"
             },
             {
               "$type": "Document",
@@ -75,7 +70,7 @@
               "RelativeDocumentMoniker": "RetroBuild\\Program.cs",
               "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\Program.cs",
               "RelativeToolTip": "RetroBuild\\Program.cs",
-              "ViewState": "AgIAAAoDAAAAAAAAAAAIwGkDAABIAAAAAAAAAA==",
+              "ViewState": "AgIAAFkDAAAAAAAAAAAIwG0DAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-27T20:52:14.658Z",
               "EditorCaption": ""
@@ -90,8 +85,7 @@
               "RelativeToolTip": "RetroBuild\\IniParser.cs",
               "ViewState": "AgIAAGIAAAAAAAAAAAAgwHUAAABjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-27T20:51:56.109Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-27T20:51:56.109Z"
             }
           ]
         }
