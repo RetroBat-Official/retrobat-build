@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -65,9 +66,8 @@ namespace RetroBuild
             Console.Clear();
             Console.WriteLine("RetroBat Builder Menu");
             Console.WriteLine("=====================");
-            Console.WriteLine("1 - Full compilation");
-            Console.WriteLine("2 - Download and configure");
-            Console.WriteLine("3 - Create archive");
+            Console.WriteLine("1 - Download and configure");
+            Console.WriteLine("2 - Create archive");
             Console.WriteLine("Q - Quit");
             Console.Write("Please type your choice here: ");
 
@@ -76,23 +76,6 @@ namespace RetroBuild
             switch (choice)
             {
                 case "1":
-                    Logger.Log("[INFO] Option selected: Full compilation.");
-                    Console.WriteLine("=====================");
-                    GetPackages(options);
-                    Console.WriteLine("=====================");
-                    CreateTree(options);
-                    Console.WriteLine("=====================");
-                    CreateEmulatorFolders(options);
-                    Console.WriteLine("=====================");
-                    CreateSystemFolders(options);
-                    Console.WriteLine("=====================");
-                    CopyESFiles(options);
-                    Console.WriteLine("=====================");
-                    CreateVersionFile(options);
-                    Console.WriteLine("=====================");
-                    CopyTemplateFiles(options);
-                    break;
-                case "2":
                     Logger.Log("[INFO] Option selected: Download and configure.");
                     Console.WriteLine("=====================");
                     GetPackages(options);
@@ -103,13 +86,18 @@ namespace RetroBuild
                     Console.WriteLine("=====================");
                     CreateSystemFolders(options);
                     Console.WriteLine("=====================");
+                    GetLibretroCores(options);
+                    Console.WriteLine("=====================");
+                    GetEmulators(options);
+                    Console.WriteLine("=====================");
                     CopyESFiles(options);
                     Console.WriteLine("=====================");
                     CreateVersionFile(options);
                     Console.WriteLine("=====================");
                     CopyTemplateFiles(options);
+                    
                     break;
-                case "3":
+                case "2":
                     Logger.Log("[INFO] Option selected: Create archive.");
                     Console.WriteLine("=====================");
                     CreateZipFolder(options);
@@ -267,7 +255,7 @@ namespace RetroBuild
             {
                 string raVersion = options.RetroarchVersion;
                 string retroarchPath = Path.Combine(buildPath, "emulators", "retroarch");
-                string raUrl = options.RetroArchURL + "/" + raVersion + "/windows/x86_64/RetroArch.7z";
+                string raUrl = options.RetroArchURL + "/stable/" + raVersion + "/windows/x86_64/RetroArch.7z";
                 Methods.DownloadAndExtractArchive_Wget(raUrl, retroarchPath, options);
 
                 string retroarchtempPath = Directory.GetDirectories(retroarchPath).FirstOrDefault(d => Path.GetFileName(d).Contains("RetroArch-Win64"));
@@ -763,6 +751,145 @@ namespace RetroBuild
                 catch (Exception ex)
                 {
                     Logger.Log($"[ERROR] Error processing {source}: {ex.Message}");
+                }
+            }
+        }
+
+        static void GetLibretroCores(BuilderOptions options)
+        {
+            if (!options.GetLrcores)
+            {
+                Logger.LogInfo("Skipping Libretro cores download as per options.");
+                return;
+            }
+
+            string task = "get_lrcores";
+            Logger.LogLabel(task);
+
+            Console.WriteLine(":: GETTING LIBRETRO CORES...");
+
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string buildPath = Path.Combine(rootPath, "build");
+            string targetCorePath = Path.Combine(buildPath, "emulators", "retroarch", "cores");
+
+            string lrCoreListFile = Path.Combine(rootPath, "system", "configgen", "lrcores_names.lst");
+
+            if (!File.Exists(lrCoreListFile))
+            {
+                Logger.LogInfo("Missing 'lrcores_names.lst' file.");
+                return;
+            }
+
+            string ftpRootPath = options.RetrobatFTPPath;
+            string coreUrl = ftpRootPath + options.Architecture + "/" + options.Branch + "/emulators/cores/";
+
+            string[] lrCores = File.ReadAllLines(lrCoreListFile);
+
+            foreach (var core in lrCores)
+            {
+                if (string.IsNullOrWhiteSpace(core))
+                    continue;
+
+                string coreZipFile = coreUrl + core + "_libretro.dll.zip";
+
+                Thread.Sleep(3000);
+
+                try
+                {
+                    int i = 0;
+                    bool success = false;
+                    for (i = 0; i < 5; i++)
+                    {
+                        success = Methods.DownloadAndExtractArchive_Wget(coreZipFile, targetCorePath, options);
+                        if (success)
+                        {
+                            Logger.LogInfo("Libretro Core " + core + " copied to: " + targetCorePath);
+                            break;
+                        }
+                        else
+                            Thread.Sleep(4000);
+                        i++;
+                    }
+                    
+                    if (!success)
+                    {
+                        Logger.LogInfo($"[WARNING] Failed to download or extract core: {core} from FTP, looking on RetroArch buildbot");
+                        coreZipFile = options.RetroArchURL + "/nightly/windows/x86_64/latest/" + core + "_libretro.dll.zip";
+                        Methods.DownloadAndExtractArchive_Wget(coreZipFile, targetCorePath, options);
+                    }
+                }
+                catch
+                {
+                    Logger.Log($"[ERROR] Error downloading RetroArch core.");
+                }
+            }
+        }
+
+        static void GetEmulators(BuilderOptions options)
+        {
+            if (!options.GetEmulators)
+            {
+                Logger.LogInfo("Skipping Emulators download as per options.");
+                return;
+            }
+
+            string task = "get_emulators";
+            Logger.LogLabel(task);
+
+            Console.WriteLine(":: GETTING EMULATORS...");
+
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string buildPath = Path.Combine(rootPath, "build");
+            string targetEmuPath = Path.Combine(buildPath, "emulators");
+
+            string emuListFile = Path.Combine(rootPath, "system", "configgen", "emulators_names.lst");
+
+            if (!File.Exists(emuListFile))
+            {
+                Logger.LogInfo("Missing 'emulators_names.lst' file.");
+                return;
+            }
+
+            string ftpRootPath = options.RetrobatFTPPath;
+            string emuUrl = ftpRootPath + options.Architecture + "/" + options.Branch + "/emulators/";
+
+            string[] emulators = File.ReadAllLines(emuListFile);
+
+            foreach (var emu in emulators)
+            {
+                if (string.IsNullOrWhiteSpace(emu))
+                    continue;
+
+                Thread.Sleep(3000);
+                string emuZipFile = emuUrl + emu + ".7z";
+                string targetPath = Path.Combine(targetEmuPath, emu);
+
+                try
+                {
+                    int i = 0;
+                    bool success = false;
+
+                    for (i = 0; i < 5; i++)
+                    {
+                        success = Methods.DownloadAndExtractArchive_Wget(emuZipFile, targetPath, options);
+                        if (success)
+                        {
+                            Logger.LogInfo("Emulator " + emu + " copied to: " + targetPath);
+                            break;
+                        }
+                        else
+                            Thread.Sleep(4000);
+                        i++;
+                    }
+
+                    if (!success)
+                    {
+                        Logger.LogInfo($"[WARNING] Failed to download or extract emulator: {emu} from FTP.");
+                    }
+                }
+                catch
+                {
+                    Logger.Log($"[ERROR] Error downloading Emulator.");
                 }
             }
         }

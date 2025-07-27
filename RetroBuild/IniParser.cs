@@ -76,6 +76,7 @@ namespace RetroBuild
         public string SevenZipPath { get; set; }
         public string WgetPath { get; set; }
         public string CurlPath { get; set; }
+        public string RetrobatFTPPath { get; set; }
         public string RetrobatBinariesBaseUrl { get; set; }
         public string EmulationstationUrl { get; set; }
         public string EmulatorlauncherUrl { get; set; }
@@ -114,6 +115,7 @@ namespace RetroBuild
             opt.SevenZipPath = Methods.PathCombineExeDir(parser.Get(section, "7za_path", "system\\tools\\7za.exe"));
             opt.WgetPath = Methods.PathCombineExeDir(parser.Get(section, "wget_path", "system\\tools\\wget.exe"));
             opt.CurlPath = Methods.PathCombineExeDir(parser.Get(section, "curl_path", "system\\tools\\curl.exe"));
+            opt.RetrobatFTPPath = parser.Get(section, "retrobat_ftp", "http://www.retrobat.ovh/repo/");
             opt.RetrobatBinariesBaseUrl = parser.Get(section, "retrobat_binaries_url", "http://www.retrobat.ovh/repo/tools/");
             opt.EmulationstationUrl = parser.Get(section, "emulationstation_url", "https://github.com/RetroBat-Official/emulationstation/releases/download/continuous-master/EmulationStation-Win32.zip");
             opt.EmulatorlauncherUrl = parser.Get(section, "emulatorlauncher_url", "https://github.com/RetroBat-Official/emulatorlauncher/releases/download/continuous/batocera-ports.zip");
@@ -121,7 +123,7 @@ namespace RetroBuild
             opt.ThemePath = parser.Get(section, "theme_path", "https://github.com/fabricecaruso/es-theme-carbon");
             opt.DecorationsPath = parser.Get(section, "decorations_path", "https://github.com/RetroBat-Official/retrobat-bezels");
             opt.SystemPath = parser.Get(section, "retrobat_system_path", "https://github.com/RetroBat-Official/retrobat-setup/tree/master/system");
-            opt.RetroArchURL = parser.Get(section, "retroarch_url", "https://buildbot.libretro.com/stable");
+            opt.RetroArchURL = parser.Get(section, "retroarch_url", "https://buildbot.libretro.com");
             opt.WiimoteGunURL = parser.Get(section, "wiimotegun_url", "https://github.com/fabricecaruso/WiimoteGun/releases/download/v1.1/WiimoteGun.zip");
             opt.BatGUIURL = parser.Get(section, "batgui_url", "https://github.com/xReppa/rb_gui/releases/download/2.0.56.0/BatGui2056.zip");
             return opt;
