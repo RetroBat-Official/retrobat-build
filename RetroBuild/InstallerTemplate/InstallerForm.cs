@@ -1,13 +1,16 @@
 using System;
 using System.Windows.Forms;
 
-namespace CustomInstaller
+namespace InstallerTemplate
 {
     public partial class InstallerForm : Form
     {
-        public InstallerForm()
+        string zipFilePath;
+
+        public InstallerForm(string zipPath)
         {
             InitializeComponent();
+            zipFilePath = zipPath;
         }
     }
 }

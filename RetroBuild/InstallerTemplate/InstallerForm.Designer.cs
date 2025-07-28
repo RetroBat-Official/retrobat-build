@@ -1,7 +1,7 @@
 using System.Windows.Forms;
 using System;
 
-namespace CustomInstaller
+namespace InstallerTemplate
 {
     partial class InstallerForm
     {
