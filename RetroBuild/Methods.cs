@@ -144,7 +144,7 @@ namespace RetroBuild
 
             try
             {
-                var wgetArgs = $"--quiet -O \"{tempFile}\" \"{url}\"";
+                var wgetArgs = $"--quiet --no-check-certificate --read-timeout=20 --timeout=15 -t 3 -O \"{tempFile}\" \"{url}\"";
                 var wgetStartInfo = new ProcessStartInfo
                 {
                     FileName = options.WgetPath,
