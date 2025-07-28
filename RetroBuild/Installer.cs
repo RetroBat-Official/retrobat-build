@@ -14,60 +14,57 @@ namespace RetroBuild
             string rootPath = AppDomain.CurrentDomain.BaseDirectory;
             string buildPath = Path.Combine(rootPath, "build");
 
-            string installerProjectPath = Path.Combine(rootPath, "InstallerTemplate");
-            string zipName = "retrobat-v" + options.RetrobatVersion + "-" + options.Branch + "-" + options.Architecture + ".zip";
-            string zipPath = Directory.GetFiles(buildPath, zipName).FirstOrDefault();
+            // Find your ZIP archive
+            string zipName = $"retrobat-v{options.RetrobatVersion}-{options.Branch}-{options.Architecture}.zip";
+            string zipPath = Path.Combine(buildPath, zipName);
 
-            if (zipPath == null)
+            if (!File.Exists(zipPath))
             {
-                Logger.Log("[ERROR] No .zip file found in build folder with name: " + zipName);
+                Logger.Log("[ERROR] No .zip file found at: " + zipPath);
                 return;
             }
+            Logger.LogInfo("Found zip file: " + zipPath);
 
-            // Copy zip into installer template Resources
-            string resourcesDir = Path.Combine(installerProjectPath, "Resources");
-            Directory.CreateDirectory(resourcesDir);
-            string embeddedZip = Path.Combine(resourcesDir, "app.zip");
+            string installerHostExePath = Path.Combine(rootPath, "InstallerHost.exe");
 
-            File.Copy(zipPath, embeddedZip, true);
-            Logger.LogInfo("Copied zip archive to installer resources.");
-
-            // Compile the installer (assumes .csproj is configured correctly)
-
-            Logger.LogInfo("Installer project path: " + installerProjectPath);
-            Logger.LogInfo("Checking for .csproj files here:");
-            var csprojFiles = Directory.GetFiles(installerProjectPath, "*.csproj");
-            foreach (var file in csprojFiles)
-                Logger.LogInfo(" - " + file);
-
-            ProcessStartInfo psi = new ProcessStartInfo
+            if (!File.Exists(installerHostExePath))
             {
-                FileName = @"C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild.exe",
-                Arguments = "InstallerTemplate.csproj /p:Configuration=Release",
-                WorkingDirectory = installerProjectPath,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
+                Logger.Log("[ERROR] InstallerHost.exe not found at: " + installerHostExePath);
+                return;
+            }
+            Logger.LogInfo("Found InstallerHost.exe at: " + installerHostExePath);
 
-            using (Process proc = Process.Start(psi))
+            try
             {
-                string output = proc.StandardOutput.ReadToEnd();
-                string error = proc.StandardError.ReadToEnd();
-                proc.WaitForExit();
+                // Read InstallerHost.exe bytes and ZIP bytes
+                byte[] installerBytes = File.ReadAllBytes(installerHostExePath);
+                byte[] zipBytes = File.ReadAllBytes(zipPath);
 
-                Logger.LogInfo(output);
-                if (!string.IsNullOrWhiteSpace(error))
-                {
-                    Logger.Log("[ERROR] Build errors:\n" + error);
-                }
-                else
-                {
-                    Logger.LogInfo("Installer built successfully.");
-                }
+                // ZIP length footer is 8 bytes (long)
+                long zipLengthLong = zipBytes.Length;
+                byte[] zipLengthBytes = BitConverter.GetBytes(zipLengthLong);
+
+                // Create combined array: InstallerHost + ZIP + 8 bytes for length
+                byte[] combinedBytes = new byte[installerBytes.Length + zipBytes.Length + zipLengthBytes.Length];
+
+                // Copy InstallerHost.exe bytes
+                Buffer.BlockCopy(installerBytes, 0, combinedBytes, 0, installerBytes.Length);
+                // Copy ZIP bytes
+                Buffer.BlockCopy(zipBytes, 0, combinedBytes, installerBytes.Length, zipBytes.Length);
+                // Copy ZIP length bytes at the very end
+                Buffer.BlockCopy(zipLengthBytes, 0, combinedBytes, installerBytes.Length + zipBytes.Length, zipLengthBytes.Length);
+
+                // Output final installer executable RetroBat-v7.3.0-stable-win64-setup
+                string setupName = "RetroBat-v" + options.RetrobatVersion + "-" + options.Branch + "-" + options.Architecture + "-setup.exe";
+                string finalInstallerPath = Path.Combine(buildPath, setupName);
+                File.WriteAllBytes(finalInstallerPath, combinedBytes);
+
+                Logger.LogInfo("Created final installer executable: " + finalInstallerPath);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("[ERROR] Exception creating installer: " + ex.Message);
             }
         }
-
     }
 }

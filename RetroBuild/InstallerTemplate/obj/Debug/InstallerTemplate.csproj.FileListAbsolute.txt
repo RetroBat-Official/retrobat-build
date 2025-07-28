@@ -1,0 +1,6 @@
+C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\InstallerTemplate\bin\Debug\Setup.dll
+C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\InstallerTemplate\bin\Debug\Setup.pdb
+C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\InstallerTemplate\obj\Debug\InstallerTemplate.csproj.AssemblyReference.cache
+C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\InstallerTemplate\obj\Debug\InstallerTemplate.csproj.CoreCompileInputs.cache
+C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\InstallerTemplate\obj\Debug\Setup.dll
+C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\InstallerTemplate\obj\Debug\Setup.pdb
