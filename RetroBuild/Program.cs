@@ -68,6 +68,7 @@ namespace RetroBuild
             Console.WriteLine("=====================");
             Console.WriteLine("1 - Download and configure");
             Console.WriteLine("2 - Create archive");
+            Console.WriteLine("3 - Create installer (need archive created first)");
             Console.WriteLine("Q - Quit");
             Console.Write("Please type your choice here: ");
 
@@ -101,6 +102,11 @@ namespace RetroBuild
                     Logger.Log("[INFO] Option selected: Create archive.");
                     Console.WriteLine("=====================");
                     CreateZipFolder(options);
+                    break;
+                case "3":
+                    Logger.Log("[INFO] Option selected: Create installer.");
+                    Console.WriteLine("=====================");
+                    Installer.CreateInstaller(options);
                     break;
                 case "Q":
                     Console.WriteLine("Exiting...");

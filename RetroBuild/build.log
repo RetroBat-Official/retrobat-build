@@ -1,0 +1,61 @@
+2025-07-28 11:42:36.148 [START] Run: RetroBuild.exe
+2025-07-28 11:42:36.152 [INFO] Reading build.ini file for options.
+2025-07-28 11:42:36.165 [INFO] RetrobatVersion = 7.3.0
+2025-07-28 11:42:36.181 [INFO] RetroarchVersion = 1.20.0
+2025-07-28 11:42:36.182 [INFO] Branch = stable
+2025-07-28 11:42:36.183 [INFO] Architecture = win64
+2025-07-28 11:42:36.185 [INFO] GetBatgui = True
+2025-07-28 11:42:36.185 [INFO] GetBatoceraPorts = True
+2025-07-28 11:42:36.186 [INFO] GetBios = True
+2025-07-28 11:42:36.186 [INFO] GetDecorations = True
+2025-07-28 11:42:36.187 [INFO] GetDefaultTheme = True
+2025-07-28 11:42:36.187 [INFO] GetEmulationstation = True
+2025-07-28 11:42:36.188 [INFO] GetEmulators = True
+2025-07-28 11:42:36.190 [INFO] GetLrcores = True
+2025-07-28 11:42:36.190 [INFO] GetRetroarch = True
+2025-07-28 11:42:36.192 [INFO] GetRetrobatBinaries = True
+2025-07-28 11:42:36.192 [INFO] GetSystem = True
+2025-07-28 11:42:36.194 [INFO] GetWiimotegun = True
+2025-07-28 11:42:36.195 [INFO] SevenZipPath = C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\system\tools\7za.exe
+2025-07-28 11:42:36.196 [INFO] WgetPath = C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\system\tools\wget.exe
+2025-07-28 11:42:36.198 [INFO] CurlPath = C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\system\tools\curl.exe
+2025-07-28 11:42:36.199 [INFO] RetrobatFTPPath = http://www.retrobat.ovh/repo/
+2025-07-28 11:42:36.199 [INFO] RetrobatBinariesBaseUrl = http://www.retrobat.ovh/repo/tools/
+2025-07-28 11:42:36.202 [INFO] EmulationstationUrl = https://github.com/RetroBat-Official/emulationstation/releases/download/continuous-master/EmulationStation-Win32.zip
+2025-07-28 11:42:36.203 [INFO] EmulatorlauncherUrl = https://github.com/RetroBat-Official/emulatorlauncher/releases/download/continuous/batocera-ports.zip
+2025-07-28 11:42:36.204 [INFO] BiosGitUrl = https://github.com/RetroBat-Official/retrobat-bios
+2025-07-28 11:42:36.207 [INFO] ThemePath = https://github.com/fabricecaruso/es-theme-carbon
+2025-07-28 11:42:36.208 [INFO] DecorationsPath = https://github.com/RetroBat-Official/retrobat-bezels
+2025-07-28 11:42:36.209 [INFO] SystemPath = https://github.com/RetroBat-Official/retrobat-setup/tree/master/system
+2025-07-28 11:42:36.210 [INFO] RetroArchURL = https://buildbot.libretro.com
+2025-07-28 11:42:36.211 [INFO] WiimoteGunURL = https://github.com/fabricecaruso/WiimoteGun/releases/download/v1.1/WiimoteGun.zip
+2025-07-28 11:42:36.212 [INFO] BatGUIURL = https://github.com/xReppa/rb_gui/releases/download/2.0.56.0/BatGui2056.zip
+2025-07-28 11:42:38.099 [INFO] Option selected: Create installer.
+2025-07-28 11:42:38.141 [INFO] Copied zip archive to installer resources.
+2025-07-28 11:42:42.032 [INFO] Installer project path: C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate
+2025-07-28 11:42:42.524 [INFO] Checking for .csproj files here:
+2025-07-28 11:42:47.101 [INFO]  - C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\InstallerTemplate.csproj
+2025-07-28 11:42:51.255 [INFO] Microsoft (R) Build Engine version 16.11.2+f32259642 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 28/07/2025 11:42:50.
+Project "C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\InstallerTemplate.csproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "bin\Release\".
+  Creating directory "obj\Release\".
+CoreCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Roslyn\csc.exe /noconfig /nowarn:1701,1702 /fullpaths /nostdlib+ /platform:x86 /main:CustomInstaller.Program /highentropyva- /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\mscorlib.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Windows.Forms.dll" /out:obj\Release\Setup.exe /resource:Resources\app.zip,CustomInstaller.Resources.app.zip /target:winexe /utf8output /langversion:7.3 InstallerForm.cs InstallerForm.Designer.cs Program.cs "obj\Release\.NETFramework,Version=v4.0.AssemblyAttributes.cs"
+  CompilerServer: server - server processed compilation - 7bca0726-19a9-41f1-896f-f41fe698bc73
+CopyFilesToOutputDirectory:
+  Copying file from "C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\obj\Release\Setup.exe" to "C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\bin\Release\Setup.exe".
+  InstallerTemplate -> C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\bin\Release\Setup.exe
+Done Building Project "C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\InstallerTemplate.csproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.30
+
+2025-07-28 11:42:51.263 [INFO] Installer built successfully.
+2025-07-28 11:42:53.294 [INFO] Build finished succesfully.

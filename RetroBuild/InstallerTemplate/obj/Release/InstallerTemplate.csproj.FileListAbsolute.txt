@@ -1,0 +1,4 @@
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\bin\Release\Setup.exe
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\obj\Release\InstallerTemplate.csproj.AssemblyReference.cache
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\obj\Release\InstallerTemplate.csproj.CoreCompileInputs.cache
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\InstallerTemplate\obj\Release\Setup.exe

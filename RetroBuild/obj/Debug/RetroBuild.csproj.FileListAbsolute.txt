@@ -10,3 +10,9 @@ C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\obj\Debug\RetroBuild.
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\obj\Debug\RetroBuild.csproj.CoreCompileInputs.cache
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\obj\Debug\RetroBuild.exe
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\RetroBuild\obj\Debug\RetroBuild.pdb
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\obj\Debug\RetroBuild.csproj.AssemblyReference.cache
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\obj\Debug\RetroBuild.csproj.CoreCompileInputs.cache
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\obj\Debug\RetroBuild.exe
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\obj\Debug\RetroBuild.pdb
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\RetroBuild.exe
+C:\Users\benoit.schneider\Documents\github\retrobat-build\RetroBuild\RetroBuild.pdb
