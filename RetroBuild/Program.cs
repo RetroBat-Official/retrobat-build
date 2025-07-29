@@ -918,7 +918,7 @@ namespace RetroBuild
             }
         }
 
-        static void CreateZipFolder(BuilderOptions options)
+        public static void CreateZipFolder(BuilderOptions options)
         {
             string task = "create_ziparchive";
             Logger.LogLabel(task);

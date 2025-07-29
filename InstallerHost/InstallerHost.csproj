@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>resources\launcher.ico</ApplicationIcon>
+    <ApplicationIcon>resources\Builder.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -47,10 +47,10 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-	<Reference Include="ICSharpCode.SharpZipLib">
+    <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\packages\ICSharpCode.SharpZipLib.dll.0.85.4.369\lib\net20\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>false</Private>
-	</Reference>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseForm.cs">
@@ -106,7 +106,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\ICSharpCode.SharpZipLib.dll" />
-    <EmbeddedResource Include="resources\launcher.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\Builder.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

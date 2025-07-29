@@ -20,6 +20,16 @@ namespace RetroBuild
 
             if (!File.Exists(zipPath))
             {
+                Logger.Log("[INFO] zip not found, creating zip first.");
+                try { Program.CreateZipFolder(options); }
+                catch (Exception ex)
+                {
+                    Logger.Log("[ERROR] Exception creating ZIP: " + ex.Message);
+                }
+            }
+
+            if (!File.Exists(zipPath))
+            {
                 Logger.Log("[ERROR] No .zip file found at: " + zipPath);
                 return;
             }
@@ -36,28 +46,28 @@ namespace RetroBuild
 
             try
             {
-                // Read InstallerHost.exe bytes and ZIP bytes
-                byte[] installerBytes = File.ReadAllBytes(installerHostExePath);
-                byte[] zipBytes = File.ReadAllBytes(zipPath);
-
-                // ZIP length footer is 8 bytes (long)
-                long zipLengthLong = zipBytes.Length;
-                byte[] zipLengthBytes = BitConverter.GetBytes(zipLengthLong);
-
-                // Create combined array: InstallerHost + ZIP + 8 bytes for length
-                byte[] combinedBytes = new byte[installerBytes.Length + zipBytes.Length + zipLengthBytes.Length];
-
-                // Copy InstallerHost.exe bytes
-                Buffer.BlockCopy(installerBytes, 0, combinedBytes, 0, installerBytes.Length);
-                // Copy ZIP bytes
-                Buffer.BlockCopy(zipBytes, 0, combinedBytes, installerBytes.Length, zipBytes.Length);
-                // Copy ZIP length bytes at the very end
-                Buffer.BlockCopy(zipLengthBytes, 0, combinedBytes, installerBytes.Length + zipBytes.Length, zipLengthBytes.Length);
-
                 // Output final installer executable RetroBat-v7.3.0-stable-win64-setup
                 string setupName = "RetroBat-v" + options.RetrobatVersion + "-" + options.Branch + "-" + options.Architecture + "-setup.exe";
                 string finalInstallerPath = Path.Combine(buildPath, setupName);
-                File.WriteAllBytes(finalInstallerPath, combinedBytes);
+
+                using (var outputStream = new FileStream(finalInstallerPath, FileMode.Create, FileAccess.Write))
+                {
+                    // Write InstallerHost.exe
+                    using (var installerStream = new FileStream(installerHostExePath, FileMode.Open, FileAccess.Read))
+                    {
+                        installerStream.CopyTo(outputStream);
+                    }
+
+                    // Write ZIP
+                    using (var zipStream = new FileStream(zipPath, FileMode.Open, FileAccess.Read))
+                    {
+                        zipStream.CopyTo(outputStream);
+                    }
+
+                    // Write ZIP length (as 8 bytes)
+                    byte[] zipLengthBytes = BitConverter.GetBytes(new FileInfo(zipPath).Length);
+                    outputStream.Write(zipLengthBytes, 0, zipLengthBytes.Length);
+                }
 
                 Logger.LogInfo("Created final installer executable: " + finalInstallerPath);
             }
