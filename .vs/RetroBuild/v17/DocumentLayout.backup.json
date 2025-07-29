@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D537D8D2-D4E7-4C88-A69E-C2743FA1A076}|InstallerHost\\InstallerHost.csproj|c:\\users\\benoit\\documents\\github\\retrobat-build\\installerhost\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D537D8D2-D4E7-4C88-A69E-C2743FA1A076}|InstallerHost\\InstallerHost.csproj|solutionrelative:installerhost\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|InstallerHost||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     },
     {
@@ -10,9 +14,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{D537D8D2-D4E7-4C88-A69E-C2743FA1A076}|InstallerHost\\InstallerHost.csproj|c:\\users\\benoit\\documents\\github\\retrobat-build\\installerhost\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8361C6B4-3F63-4A1A-BFFD-2302EC42798D}|RetroBuild\\RetroBuild.csproj|c:\\users\\benoit\\documents\\github\\retrobat-build\\retrobuild\\||{B270807C-D8C6-49EB-8EBE-8E8D566637A1}|5e9a8ac2-4f34-4521-858f-4c248ba31532"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,32 +23,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "RetroBuild",
-              "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\RetroBuild.csproj",
-              "RelativeDocumentMoniker": "RetroBuild\\RetroBuild.csproj",
-              "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\RetroBuild.csproj",
-              "RelativeToolTip": "RetroBuild\\RetroBuild.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-07-29T17:52:24.535Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "InstallerHost",
-              "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\InstallerHost\\InstallerHost.csproj",
-              "RelativeDocumentMoniker": "InstallerHost\\InstallerHost.csproj",
-              "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\InstallerHost\\InstallerHost.csproj",
-              "RelativeToolTip": "InstallerHost\\InstallerHost.csproj",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-07-29T17:52:12.567Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -59,6 +36,42 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\InstallerHost\\Program.cs",
+              "RelativeDocumentMoniker": "InstallerHost\\Program.cs",
+              "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\InstallerHost\\Program.cs",
+              "RelativeToolTip": "InstallerHost\\Program.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwCMAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-29T19:20:26.137Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "RetroBuild",
+              "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\RetroBuild.csproj",
+              "RelativeDocumentMoniker": "RetroBuild\\RetroBuild.csproj",
+              "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\RetroBuild\\RetroBuild.csproj",
+              "RelativeToolTip": "RetroBuild\\RetroBuild.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-07-29T17:52:24.535Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "InstallerHost",
+              "DocumentMoniker": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\InstallerHost\\InstallerHost.csproj",
+              "RelativeDocumentMoniker": "InstallerHost\\InstallerHost.csproj",
+              "ToolTip": "C:\\Users\\BENOIT\\Documents\\GitHub\\retrobat-build\\InstallerHost\\InstallerHost.csproj",
+              "RelativeToolTip": "InstallerHost\\InstallerHost.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-07-29T17:52:12.567Z",
+              "EditorCaption": ""
             }
           ]
         }
