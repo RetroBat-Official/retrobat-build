@@ -113,6 +113,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                     case "FolderNotEmpty":
                         text = "The selected folder is not empty. Please choose an empty folder or a new folder.";
                         break;
+                    case "LicenseText":
+                        text = licence;
+                        break;
                     case "CancelSure":
                         text = "Are you sure that you want to cancel the installation ?";
                         break;
