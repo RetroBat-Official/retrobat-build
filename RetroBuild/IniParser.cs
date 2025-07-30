@@ -119,7 +119,7 @@ namespace RetroBuild
             opt.RetrobatBinariesBaseUrl = parser.Get(section, "retrobat_binaries_url", "http://www.retrobat.ovh/repo/tools/");
             opt.EmulationstationUrl = parser.Get(section, "emulationstation_url", "https://github.com/RetroBat-Official/emulationstation/releases/download/continuous-master/EmulationStation-Win32.zip");
             opt.EmulatorlauncherUrl = parser.Get(section, "emulatorlauncher_url", "https://github.com/RetroBat-Official/emulatorlauncher/releases/download/continuous/batocera-ports.zip");
-            opt.BiosGitUrl = parser.Get(section, "bios_git_url", "https://github.com/RetroBat-Official/emulatorlauncher/releases/download/continuous/batocera-ports.zip");
+            opt.BiosGitUrl = parser.Get(section, "bios_git_url", "https://github.com/RetroBat-Official/retrobat-bios");
             opt.ThemePath = parser.Get(section, "theme_path", "https://github.com/fabricecaruso/es-theme-carbon");
             opt.DecorationsPath = parser.Get(section, "decorations_path", "https://github.com/RetroBat-Official/retrobat-bezels");
             opt.SystemPath = parser.Get(section, "retrobat_system_path", "https://github.com/RetroBat-Official/retrobat-setup/tree/master/system");

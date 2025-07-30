@@ -1,11 +1,9 @@
 C:\Users\BENOIT\Documents\GitHub\retrobat-setup\InstallerHost.exe
-C:\Users\BENOIT\Documents\GitHub\retrobat-setup\InstallerHost.pdb
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.csproj.AssemblyReference.cache
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.Properties.Resources.resources
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.csproj.GenerateResource.cache
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.csproj.CoreCompileInputs.cache
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.exe
-C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.pdb
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.MainForm.resources
 C:\Users\BENOIT\Documents\GitHub\retrobat-build\InstallerHost\obj\Debug\InstallerHost.BaseForm.resources
 C:\Users\benoit.schneider\Documents\github\retrobat-setup\InstallerHost.exe
