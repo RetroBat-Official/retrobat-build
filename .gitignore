@@ -1,0 +1,18 @@
+# Ignore all bin, obj, and Debug folders
+**/bin/
+**/obj/
+**/Debug/
+
+# Ignore Visual Studio folders and files
+.vs/
+**/.vs/
+*.suo
+*.csproj.user
+**/*.csproj.user
+
+# Ignore NuGet packages
+packages/
+**/packages/
+
+# Project-specific ignores
+/RetroBat/RetroBat/obj/Debug/

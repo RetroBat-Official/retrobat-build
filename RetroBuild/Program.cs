@@ -65,6 +65,11 @@ namespace RetroBuild
 
             Console.Clear();
             Console.WriteLine("RetroBat Builder Menu");
+            Console.WriteLine("---------------------------------------------------");
+            Console.WriteLine("This executable is made to help download all the required software for RetroBat.");
+            Console.WriteLine("Use the 'build.ini' file to set options for building.");
+            Console.WriteLine("Option 1 must always be done first, as it will download all the required files.");
+            Console.WriteLine("---------------------------------------------------");
             Console.WriteLine("=====================");
             Console.WriteLine("1 - Download and configure");
             Console.WriteLine("2 - Create archive");
@@ -123,7 +128,34 @@ namespace RetroBuild
             string rootPath = AppDomain.CurrentDomain.BaseDirectory;
             string buildPath = Path.Combine(rootPath, "build");
 
-            if (!Directory.Exists(buildPath))
+            if (Directory.Exists(buildPath))
+            {
+                bool isEmpty = Directory.GetFiles(buildPath).Length == 0 &&
+                               Directory.GetDirectories(buildPath).Length == 0;
+
+                if (!isEmpty)
+                {
+                    Logger.Log("[WARNING] Build path was not empty, deleting content.");
+                    
+                    try { Directory.Delete(buildPath, recursive: true); } 
+                    catch (Exception ex)
+                    { 
+                        Logger.Log("[ERROR] Failed to delete content of build path: " + ex.Message);
+                        Console.ReadKey();
+                        return;
+                    }
+                    
+                    try { Directory.CreateDirectory(buildPath); }
+                    catch (Exception ex)
+                    {
+                        Logger.Log("[ERROR] Failed to create build directory: " + ex.Message);
+                        Console.ReadKey();
+                        return;
+                    }
+                }
+            }
+
+            else
             {
                 try { Directory.CreateDirectory(buildPath); }
                 catch (Exception ex)
