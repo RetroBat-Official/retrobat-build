@@ -175,9 +175,7 @@ namespace RetroBuild
             int gitResult = Methods.RunProcess("git", "submodule update --init", rootPath, out string output);
             if (gitResult != 0)
             {
-                Logger.Log("[ERROR] Failed to initialize git submodules");
-                Console.ReadKey();
-                return;
+                Logger.Log("[WARNING] Failed to initialize git submodules");
             }
 
             // Get RetroBat Binaries
