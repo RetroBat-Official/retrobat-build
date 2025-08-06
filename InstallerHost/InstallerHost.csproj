@@ -28,7 +28,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\..\retrobat-setup\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -37,6 +37,9 @@
     <ApplicationIcon>resources\Builder.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetZip, Version=1.16.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.16.0\lib\net40\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -73,6 +76,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Texts.cs" />
+    <Compile Include="WaitForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="WelcomeControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -114,21 +120,7 @@
     <EmbeddedResource Include="resources\Builder.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\directx_Jun2010_redist.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="resources\vcredist2005_x64.exe" />
-    <EmbeddedResource Include="resources\vcredist2005_x86.exe" />
-    <EmbeddedResource Include="resources\vcredist2008_x64.exe" />
-    <EmbeddedResource Include="resources\vcredist2008_x86.exe" />
-    <EmbeddedResource Include="resources\vcredist2010_x64.exe" />
-    <EmbeddedResource Include="resources\vcredist2010_x86.exe" />
-    <EmbeddedResource Include="resources\vcredist2012_x64.exe" />
-    <EmbeddedResource Include="resources\vcredist2012_x86.exe" />
-    <EmbeddedResource Include="resources\vcredist2013_x64.exe" />
-    <EmbeddedResource Include="resources\vcredist2013_x86.exe" />
-    <EmbeddedResource Include="resources\vcredist2015_2017_2019_2022_x64.exe" />
-    <EmbeddedResource Include="resources\vcredist2015_2017_2019_2022_x86.exe" />
+    <EmbeddedResource Include="resources\wget.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
