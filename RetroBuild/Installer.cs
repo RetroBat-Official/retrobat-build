@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace RetroBuild
@@ -67,6 +68,22 @@ namespace RetroBuild
                     // Write ZIP length (as 8 bytes)
                     byte[] zipLengthBytes = BitConverter.GetBytes(new FileInfo(zipPath).Length);
                     outputStream.Write(zipLengthBytes, 0, zipLengthBytes.Length);
+                }
+
+                // Writing sha256
+                string sha256 = "";
+                string shaFile = finalInstallerPath + ".sha256.txt";
+                if (File.Exists(finalInstallerPath))
+                {
+                    using (var stream = File.OpenRead(finalInstallerPath))
+                    using (var sha = SHA256.Create())
+                    {
+                        byte[] hashBytes = sha.ComputeHash(stream);
+                        sha256 = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                    }
+
+                    if (!string.IsNullOrEmpty(sha256))
+                        File.WriteAllText(shaFile, sha256);
                 }
 
                 Logger.LogInfo("Created final installer executable: " + finalInstallerPath);

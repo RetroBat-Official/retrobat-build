@@ -19,14 +19,14 @@
     <DebugSymbols>false</DebugSymbols>
     <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\retrobat-setup\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -69,6 +69,9 @@
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Prerequisites.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Texts.cs" />
     <Compile Include="WelcomeControl.cs">
       <SubType>UserControl</SubType>
@@ -109,6 +112,23 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\Builder.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\directx_Jun2010_redist.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="resources\vcredist2005_x64.exe" />
+    <EmbeddedResource Include="resources\vcredist2005_x86.exe" />
+    <EmbeddedResource Include="resources\vcredist2008_x64.exe" />
+    <EmbeddedResource Include="resources\vcredist2008_x86.exe" />
+    <EmbeddedResource Include="resources\vcredist2010_x64.exe" />
+    <EmbeddedResource Include="resources\vcredist2010_x86.exe" />
+    <EmbeddedResource Include="resources\vcredist2012_x64.exe" />
+    <EmbeddedResource Include="resources\vcredist2012_x86.exe" />
+    <EmbeddedResource Include="resources\vcredist2013_x64.exe" />
+    <EmbeddedResource Include="resources\vcredist2013_x86.exe" />
+    <EmbeddedResource Include="resources\vcredist2015_2017_2019_2022_x64.exe" />
+    <EmbeddedResource Include="resources\vcredist2015_2017_2019_2022_x86.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -132,7 +132,7 @@ namespace InstallerHost
                 Width = 80,
                 Height = 30,
             };
-            btnBack.Click += (s, e) => mainForm.ShowWelcome();
+            btnBack.Click += (s, e) => mainForm.ShowPrerequisites();
 
             // Add controls to this UserControl
             this.Controls.Add(lblTitle);

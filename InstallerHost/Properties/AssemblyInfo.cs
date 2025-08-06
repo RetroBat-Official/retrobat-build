@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Les informations générales relatives à un assembly dépendent de
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("InstallerHost")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("RetroBat Setup")]
+[assembly: AssemblyDescription("Setup executable for RetroBat")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("InstallerHost")]
+[assembly: AssemblyCompany("The RetroBat team")]
+[assembly: AssemblyProduct("RetroBat")]
 [assembly: AssemblyCopyright("Copyright ©  2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Numéro de build
 //      Révision
 //
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("7.3.1.1")]
+[assembly: AssemblyFileVersion("7.3.1.1")]

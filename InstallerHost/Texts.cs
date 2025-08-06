@@ -57,7 +57,10 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "RunRetroBat", "Lancer RetroBat.exe" },
             { "Finish", "Terminer" },
             { "Error", "Erreur" },
-            { "StartupError", "Erreur au lancement de l'application, consultez le log." }
+            { "StartupError", "Erreur au lancement de l'application, consultez le log." },
+            { "PrerequisiteIntro", "Sélectionnez les prérequis à installer." },
+            { "vcText", "Installer Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
+            { "dx9text", "Installer DirectX 9 (Legacy)" }
         };
 
         public static string GetString(string key, params object[] args)
@@ -73,6 +76,15 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                 {
                     case "Welcome":
                         text = "Welcome to the RetroBat installation program";
+                        break;
+                    case "dx9text":
+                        text = "Install DirectX 9 (Legacy)";
+                        break;
+                    case "vcText":
+                        text = "Install Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)";
+                        break;
+                    case "PrerequisiteIntro":
+                        text = "Select components to install before continuing.";
                         break;
                     case "StartupError":
                         text = "Startup error occurred. See log file for details.";

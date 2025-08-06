@@ -100,7 +100,7 @@ namespace InstallerHost
             btnNext.Click += (s, e) =>
             {
                 Logger.Log("Licence screen, user clicked NEXT");
-                mainForm.ShowInstall();
+                mainForm.ShowPrerequisites();
             };
 
             btnBack.Click += (s, e) =>

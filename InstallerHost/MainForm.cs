@@ -42,6 +42,13 @@ namespace InstallerHost
             ShowControl(license);
         }
 
+        public void ShowPrerequisites()
+        {
+            var prerequisite = new PrerequisiteControl(this);
+            Logger.Log("Showing Prerequisites screen.");
+            ShowControl(prerequisite);
+        }
+
         public void ShowInstall()
         {
             var install = new InstallControl(this);
