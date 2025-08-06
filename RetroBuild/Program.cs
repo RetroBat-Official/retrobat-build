@@ -69,12 +69,12 @@ namespace RetroBuild
             Console.WriteLine("This executable is made to help download all the required software for RetroBat.");
             Console.WriteLine("Use the 'build.ini' file to set options for building.");
             Console.WriteLine("Option 1 must always be done first, as it will download all the required files.");
-            Console.WriteLine("---------------------------------------------------");
-            Console.WriteLine("=====================");
+            Console.WriteLine("---------------------------------------------------\n");
+            Console.WriteLine("=====================\n");
             Console.WriteLine("1 - Download and configure");
             Console.WriteLine("2 - Create archive");
             Console.WriteLine("3 - Create installer (need archive created first)");
-            Console.WriteLine("Q - Quit");
+            Console.WriteLine("Q - Quit\n");
             Console.Write("Please type your choice here: ");
 
             var choice = Console.ReadLine()?.Trim().ToUpper();
@@ -82,7 +82,8 @@ namespace RetroBuild
             switch (choice)
             {
                 case "1":
-                    Logger.Log("[INFO] Option selected: Download and configure.");
+                    Logger.Log("Option selected: Download and configure.");
+                    Logger.Log("Starting log.\n");
                     Console.WriteLine("=====================");
                     GetPackages(options);
                     Console.WriteLine("=====================");
@@ -104,12 +105,14 @@ namespace RetroBuild
                     
                     break;
                 case "2":
-                    Logger.Log("[INFO] Option selected: Create archive.");
+                    Logger.Log("Option selected: Create archive.");
+                    Logger.Log("Starting log.\n");
                     Console.WriteLine("=====================");
                     CreateZipFolder(options);
                     break;
                 case "3":
-                    Logger.Log("[INFO] Option selected: Create installer.");
+                    Logger.Log("Option selected: Create installer.");
+                    Logger.Log("Starting log.\n");
                     Console.WriteLine("=====================");
                     Installer.CreateInstaller(options);
                     break;
@@ -118,7 +121,7 @@ namespace RetroBuild
                     return;
             }
 
-            Logger.Log("[INFO] Build finished succesfully.");
+            Logger.Log("[INFO] Build finished succesfully.\n");
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
         }
