@@ -14,9 +14,9 @@ namespace InstallerHost
     public class PrerequisiteControl : UserControl
     {
         private MainForm mainForm;
-        private WaitForm waitForm;
 
         private Label lblIntro;
+        private Label statusLabel;
         private CheckBox chkVCpp;
         private CheckBox chkDirectX;
         private Button btnCancel;
@@ -33,25 +33,25 @@ namespace InstallerHost
             this.Resize += PrerequisiteControl_Resize;
         }
 
-        private readonly Dictionary<string, VCInstallerInfo> vcRedistResources = new Dictionary<string, VCInstallerInfo>
+        private readonly Dictionary<string, InstallerInfo> vcRedistResources = new Dictionary<string, InstallerInfo>
         {
-            { "vcredist2005_x64.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") },
-            { "vcredist2005_x86.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") },
-            { "vcredist2008_x64.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
-            { "vcredist2008_x86.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
-            { "vcredist2010_x64.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2010_x86.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2012_x64.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2012_x86.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2013_x64.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2013_x86.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2015_2017_2019_2022_x64.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2015_2017_2019_2022_x86.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") }
+            { "vcredist2005_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") },
+            { "vcredist2005_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") },
+            { "vcredist2008_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
+            { "vcredist2008_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
+            { "vcredist2010_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2010_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2012_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2012_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2013_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2013_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2015_2017_2019_2022_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2015_2017_2019_2022_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") }
         };
 
-        private readonly Dictionary<string, VCInstallerInfo> dxRedistResources = new Dictionary<string, VCInstallerInfo>
+        private readonly Dictionary<string, InstallerInfo> dxRedistResources = new Dictionary<string, InstallerInfo>
         {
-            { "directx_Jun2010_redist.zip", new VCInstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") }
+            { "directx_Jun2010_redist.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") }
         };
 
         private void InitializeComponent()
@@ -102,6 +102,18 @@ namespace InstallerHost
                 Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
 
+            statusLabel = new Label()
+            {
+                Left = progressBar.Left,
+                Top = progressBar.Bottom + 10,
+                Width = progressBar.Width,
+                Height = 30,
+                Text = "",
+                Font = new Font("Segoe UI", 10),
+                AutoSize = false,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left
+            };
+
             btnCancel = new Button()
             {
                 Text = Texts.GetString("Cancel"),
@@ -136,6 +148,9 @@ namespace InstallerHost
             this.Controls.Add(btnNext);
             this.Controls.Add(btnBack);
             this.Controls.Add(progressBar);
+            this.Controls.Add(statusLabel);
+
+            UpdateStatusLabelSafe(Texts.GetString("WaitingSelect"));
 
             this.ResumeLayout(false);
         }
@@ -148,17 +163,7 @@ namespace InstallerHost
                 btnBack.Enabled = false;
                 btnCancel.Enabled = false;
 
-                int totalSteps = 0;
-                if (chkDirectX.Checked)
-                    totalSteps++;
-                if (chkVCpp.Checked)
-                    totalSteps += vcRedistResources.Count;
-
-                progressBar.Value = 0;
-                progressBar.Maximum = totalSteps;
-
-                waitForm = new WaitForm("Downloading and installing prerequisites...\r\nPlease wait...");
-                waitForm.Show(mainForm);
+                statusLabel.Text = Texts.GetString("DownloadAndInstall");
 
                 installerWorker = new BackgroundWorker();
                 installerWorker.DoWork += InstallerWorker_DoWork;
@@ -178,43 +183,45 @@ namespace InstallerHost
                 if (chkDirectX.Checked)
                 {
                     Logger.Log("Launching DirectX installer...");
-                    InstallDirectXFromEmbedded();
+                    InstallDirectX();
                 }
 
                 if (chkVCpp.Checked)
                 {
                     Logger.Log("Launching VC++ installer...");
-                    InstallVCppAllAsync();
+                    InstallVCppAll();
                 }
+
+                int totalSteps = 0;
+                if (chkDirectX.Checked)
+                    totalSteps++;
+                if (chkVCpp.Checked)
+                    totalSteps += vcRedistResources.Count;
+
+                progressBar.Value = 0;
+                progressBar.Maximum = totalSteps;
             }
             catch (Exception ex)
             {
-                e.Result = ex;  // Pass exception to completed handler
+                e.Result = ex;
             }
         }
 
         private void InstallerWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            if (waitForm != null && !waitForm.IsDisposed)
-            {
-                waitForm.Invoke(new Action(() =>
-                {
-                    waitForm.Close();
-                    waitForm.Dispose();
-                }));
-                waitForm = null;
-            }
-
             if (e.Result is Exception ex)
             {
                 Logger.Log("Installation error: " + ex.Message);
-                MessageBox.Show("Installation failed:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Texts.GetString("InstallFail") + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                 btnNext.Enabled = true;
                 btnBack.Enabled = true;
                 btnCancel.Enabled = true;
             }
             else
             {
+                UpdateStatusLabelSafe(Texts.GetString("InstallComplete"));
+
                 installationComplete = true;
                 btnNext.Enabled = true;
                 btnCancel.Enabled = true;
@@ -233,7 +240,7 @@ namespace InstallerHost
             btnBack.Left = btnNext.Left - btnBack.Width - mainForm.spacing;
         }
 
-        private void InstallDirectXFromEmbedded()
+        private void InstallDirectX()
         {
             string wgetPath = ExtractWgetExecutable();
 
@@ -244,7 +251,7 @@ namespace InstallerHost
             foreach (var kvp in dxRedistResources)
             {
                 string zipFileName = kvp.Key;
-                VCInstallerInfo info = kvp.Value;
+                InstallerInfo info = kvp.Value;
 
                 string zipLocalPath = Path.Combine(tempRoot, zipFileName);
                 string extractPath = Path.Combine(tempRoot, Path.GetFileNameWithoutExtension(zipFileName));
@@ -275,9 +282,11 @@ namespace InstallerHost
                     }
                     catch { }
 
+                    UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
+
                     Logger.Log($"Downloading ZIP from {fullUrl}...");
                     DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
-                    Logger.Log("Download and extraction complete.");
+                    Logger.Log("Download complete.");
 
                     ExtractZipDotNetZip(zipLocalPath, extractPath);
                     Logger.Log("Extraction complete.");
@@ -285,6 +294,8 @@ namespace InstallerHost
                     string exePath = Path.Combine(extractPath, zipFileName.Replace(".zip", ".exe"));
                     if (!File.Exists(exePath))
                         throw new FileNotFoundException("Installer not found: " + exePath);
+
+                    UpdateStatusLabelSafe(Texts.GetString("Extracting") + " " + zipFileName + "...");
 
                     var extractProcess = new Process();
                     extractProcess.StartInfo.FileName = exePath;
@@ -306,15 +317,20 @@ namespace InstallerHost
                         throw new FileNotFoundException("DXSETUP.exe not found after extraction.");
                     }
 
+                    UpdateStatusLabelSafe(Texts.GetString("InstallDX"));
+
                     var installProcess = new Process();
                     installProcess.StartInfo.FileName = dxSetupPath;
                     installProcess.StartInfo.Arguments = "";
                     installProcess.StartInfo.UseShellExecute = true;
-                    installProcess.StartInfo.CreateNoWindow = true;
 
                     installProcess.Start();
                     installProcess.WaitForExit();
                     Logger.Log($"DirectX installation finished with exit code: {installProcess.ExitCode}");
+
+                    try { Directory.Delete(zipLocalPath, true); } catch { }
+                    try { Directory.Delete(tempExtractPath, true); } catch { }
+
                     UpdateProgressBarSafe();
                 }
                 catch (Exception ex)
@@ -322,10 +338,12 @@ namespace InstallerHost
                     Logger.Log("DirectX installation failed: " + ex.Message);
                     MessageBox.Show("DirectX installation failed:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+
+                try { Directory.Delete(tempRoot, true); } catch { }
             }
         }
 
-        private void InstallVCppAllAsync()
+        private void InstallVCppAll()
         {
             string wgetPath = ExtractWgetExecutable();
 
@@ -336,7 +354,7 @@ namespace InstallerHost
             foreach (var kvp in vcRedistResources)
             {
                 string zipFileName = kvp.Key;
-                VCInstallerInfo info = kvp.Value;
+                InstallerInfo info = kvp.Value;
 
                 string zipLocalPath = Path.Combine(tempRoot, zipFileName);
                 string extractPath = Path.Combine(tempRoot, Path.GetFileNameWithoutExtension(zipFileName));
@@ -344,12 +362,16 @@ namespace InstallerHost
 
                 try
                 {
+                    UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
+
                     Logger.Log($"Downloading ZIP from {fullUrl}...");
                     DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
                     Logger.Log("Download and extraction complete.");
 
                     ExtractZipDotNetZip(zipLocalPath, extractPath);
                     Logger.Log("Extraction complete.");
+
+                    UpdateStatusLabelSafe(Texts.GetString("Installing") + " " + zipFileName + "...");
 
                     string exePath = Path.Combine(extractPath, zipFileName.Replace(".zip", ".exe"));
                     if (!File.Exists(exePath))
@@ -365,6 +387,9 @@ namespace InstallerHost
                     process.Start();
                     process.WaitForExit();
 
+                    try { Directory.Delete(zipLocalPath, true); } catch { }
+                    try { Directory.Delete(extractPath, true); } catch { }
+
                     Logger.Log($"Installer finished with code {process.ExitCode}");
                 }
                 catch (Exception ex)
@@ -374,6 +399,8 @@ namespace InstallerHost
                 }
                 UpdateProgressBarSafe();
             }
+
+            try { Directory.Delete(tempRoot, true); } catch { }
         }
 
         public static string ExtractEmbeddedFile(string resourceName, string outputFile)
@@ -442,39 +469,31 @@ namespace InstallerHost
 
         private void DownloadWithWget(string wgetPath, string url, string outputPath)
         {
-            using (var process = new Process())
+            try
             {
-                process.StartInfo.FileName = wgetPath;
-                process.StartInfo.Arguments = $"\"{url}\" -O \"{outputPath}\" --no-check-certificate";
-                process.StartInfo.CreateNoWindow = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
+                using (var process = new Process())
+                {
+                    process.StartInfo.FileName = wgetPath;
+                    process.StartInfo.Arguments = $"\"{url}\" -O \"{outputPath}\" --no-check-certificate";
+                    process.StartInfo.CreateNoWindow = true;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
 
-                process.OutputDataReceived += (s, e) => { if (e.Data != null) Logger.Log("wget stdout: " + e.Data); };
-                process.ErrorDataReceived += (s, e) => { if (e.Data != null) Logger.Log("wget stderr: " + e.Data); };
+                    process.OutputDataReceived += (s, e) => { if (e.Data != null) Logger.Log("wget stdout: " + e.Data); };
+                    process.ErrorDataReceived += (s, e) => { if (e.Data != null) Logger.Log("wget stderr: " + e.Data); };
 
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
+                    process.Start();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
 
-                process.WaitForExit();
+                    process.WaitForExit();
 
-                if (process.ExitCode != 0)
-                    throw new Exception($"wget failed with exit code {process.ExitCode}");
+                    if (process.ExitCode != 0)
+                        throw new Exception($"wget failed with exit code {process.ExitCode}");
+                }
             }
-        }
-
-        private void DownloadAndExtractZipFromFtp(string ftpUrl, string zipPath, string extractTo)
-        {
-            using (WebClient client = new WebClient())
-            {
-                // Add credentials if needed:
-                // client.Credentials = new NetworkCredential("user", "pass");
-                client.DownloadFile(ftpUrl, zipPath);
-            }
-
-            ExtractZipDotNetZip(zipPath, extractTo);
+            catch { Logger.Log("Error Downloading" + url); }
         }
 
         private void ExtractZipDotNetZip(string zipPath, string extractTo)
@@ -487,14 +506,26 @@ namespace InstallerHost
                 }
             }
         }
+
+        private void UpdateStatusLabelSafe(string text)
+        {
+            if (statusLabel.InvokeRequired)
+            {
+                statusLabel.Invoke(new Action(() => statusLabel.Text = text));
+            }
+            else
+            {
+                statusLabel.Text = text;
+            }
+        }
     }
 
-    public class VCInstallerInfo
+    public class InstallerInfo
     {
         public string Url { get; set; }
         public string Arguments { get; set; }
 
-        public VCInstallerInfo(string url, string arguments)
+        public InstallerInfo(string url, string arguments)
         {
             Url = url;
             Arguments = arguments;

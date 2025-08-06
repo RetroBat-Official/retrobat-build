@@ -60,7 +60,13 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "StartupError", "Erreur au lancement de l'application, consultez le log." },
             { "PrerequisiteIntro", "Sélectionnez les prérequis à installer." },
             { "vcText", "Installer Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
-            { "dx9text", "Installer DirectX 9 (Legacy)" }
+            { "dx9text", "Installer DirectX 9 (Legacy)" },
+            { "DownloadAndInstall", "Téléchargement et installation des prérequis...\r\nVeuillez patienter..." },
+            { "Downloading", "Téléchargement de" },
+            { "Extracting", "Extraction de" },
+            { "InstallDX", "Installation de DirectX..." },
+            { "Installing", "Installation de" },
+            { "WaitingSelect", "En attente des choix..." }
         };
 
         public static string GetString(string key, params object[] args)
@@ -74,8 +80,20 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             else
                 switch (key)
                 {
+                    case "WaitingSelect":
+                        text = "Waiting for selection...";
+                        break;
                     case "Welcome":
                         text = "Welcome to the RetroBat installation program";
+                        break;
+                    case "InstallDX":
+                        text = "Installing DirectX...";
+                        break;
+                    case "InstallComplete...":
+                        text = "Installation complete...";
+                        break;
+                    case "DownloadAndInstall":
+                        text = "Downloading and installing prerequisites...\r\nPlease wait...";
                         break;
                     case "dx9text":
                         text = "Install DirectX 9 (Legacy)";

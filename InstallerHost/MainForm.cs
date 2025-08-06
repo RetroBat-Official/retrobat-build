@@ -11,7 +11,7 @@ namespace InstallerHost
 
         public MainForm() : base()
         {
-            ShowWelcome(); // Show welcome screen on startup
+            ShowWelcome();
         }
 
         private void ShowControl(UserControl control)
@@ -68,13 +68,16 @@ namespace InstallerHost
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.SuspendLayout();
             // 
+            // contentPanel
+            // 
+            this.contentPanel.Size = new System.Drawing.Size(353, 394);
+            // 
             // MainForm
             // 
             this.ClientSize = new System.Drawing.Size(584, 361);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.ResumeLayout(false);
-
         }
     }
 }
