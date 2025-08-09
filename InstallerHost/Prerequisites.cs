@@ -7,7 +7,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Ionic.Zip;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace InstallerHost
 {
@@ -25,6 +25,7 @@ namespace InstallerHost
         private BackgroundWorker installerWorker;
         private ProgressBar progressBar;
         private bool installationComplete = false;
+        private BackgroundWorker worker;
 
         public PrerequisiteControl(MainForm main)
         {
@@ -288,7 +289,7 @@ namespace InstallerHost
                     DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
                     Logger.Log("Download complete.");
 
-                    ExtractZipDotNetZip(zipLocalPath, extractPath);
+                    ExtractZipToFolder(zipLocalPath, extractPath);
                     Logger.Log("Extraction complete.");
 
                     string exePath = Path.Combine(extractPath, zipFileName.Replace(".zip", ".exe"));
@@ -368,7 +369,7 @@ namespace InstallerHost
                     DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
                     Logger.Log("Download and extraction complete.");
 
-                    ExtractZipDotNetZip(zipLocalPath, extractPath);
+                    ExtractZipToFolder(zipLocalPath, extractPath);
                     Logger.Log("Extraction complete.");
 
                     UpdateStatusLabelSafe(Texts.GetString("Installing") + " " + zipFileName + "...");
@@ -467,6 +468,51 @@ namespace InstallerHost
             return tempPath;
         }
 
+        private void ExtractZipToFolder(string zipFilePath, string destinationFolder)
+        {
+            using (FileStream fs = File.OpenRead(zipFilePath))
+            using (ZipFile zipFile = new ZipFile(fs))
+            {
+                long totalSize = 0;
+                foreach (ZipEntry entry in zipFile)
+                {
+                    if (!entry.IsFile)
+                        continue;
+                    totalSize += entry.Size;
+                }
+
+                long extractedSize = 0;
+
+                foreach (ZipEntry entry in zipFile)
+                {
+                    if (!entry.IsFile)
+                        continue;
+
+                    string entryFileName = entry.Name;
+                    string fullPath = Path.Combine(destinationFolder, entryFileName);
+
+                    string directoryName = Path.GetDirectoryName(fullPath);
+                    if (!Directory.Exists(directoryName))
+                        Directory.CreateDirectory(directoryName);
+
+                    using (Stream zipStream = zipFile.GetInputStream(entry))
+                    using (FileStream outputStream = File.Create(fullPath))
+                    {
+                        byte[] buffer = new byte[4096];
+                        int bytesRead;
+                        while ((bytesRead = zipStream.Read(buffer, 0, buffer.Length)) > 0)
+                        {
+                            outputStream.Write(buffer, 0, bytesRead);
+                            extractedSize += bytesRead;
+
+                            int percent = (int)((extractedSize * 100) / totalSize);
+                            worker?.ReportProgress(percent);
+                        }
+                    }
+                }
+            }
+        }
+
         private void DownloadWithWget(string wgetPath, string url, string outputPath)
         {
             try
@@ -494,17 +540,6 @@ namespace InstallerHost
                 }
             }
             catch { Logger.Log("Error Downloading" + url); }
-        }
-
-        private void ExtractZipDotNetZip(string zipPath, string extractTo)
-        {
-            using (ZipFile zip = ZipFile.Read(zipPath))
-            {
-                foreach (ZipEntry entry in zip)
-                {
-                    entry.Extract(extractTo, ExtractExistingFileAction.OverwriteSilently);
-                }
-            }
         }
 
         private void UpdateStatusLabelSafe(string text)
