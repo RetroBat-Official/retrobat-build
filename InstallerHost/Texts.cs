@@ -31,6 +31,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
     private static Dictionary<string, string> frenchStrings = new Dictionary<string, string>
         {
             { "Cancel", "Annuler" },
+            { "WindowsTitle", "Installation de RetroBat " },
             { "Next", "Suivant" },
             { "Back", "Retour" },
             { "Browse", "Parcourir" },
@@ -82,6 +83,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                 {
                     case "WaitingSelect":
                         text = "Waiting for selection...";
+                        break;
+                    case "WindowsTitle":
+                        text = "RetroBat Installer ";
                         break;
                     case "Welcome":
                         text = "Welcome to the RetroBat installation program";

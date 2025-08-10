@@ -32,7 +32,7 @@ namespace InstallerHost
             version = strings.Length > 1 ? strings[1] : "";
             branch = strings.Length > 2 ? strings[2] : "";
 
-            this.Text = "RetroBat Installer " + branch + " " + version;
+            this.Text = Texts.GetString("WindowsTitle") + branch + " " + version;
             InitializeLayout();
         }
 
