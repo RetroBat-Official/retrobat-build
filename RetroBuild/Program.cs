@@ -190,9 +190,9 @@ namespace RetroBuild
                     File.Copy(file, destFile, true);
                 }
 
-                string gitBranch = "master";
-                string fileName = "retrobat_binaries_" + gitBranch + ".7z";
-                string retrobatUrl = options.RetrobatBinariesBaseUrl + fileName;
+                string branch = options.Branch;
+                string fileName = "retrobat_binaries_" + branch + ".7z";
+                string retrobatUrl = options.RetrobatBinariesBaseUrl + branch + "/" + fileName;
                 Methods.DownloadAndExtractArchive_WebClient(retrobatUrl, buildPath, options);
                 Logger.LogInfo("retrobat binaries copied to " + buildPath);
             }
