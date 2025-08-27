@@ -158,6 +158,12 @@ namespace InstallerHost
 
         private void BtnNext_Click(object sender, EventArgs e)
         {
+            if (!chkDirectX.Checked && !chkVCpp.Checked)
+            {
+                mainForm.ShowInstall();
+                return;
+            }
+
             if (!installationComplete)
             {
                 btnNext.Enabled = false;
