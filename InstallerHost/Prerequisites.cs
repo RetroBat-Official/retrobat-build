@@ -172,6 +172,15 @@ namespace InstallerHost
 
                 statusLabel.Text = Texts.GetString("DownloadAndInstall");
 
+                int totalSteps = 0;
+                if (chkDirectX.Checked)
+                    totalSteps++;
+                if (chkVCpp.Checked)
+                    totalSteps += vcRedistResources.Count;
+
+                progressBar.Value = 0;
+                progressBar.Maximum = totalSteps;
+
                 installerWorker = new BackgroundWorker();
                 installerWorker.DoWork += InstallerWorker_DoWork;
                 installerWorker.RunWorkerCompleted += InstallerWorker_RunWorkerCompleted;
@@ -204,9 +213,6 @@ namespace InstallerHost
                     totalSteps++;
                 if (chkVCpp.Checked)
                     totalSteps += vcRedistResources.Count;
-
-                progressBar.Value = 0;
-                progressBar.Maximum = totalSteps;
             }
             catch (Exception ex)
             {
@@ -232,6 +238,7 @@ namespace InstallerHost
                 installationComplete = true;
                 btnNext.Enabled = true;
                 btnCancel.Enabled = true;
+                progressBar.Value = progressBar.Maximum;
             }
         }
 
@@ -443,12 +450,14 @@ namespace InstallerHost
             {
                 progressBar.Invoke(new Action(() =>
                 {
-                    progressBar.Value = Math.Min(progressBar.Maximum, progressBar.Value + 1);
+                    if (progressBar.Value < progressBar.Maximum)
+                        progressBar.Value++;
                 }));
             }
             else
             {
-                progressBar.Value = Math.Min(progressBar.Maximum, progressBar.Value + 1);
+                if (progressBar.Value < progressBar.Maximum)
+                    progressBar.Value++;
             }
         }
 
