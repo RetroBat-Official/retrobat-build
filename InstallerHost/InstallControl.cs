@@ -350,22 +350,32 @@ namespace InstallerHost
             string exePath = Application.ExecutablePath;
             byte[] exeBytes = File.ReadAllBytes(exePath);
 
-            const int footerLength = 8;
-            if (exeBytes.Length < footerLength)
-                throw new Exception("Executable too small to contain ZIP length footer.");
+            // ZIP files start with "PK" signature: 0x50, 0x4B, 0x03, 0x04
+            byte[] zipHeader = { 0x50, 0x4B, 0x03, 0x04 };
+            int index = FindBytes(exeBytes, zipHeader);
 
-            long zipLength = BitConverter.ToInt64(exeBytes, exeBytes.Length - footerLength);
-            if (zipLength <= 0 || zipLength > exeBytes.Length - footerLength)
-                throw new Exception("Invalid ZIP length in footer.");
+            if (index < 0)
+                throw new Exception("No ZIP header found in executable.");
 
-            long zipStartIndex = exeBytes.Length - footerLength - zipLength;
-            if (zipStartIndex < 0)
-                throw new Exception("ZIP start index is invalid.");
-
-            byte[] zipBytes = new byte[zipLength];
-            Array.Copy(exeBytes, zipStartIndex, zipBytes, 0, zipLength);
+            // Copy everything from the header to the end of the exe
+            byte[] zipBytes = new byte[exeBytes.Length - index];
+            Array.Copy(exeBytes, index, zipBytes, 0, zipBytes.Length);
 
             File.WriteAllBytes(outputZipPath, zipBytes);
+        }
+
+        private int FindBytes(byte[] buffer, byte[] pattern)
+        {
+            for (int i = 0; i <= buffer.Length - pattern.Length; i++)
+            {
+                bool match = true;
+                for (int j = 0; j < pattern.Length; j++)
+                {
+                    if (buffer[i + j] != pattern[j]) { match = false; break; }
+                }
+                if (match) return i;
+            }
+            return -1;
         }
 
         private void ExtractZipToFolder(string zipFilePath, string destinationFolder)
@@ -373,27 +383,24 @@ namespace InstallerHost
             using (FileStream fs = File.OpenRead(zipFilePath))
             using (ZipFile zipFile = new ZipFile(fs))
             {
-                long totalSize = 0;
-                foreach (ZipEntry entry in zipFile)
-                {
-                    if (!entry.IsFile)
-                        continue;
-                    totalSize += entry.Size;
-                }
+                // Calcule la taille totale des fichiers seulement
+                long totalSize = zipFile.Cast<ZipEntry>()
+                                        .Where(e => e.IsFile)
+                                        .Sum(e => e.Size);
 
                 long extractedSize = 0;
 
                 foreach (ZipEntry entry in zipFile)
                 {
-                    if (!entry.IsFile)
+                    string fullPath = Path.Combine(destinationFolder, entry.Name);
+
+                    if (entry.IsDirectory)
+                    {
+                        Directory.CreateDirectory(fullPath);
                         continue;
+                    }
 
-                    string entryFileName = entry.Name;
-                    string fullPath = Path.Combine(destinationFolder, entryFileName);
-
-                    string directoryName = Path.GetDirectoryName(fullPath);
-                    if (!Directory.Exists(directoryName))
-                        Directory.CreateDirectory(directoryName);
+                    Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
 
                     using (Stream zipStream = zipFile.GetInputStream(entry))
                     using (FileStream outputStream = File.Create(fullPath))
@@ -405,6 +412,7 @@ namespace InstallerHost
                             outputStream.Write(buffer, 0, bytesRead);
                             extractedSize += bytesRead;
 
+                            // On reporte la progression uniquement pour les fichiers
                             int percent = (int)((extractedSize * 100) / totalSize);
                             worker?.ReportProgress(percent);
                         }
