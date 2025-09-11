@@ -191,7 +191,7 @@ namespace RetroBuild
                 }
 
                 string branch = options.Branch;
-                string fileName = "retrobat_binaries_" + branch + ".7z";
+                string fileName = "retrobat_binaries.7z";
                 string retrobatUrl = options.RetrobatBinariesBaseUrl + branch + "/" + fileName;
                 Methods.DownloadAndExtractArchive_WebClient(retrobatUrl, buildPath, options);
                 Logger.LogInfo("retrobat binaries copied to " + buildPath);
