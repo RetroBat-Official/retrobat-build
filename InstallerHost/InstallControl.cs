@@ -383,6 +383,7 @@ namespace InstallerHost
             using (FileStream fs = File.OpenRead(zipFilePath))
             using (ZipFile zipFile = new ZipFile(fs))
             {
+                ICSharpCode.SharpZipLib.Zip.ZipConstants.DefaultCodePage = 65001;
                 // Calcule la taille totale des fichiers seulement
                 long totalSize = zipFile.Cast<ZipEntry>()
                                         .Where(e => e.IsFile)

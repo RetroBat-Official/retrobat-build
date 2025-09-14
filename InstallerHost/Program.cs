@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace InstallerHost
 {
@@ -32,7 +33,6 @@ namespace InstallerHost
                 }
                 return null;
             };
-
             CultureInfo windowsCulture = CultureInfo.CurrentUICulture;
 
             Application.EnableVisualStyles();

@@ -488,6 +488,7 @@ namespace InstallerHost
             using (FileStream fs = File.OpenRead(zipFilePath))
             using (ZipFile zipFile = new ZipFile(fs))
             {
+                ICSharpCode.SharpZipLib.Zip.ZipConstants.DefaultCodePage = 65001;
                 long totalSize = 0;
                 foreach (ZipEntry entry in zipFile)
                 {
