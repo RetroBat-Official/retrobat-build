@@ -974,7 +974,7 @@ namespace RetroBuild
 
                 ProcessStartInfo psi = new ProcessStartInfo();
                 psi.FileName = options.SevenZipPath;
-                psi.Arguments = $"a -tzip \"{zipPath}\" \"{sourceFolder}\\*\"";
+                psi.Arguments = $"a -tzip -mcu=on \"{zipPath}\" \"{sourceFolder}\\*\"";
                 psi.UseShellExecute = false;
                 psi.RedirectStandardOutput = true;
                 psi.RedirectStandardError = true;

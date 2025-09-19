@@ -1,10 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Windows.Forms;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.ComponentModel;
-using System.Linq;
-using ICSharpCode.SharpZipLib.Zip;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
 namespace InstallerHost
 {
@@ -383,7 +384,10 @@ namespace InstallerHost
             using (FileStream fs = File.OpenRead(zipFilePath))
             using (ZipFile zipFile = new ZipFile(fs))
             {
-                // Calcule la taille totale des fichiers seulement
+                zipFile.IsStreamOwner = true;
+                zipFile.UseZip64 = UseZip64.On;
+                ICSharpCode.SharpZipLib.Zip.ZipConstants.DefaultCodePage = 65001; // UTF-8
+
                 long totalSize = zipFile.Cast<ZipEntry>()
                                         .Where(e => e.IsFile)
                                         .Sum(e => e.Size);
@@ -392,7 +396,11 @@ namespace InstallerHost
 
                 foreach (ZipEntry entry in zipFile)
                 {
-                    string fullPath = Path.Combine(destinationFolder, entry.Name);
+                    string entryName = entry.IsUnicodeText
+                ? entry.Name
+                : Encoding.UTF8.GetString(Encoding.Default.GetBytes(entry.Name));
+
+                    string fullPath = Path.Combine(destinationFolder, entryName);
 
                     if (entry.IsDirectory)
                     {
