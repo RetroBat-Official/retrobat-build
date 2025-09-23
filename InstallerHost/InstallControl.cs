@@ -349,11 +349,11 @@ namespace InstallerHost
         private void ExtractEmbeddedZip(string outputZipPath)
         {
             string exePath = Application.ExecutablePath;
-            byte[] exeBytes = File.ReadAllBytes(exePath);
+            //byte[] exeBytes = File.ReadAllBytes(exePath);
 
             // ZIP files start with "PK" signature: 0x50, 0x4B, 0x03, 0x04
             byte[] zipHeader = { 0x50, 0x4B, 0x03, 0x04 };
-            int index = FindBytes(exeBytes, zipHeader);
+            /*int index = FindBytes(exeBytes, zipHeader);
 
             if (index < 0)
                 throw new Exception("No ZIP header found in executable.");
@@ -362,7 +362,46 @@ namespace InstallerHost
             byte[] zipBytes = new byte[exeBytes.Length - index];
             Array.Copy(exeBytes, index, zipBytes, 0, zipBytes.Length);
 
-            File.WriteAllBytes(outputZipPath, zipBytes);
+            File.WriteAllBytes(outputZipPath, zipBytes);*/
+
+            using (FileStream fs = new FileStream(exePath, FileMode.Open, FileAccess.Read))
+            {
+                int index = FindBytesInStream(fs, zipHeader);
+                if (index < 0)
+                    throw new Exception("No ZIP header found in executable.");
+
+                // On se place au début du ZIP dans l’exécutable
+                fs.Seek(index, SeekOrigin.Begin);
+
+                // Copie le reste du flux directement dans le fichier ZIP de sortie
+                using (FileStream outFs = new FileStream(outputZipPath, FileMode.Create, FileAccess.Write))
+                {
+                    fs.CopyTo(outFs); // Copie par chunks, pas de gros buffer en mémoire
+                }
+            }
+        }
+
+        private int FindBytesInStream(FileStream fs, byte[] pattern)
+        {
+            int matchIndex = 0;
+            int position = 0;
+
+            int b;
+            while ((b = fs.ReadByte()) != -1)
+            {
+                if (b == pattern[matchIndex])
+                {
+                    matchIndex++;
+                    if (matchIndex == pattern.Length)
+                        return position - pattern.Length + 1;
+                }
+                else
+                {
+                    matchIndex = 0;
+                }
+                position++;
+            }
+            return -1;
         }
 
         private int FindBytes(byte[] buffer, byte[] pattern)
@@ -393,13 +432,11 @@ namespace InstallerHost
                                         .Sum(e => e.Size);
 
                 long extractedSize = 0;
+                int lastPercent = -1;
 
                 foreach (ZipEntry entry in zipFile)
                 {
-                    string entryName = entry.IsUnicodeText
-                ? entry.Name
-                : Encoding.UTF8.GetString(Encoding.Default.GetBytes(entry.Name));
-
+                    string entryName = entry.Name;
                     string fullPath = Path.Combine(destinationFolder, entryName);
 
                     if (entry.IsDirectory)
@@ -408,21 +445,29 @@ namespace InstallerHost
                         continue;
                     }
 
-                    Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+                    string dirPath = Path.GetDirectoryName(fullPath);
+                    if (!string.IsNullOrEmpty(dirPath))
+                        Directory.CreateDirectory(dirPath);
 
                     using (Stream zipStream = zipFile.GetInputStream(entry))
                     using (FileStream outputStream = File.Create(fullPath))
                     {
-                        byte[] buffer = new byte[4096];
+                        byte[] buffer = new byte[8192];
                         int bytesRead;
                         while ((bytesRead = zipStream.Read(buffer, 0, buffer.Length)) > 0)
                         {
                             outputStream.Write(buffer, 0, bytesRead);
                             extractedSize += bytesRead;
 
-                            // On reporte la progression uniquement pour les fichiers
-                            int percent = (int)((extractedSize * 100) / totalSize);
-                            worker?.ReportProgress(percent);
+                            if (totalSize > 0)
+                            {
+                                int percent = (int)((extractedSize * 100) / totalSize);
+                                if (percent != lastPercent)
+                                {
+                                    worker?.ReportProgress(percent);
+                                    lastPercent = percent;
+                                }
+                            }
                         }
                     }
                 }
