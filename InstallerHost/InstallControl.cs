@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace InstallerHost
@@ -227,7 +228,24 @@ namespace InstallerHost
             try
             {
                 Logger.Log("Extracting zip content.");
-                ExtractEmbeddedZip(zipFilePath);
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        Logger.Log("Extracting zip content in background...");
+                        ExtractEmbeddedZip(zipFilePath);
+                        Logger.Log("Zip extraction completed.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log("Failed to extract installer data.");
+                        this.Invoke(new Action(() =>
+                        {
+                            MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
+                            Application.Exit();
+                        }));
+                    }
+                });
             }
             catch (Exception ex)
             {
@@ -425,7 +443,6 @@ namespace InstallerHost
             {
                 zipFile.IsStreamOwner = true;
                 zipFile.UseZip64 = UseZip64.On;
-                ICSharpCode.SharpZipLib.Zip.ZipConstants.DefaultCodePage = 65001; // UTF-8
 
                 long totalSize = zipFile.Cast<ZipEntry>()
                                         .Where(e => e.IsFile)

@@ -1,21 +1,43 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
-using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace RetroBuild
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                var requestedAssemblyName = new AssemblyName(args.Name).Name;
+                if (requestedAssemblyName == "ICSharpCode.SharpZipLib")
+                {
+                    var currentAssembly = Assembly.GetExecutingAssembly();
+                    var resourceName = "RetroBuild.resources.ICSharpCode.SharpZipLib.dll";
+
+                    using (var stream = currentAssembly.GetManifestResourceStream(resourceName))
+                    {
+                        if (stream == null)
+                            return null;
+
+                        byte[] assemblyData = new byte[stream.Length];
+                        stream.Read(assemblyData, 0, assemblyData.Length);
+                        return Assembly.Load(assemblyData);
+                    }
+                }
+                return null;
+            };
+
             // Start logging in build.log
             string exeName = AppDomain.CurrentDomain.FriendlyName;
             Logger.LogStart(exeName);
@@ -108,7 +130,7 @@ namespace RetroBuild
                     Logger.Log("Option selected: Create archive.");
                     Logger.Log("Starting log.\n");
                     Console.WriteLine("=====================");
-                    CreateZipFolder(options);
+                    CreateZipFolderSharpZip(options);
                     break;
                 case "3":
                     Logger.Log("Option selected: Create installer.");
@@ -951,71 +973,99 @@ namespace RetroBuild
             }
         }
 
-        public static void CreateZipFolder(BuilderOptions options)
+        public static void CreateZipFolderSharpZip(BuilderOptions options)
         {
             string task = "create_ziparchive";
             Logger.LogLabel(task);
 
             Console.WriteLine(":: CREATE ZIP ARCHIVE...");
 
-            string zipName = "retrobat-v" + options.RetrobatVersion + "-" + options.Branch + "-" + options.Architecture + ".zip";
+            string zipName = $"retrobat-v{options.RetrobatVersion}-{options.Branch}-{options.Architecture}.zip";
             string rootPath = AppDomain.CurrentDomain.BaseDirectory;
             string buildPath = Path.Combine(rootPath, "build");
-
             string sourceFolder = buildPath;
-            string zipPath = Path.Combine(buildPath, zipName);
 
-            if (Directory.Exists(sourceFolder))
-            {
-                if (File.Exists(zipPath))
-                {
-                    try { File.Delete(zipPath); } catch { }
-                }
+            // Place zip outside the folder to avoid self-inclusion
+            string zipPath = Path.Combine(rootPath, zipName);
 
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = options.SevenZipPath;
-                psi.Arguments = $"a -tzip -mcu=on \"{zipPath}\" \"{sourceFolder}\\*\"";
-                psi.UseShellExecute = false;
-                psi.RedirectStandardOutput = true;
-                psi.RedirectStandardError = true;
-                psi.CreateNoWindow = true;
-
-                using (Process proc = Process.Start(psi))
-                {
-                    string output = proc.StandardOutput.ReadToEnd();
-                    string error = proc.StandardError.ReadToEnd();
-                    proc.WaitForExit();
-
-                    Logger.LogInfo("7-Zip Output: " + output);
-
-                    if (!string.IsNullOrEmpty(error))
-                    {
-                        Logger.LogInfo("7-Zip Errors: " + error);
-                    }
-
-                    Logger.LogInfo($"ZIP created at: {zipPath}");
-                }
-
-                // Writing sha256
-                string sha256 = "";
-                string shaFile = zipPath + ".sha256.txt";
-                if (File.Exists(zipPath))
-                {
-                    using (var stream = File.OpenRead(zipPath))
-                    using (var sha = SHA256.Create())
-                    {
-                        byte[] hashBytes = sha.ComputeHash(stream);
-                        sha256 = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-                    }
-
-                    if (!string.IsNullOrEmpty(sha256))
-                        File.WriteAllText(shaFile, sha256);
-                }
-            }
-            else
+            if (!Directory.Exists(sourceFolder))
             {
                 Logger.LogInfo("[ERROR] Source folder does not exist.");
+                return;
             }
+
+            if (File.Exists(zipPath))
+            {
+                try { File.Delete(zipPath); }
+                catch (Exception ex) { Logger.LogInfo($"[WARNING] Could not delete existing zip file: {ex.Message}"); }
+            }
+
+            using (FileStream fs = new FileStream(zipPath, FileMode.Create, FileAccess.Write, FileShare.None))
+            using (ZipOutputStream zipStream = new ZipOutputStream(fs))
+            {
+                zipStream.SetLevel(9); // max compression
+                zipStream.IsStreamOwner = true;
+
+                // Add files
+                foreach (string filePath in Directory.GetFiles(sourceFolder, "*", SearchOption.AllDirectories))
+                {
+                    // Skip the zip file itself just in case
+                    if (Path.GetFullPath(filePath) == Path.GetFullPath(zipPath))
+                        continue;
+
+                    string entryName = GetRelativePath(sourceFolder, filePath).Replace("\\", "/");
+                    ZipEntry entry = new ZipEntry(entryName) { IsUnicodeText = true };
+                    zipStream.PutNextEntry(entry);
+
+                    using (FileStream inputStream = File.OpenRead(filePath))
+                    {
+                        inputStream.CopyTo(zipStream);
+                    }
+
+                    zipStream.CloseEntry();
+                }
+
+                // Add empty directories
+                foreach (string dirPath in Directory.GetDirectories(sourceFolder, "*", SearchOption.AllDirectories))
+                {
+                    if (Directory.GetFiles(dirPath).Length == 0 && Directory.GetDirectories(dirPath).Length == 0)
+                    {
+                        string entryName = GetRelativePath(sourceFolder, dirPath).Replace("\\", "/") + "/";
+                        ZipEntry entry = new ZipEntry(entryName);
+                        zipStream.PutNextEntry(entry);
+                        zipStream.CloseEntry();
+                    }
+                }
+
+                zipStream.Finish(); // ensures all data flushed
+            }
+
+            // Compute SHA256 AFTER zip is fully closed
+            string shaFile = zipPath + ".sha256.txt";
+            using (var stream = File.OpenRead(zipPath))
+            using (var sha = SHA256.Create())
+            {
+                byte[] hashBytes = sha.ComputeHash(stream);
+                string sha256 = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                File.WriteAllText(shaFile, sha256);
+            }
+
+            Logger.LogInfo($"ZIP created at: {zipPath}");
+        }
+
+        public static string GetRelativePath(string basePath, string fullPath)
+        {
+            if (!basePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                basePath += Path.DirectorySeparatorChar;
+
+            Uri baseUri = new Uri(basePath);
+            Uri fullUri = new Uri(fullPath);
+
+            Uri relativeUri = baseUri.MakeRelativeUri(fullUri);
+            string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            // Convert URI slashes to system directory separator
+            return relativePath.Replace('/', Path.DirectorySeparatorChar);
         }
     }
 }

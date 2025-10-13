@@ -13,16 +13,16 @@ namespace RetroBuild
         public static void CreateInstaller(BuilderOptions options)
         {
             string rootPath = AppDomain.CurrentDomain.BaseDirectory;
-            string buildPath = Path.Combine(rootPath, "build");
+            string buildPath = rootPath;
 
             // Find your ZIP archive
             string zipName = $"retrobat-v{options.RetrobatVersion}-{options.Branch}-{options.Architecture}.zip";
-            string zipPath = Path.Combine(buildPath, zipName);
+            string zipPath = Path.Combine(rootPath, zipName);
 
             if (!File.Exists(zipPath))
             {
                 Logger.Log("[INFO] zip not found, creating zip first.");
-                try { Program.CreateZipFolder(options); }
+                try { Program.CreateZipFolderSharpZip(options); }
                 catch (Exception ex)
                 {
                     Logger.Log("[ERROR] Exception creating ZIP: " + ex.Message);
