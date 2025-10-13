@@ -1,0 +1,76 @@
+Installer strings
+Language: 
+
+"Waiting for selection..."
+
+"RetroBat Installer "
+
+"Welcome to the RetroBat installation program"
+
+"Installing DirectX..."
+
+"Installation complete..."
+
+"Downloading and installing prerequisites...\r\nPlease wait..."
+
+"DirectX 9 (Legacy)"
+
+"Dokany (used to mount XBOX images with CXBX)"
+
+"Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)"
+
+"Select components to install before continuing."
+
+"Startup error occurred. See log file for details."
+
+"Run RetroBat.exe"
+
+"Failed to launch application: "
+
+"Executable not found: "
+
+"Installation failed: "
+
+"Failed to extract installer data: "
+
+"Failed to create installation folder: "
+
+"Please select a valid installation folder."
+
+"I accept the terms of the license agreement"
+
+"Licence Agreement"
+
+"Select the installation folder:"
+
+"The selected folder is not empty. Please choose an empty folder or a new folder."
+
+"Are you sure that you want to cancel the installation ?"
+
+"Cancel"
+
+"This wizard will guide you through the installation of RetroBat {0} {1} on your computer.\n\nIt is recommended to close all active applications before the next step.\n\nClick Next to continue or Cancel to exit the installer."
+
+"The installer program will install RetroBat in the folder below.\n\nTo continue, click Next. If you want to specify another folder, Click Browse."
+
+"Destination folder"
+
+"The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters."
+
+"Next"
+
+"Back"
+
+"Browse"
+
+"Install"
+
+"Finish"
+
+"Error"
+
+"Downloading"
+
+"Extracting"
+
+"Installing"

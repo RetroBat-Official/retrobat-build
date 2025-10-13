@@ -1,0 +1,113 @@
+Installer strings / Низове на инсталатора
+Language / Език:
+
+"Waiting for selection..."
+"Изчакване на избор..."
+
+"RetroBat Installer "
+"Инсталатор RetroBat"
+
+"Welcome to the RetroBat installation program"
+"Добре дошли в програмата за инсталиране на RetroBat"
+
+"Installing DirectX..."
+"Инсталиране на DirectX..."
+
+"Installation complete..."
+"Инсталацията е завършена..."
+
+"Downloading and installing prerequisites...\r\nPlease wait..."
+"Изтегляне и инсталиране на предварителни компоненти...\r\nМоля, изчакайте..."
+
+"DirectX 9 (Legacy)"
+"DirectX 9 (Наследена версия)"
+
+"Dokany (used to mount XBOX images with CXBX)"
+"Dokany (използва се за монтиране на XBOX образи с CXBX)"
+
+"Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)"
+"Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)"
+
+"Select components to install before continuing."
+"Изберете компонентите за инсталиране, преди да продължите."
+
+"Startup error occurred. See log file for details."
+"Възникна грешка при стартиране. Вижте файла с логове за повече информация."
+
+"Run RetroBat.exe"
+"Стартирай RetroBat.exe"
+
+"Failed to launch application: "
+"Неуспешно стартиране на приложението: "
+
+"Executable not found: "
+"Изпълнимият файл не е намерен: "
+
+"Installation failed: "
+"Инсталацията е неуспешна: "
+
+"Failed to extract installer data: "
+"Неуспешно извличане на данните на инсталатора: "
+
+"Failed to create installation folder: "
+"Неуспешно създаване на инсталационна папка: "
+
+"Please select a valid installation folder."
+"Моля, изберете валидна папка за инсталиране."
+
+"I accept the terms of the license agreement"
+"Приемам условията на лицензионното споразумение"
+
+"Licence Agreement"
+"Лицензионно споразумение"
+
+"Select the installation folder:"
+"Изберете папката за инсталиране:"
+
+"The selected folder is not empty. Please choose an empty folder or a new folder."
+"Избраната папка не е празна. Моля, изберете празна папка или създайте нова."
+
+"Are you sure that you want to cancel the installation ?"
+"Сигурни ли сте, че искате да отмените инсталацията?"
+
+"Cancel"
+"Отказ"
+
+"This wizard will guide you through the installation of RetroBat {0} {1} on your computer.\n\nIt is recommended to close all active applications before the next step.\n\nClick Next to continue or Cancel to exit the installer."
+"Този помощник ще ви преведе през инсталацията на RetroBat {0} {1} на вашия компютър.\n\nПрепоръчва се да затворите всички активни приложения преди следващата стъпка.\n\nЩракнете върху „Напред“, за да продължите, или върху „Отказ“, за да излезете от инсталатора."
+
+"The installer program will install RetroBat in the folder below.\n\nTo continue, click Next. If you want to specify another folder, Click Browse."
+"Програмата за инсталиране ще инсталира RetroBat в папката по-долу.\n\nЗа да продължите, щракнете върху „Напред“. Ако искате да изберете друга папка, щракнете върху „Преглед“."
+
+"Destination folder"
+"Целева папка"
+
+"The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters."
+"Програмата изисква поне 3.38 GB свободно дисково пространство.\n\nНе използвай папки с специални символи."
+
+"Next"
+"Напред"
+
+"Back"
+"Назад"
+
+"Browse"
+"Преглед"
+
+"Install"
+"Инсталирай"
+
+"Finish"
+"Готово"
+
+"Error"
+"Грешка"
+
+"Downloading"
+"Изтегляне"
+
+"Extracting"
+"Извличане"
+
+"Installing"
+"Инсталиране"

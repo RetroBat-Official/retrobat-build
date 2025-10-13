@@ -1,0 +1,111 @@
+Installer strings
+Language: Spanish
+
+"Waiting for selection..."
+"Esperando la selección"
+
+"RetroBat Installer "
+"Instalador de RetroBat"
+
+"Welcome to the RetroBat installation program"
+"Bienvenido al programa de instalación de Retrobat"
+
+"Installing DirectX..."
+"Instalando DirectX"
+
+"Installation complete..."
+"Instalación completa"
+
+"Downloading and installing prerequisites...\r\nPlease wait..."
+"Descargando e instalando los requisitos previos...\r\nPor favor espere..."
+
+"DirectX 9 (Legacy)"
+
+"Dokany (used to mount XBOX images with CXBX)"
+"Dokany (usado para montar imágenes de XBOX con CXBX)"
+
+"Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)"
+
+"Select components to install before continuing."
+"Seleccione los componentes que desea instalar antes de continuar"
+
+"Startup error occurred. See log file for details."
+"Ocurrió un error de inicio. Consulte el archivo de registro para más detalles"
+
+"Run RetroBat.exe"
+"Ejecutar RetroBat.exe"
+
+"Failed to launch application: "
+"Fallo al iniciar la aplicacion"
+
+"Executable not found: "
+"Ejecutable no encontrado"
+
+"Installation failed: "
+"Fallo en la instalación"
+
+"Failed to extract installer data: "
+"Fallo al extraer los datos del instalador" 
+
+"Failed to create installation folder: "
+"Fallo al crear la carpeta de instalación"
+
+"Please select a valid installation folder."
+"Por favor seleccione una carpeta de instalación válida"
+
+"I accept the terms of the license agreement"
+"Acepto los términos del acuerdo de licencia"
+
+"Licence Agreement"
+"Acuerdo de Licencia"
+
+"Select the installation folder:"
+"Seleccione la carpeta de instalación"
+
+"The selected folder is not empty. Please choose an empty folder or a new folder."
+"La carpeta seleccionada no está vacía. Por favor elija una carpeta vacía o cree una nueva"
+
+"Are you sure that you want to cancel the installation ?"
+"¿Está seguro de que desea cancelar la instalación?"
+
+"Cancel"
+"Cancelar"
+
+"This wizard will guide you through the installation of RetroBat {0} {1} on your computer.\n\nIt is recommended to close all active applications before the next step.\n\nClick Next to continue or Cancel to exit the installer."
+"Este asistente lo guiará a través de la instalación de RetroBat {0} {1} en su computadora.\n\nSe recomienda cerrar todas las aplicaciones activas antes del siguiente paso.\n\nHaga click en Siguiente para continuar o en Cancelar para salir del instalador."
+
+"The installer program will install RetroBat in the folder below.\n\nTo continue, click Next. If you want to specify another folder, Click Browse."
+"El programa de instalación instalará RetroBat en la carpeta indicada a continuación.\n\nPara continuar, haga click en Siguiente. Si desea especificar otra carpeta, haga click en Examinar"
+
+"Destination folder"
+"Carpeta de destino"
+
+"The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters."
+"El programa requiere al menos 3.38 GB de espacio libre en el disco.\n\nNo uses carpetas con espacios ni caracteres especiales."
+
+"Next"
+"Siguiente"
+
+"Back"
+"Atrás"
+
+"Browse"
+"Examinar"
+
+"Install"
+"Instalar"
+
+"Finish"
+"Finalizar"
+
+"Error"
+"Error"
+
+"Downloading"
+"Descargando"
+
+"Extracting"
+"Extrayendo"
+
+"Installing"
+"Instalando"

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace InstallerHost
@@ -11,6 +13,7 @@ namespace InstallerHost
         private string installPath;
         private CheckBox chkRunApp;
         private Button btnFinish;
+        private FlowLayoutPanel linkPanel;
 
         public FinishControl(MainForm main, string path)
         {
@@ -37,10 +40,24 @@ namespace InstallerHost
             {
                 Text = Texts.GetString("RunRetroBat"),
                 Left = 20,
-                Top = lblMessage.Bottom + 20,
+                Top = lblMessage.Bottom + 30,
                 AutoSize = true,
-                Checked = true
+                Checked = false
             };
+
+            linkPanel = new FlowLayoutPanel()
+            {
+                Left = 20,
+                Top = chkRunApp.Bottom + 80,
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                WrapContents = false
+            };
+
+            AddLink("Forum", "https://forum.retrobat.org/", Properties.Resources.forum);
+            AddLink("Discord", "https://discord.gg/retrobat", Properties.Resources.discord);
+            AddLink("Website", "https://www.retrobat.org/", Properties.Resources.website);
+            AddLink("Wiki", "https://wiki.retrobat.org/", Properties.Resources.wiki);
 
             btnFinish = new Button()
             {
@@ -53,10 +70,10 @@ namespace InstallerHost
 
             this.Controls.Add(lblMessage);
             this.Controls.Add(chkRunApp);
+            this.Controls.Add(linkPanel);
             this.Controls.Add(btnFinish);
 
             this.ResumeLayout(false);
-
             FinishControl_Resize(this, EventArgs.Empty);
         }
 
@@ -64,6 +81,43 @@ namespace InstallerHost
         {
             btnFinish.Top = this.ClientSize.Height - btnFinish.Height - mainForm.bottomMargin;
             btnFinish.Left = this.ClientSize.Width - btnFinish.Width - mainForm.rightMargin;
+        }
+
+        void AddLink(string text, string url, System.Drawing.Image icon)
+        {
+            PictureBox iconBox = new PictureBox()
+            {
+                Image = icon,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Width = 24,
+                Height = 24,
+                Margin = new Padding(0, 2, 4, 0)
+            };
+
+            LinkLabel link = new LinkLabel()
+            {
+                Text = text,
+                Tag = url,
+                AutoSize = true,
+                LinkColor = System.Drawing.Color.RoyalBlue,
+                ActiveLinkColor = System.Drawing.Color.DodgerBlue,
+                VisitedLinkColor = System.Drawing.Color.Purple,
+                Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular)
+            };
+            link.LinkClicked += LinkLabel_LinkClicked;
+
+            FlowLayoutPanel pairPanel = new FlowLayoutPanel()
+            {
+                AutoSize = true,
+                AutoSizeMode = AutoSizeMode.GrowAndShrink,
+                FlowDirection = FlowDirection.LeftToRight,
+                Margin = new Padding(0, 0, 15, 0)
+            };
+
+            pairPanel.Controls.Add(iconBox);
+            pairPanel.Controls.Add(link);
+
+            linkPanel.Controls.Add(pairPanel);
         }
 
         private void BtnFinish_Click(object sender, EventArgs e)
@@ -93,6 +147,21 @@ namespace InstallerHost
             }
 
             Application.Exit();
+        }
+
+        private void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            if (sender is LinkLabel link && link.Tag is string url)
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to open link: " + ex.Message);
+                }
+            }
         }
     }
 }
