@@ -1,0 +1,113 @@
+Installer strings
+Language: fr
+
+"Waiting for selection..."
+"En attente des choix..."
+
+"RetroBat Installer "
+"Installation de RetroBat "
+
+"Welcome to the RetroBat installation program"
+"Bienvenue dans l'assistant d'installation de RetroBat"
+
+"Installing DirectX..."
+"Installation de DirectX..."
+
+"Installation complete..."
+"Installation terminée!"
+
+"Downloading and installing prerequisites...\r\nPlease wait..."
+"Téléchargement et installation des prérequis...\r\nVeuillez patienter..."
+
+"DirectX 9 (Legacy)"
+"DirectX 9 (Legacy)"
+
+"Dokany (used to mount XBOX images with CXBX)"
+"Dokany (permet de monter les images Xbox avec CXBX)"
+
+"Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)"
+"Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)"
+
+"Select components to install before continuing."
+"Sélectionnez les prérequis à installer."
+
+"Startup error occurred. See log file for details."
+"Erreur au lancement de l'application, consultez le log."
+
+"Run RetroBat.exe"
+"Lancer RetroBat.exe"
+
+"Failed to launch application: "
+"Erreur lors du lancement de RetroBat: "
+
+"Executable not found: "
+"Exécutable non trouvé: "
+
+"Installation failed: "
+"Erreur lors de l'installation: "
+
+"Failed to extract installer data: "
+"Erreur lors de l'extraction des fichiers: " 
+
+"Failed to create installation folder: "
+"Erreur lors de la création du dossier: "
+
+"Please select a valid installation folder."
+"Veuillez sélectionner un dossier valide."
+
+"I accept the terms of the license agreement"
+"J'accepte les conditions d'utilisation"
+
+"Licence Agreement"
+"Accord de licence"
+
+"Select the installation folder:"
+"Répertoire d'installation:"
+
+"The selected folder is not empty. Please choose an empty folder or a new folder."
+"Le dossier sélectionné n'est pas vide. Veuillez choisir un dossier vide ou créez un nouveau dossier."
+
+"Are you sure that you want to cancel the installation ?"
+"Êtes-vous sûr de vouloir quitter l'installation ?"
+
+"Cancel"
+"Annuler"
+
+"This wizard will guide you through the installation of RetroBat {0} {1} on your computer.\n\nIt is recommended to close all active applications before the next step.\n\nClick Next to continue or Cancel to exit the installer."
+"Cet assistant va vous guider dans l'installation de RetroBat {0} {1} sur votre ordinateur.\n\nIl est recommandé de fermer toutes les applications actives avant de continuer.\n\nCliquez sur Suivant pour continuer ou sur Annuler pour abandonner l'installation."
+
+"The installer program will install RetroBat in the folder below.\n\nTo continue, click Next. If you want to specify another folder, Click Browse."
+"L'assistant va installer RetroBat dans le dossier suivant.\nPour continuer, cliquez sur Suivant. Si vous souhaitez choisir un dossier différent, cliquez sur Parcourir."
+
+"Destination folder"
+"Dossier de destination"
+
+"The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters."
+"Le programme requiert au moins 3,38 Go d'espace disque disponible.\n\nN'utilisez pas de dossier avec des espaces ou des caractères spéciaux !"
+
+"Next"
+"Suivant"
+
+"Back"
+"Retour"
+
+"Browse"
+"Parcourir"
+
+"Install"
+"Installer"
+
+"Finish"
+"Terminer"
+
+"Error"
+"Erreur"
+
+"Downloading"
+"Téléchargement de"
+
+"Extracting"
+"Extraction de"
+
+"Installing"
+"Installation de"

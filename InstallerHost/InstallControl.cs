@@ -107,7 +107,7 @@ namespace InstallerHost
                 Text = Texts.GetString("InstallFolderHint"),
                 Font = new Font("Segoe UI", 8, FontStyle.Regular),
                 AutoSize = false,
-                Height = 30,
+                Height = 60,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
             };
 

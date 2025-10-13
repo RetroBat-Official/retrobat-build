@@ -122,5 +122,11 @@
   <ItemGroup>
     <EmbeddedResource Include="resources\ICSharpCode.SharpZipLib.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\discord.png" />
+    <Content Include="resources\forum.png" />
+    <Content Include="resources\website.png" />
+    <Content Include="resources\wiki.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

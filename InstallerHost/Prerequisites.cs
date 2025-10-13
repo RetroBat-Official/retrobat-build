@@ -19,6 +19,7 @@ namespace InstallerHost
         private Label statusLabel;
         private CheckBox chkVCpp;
         private CheckBox chkDirectX;
+        private CheckBox chkDokany;
         private Button btnCancel;
         private Button btnNext;
         private Button btnBack;
@@ -53,6 +54,11 @@ namespace InstallerHost
         private readonly Dictionary<string, InstallerInfo> dxRedistResources = new Dictionary<string, InstallerInfo>
         {
             { "directx_Jun2010_redist.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") }
+        };
+
+        private readonly Dictionary<string, InstallerInfo> dokanResources = new Dictionary<string, InstallerInfo>
+        {
+            { "DokanSetup.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/quiet") }
         };
 
         private void InitializeComponent()
@@ -91,14 +97,27 @@ namespace InstallerHost
                 Checked = true
             };
 
+            chkDokany = new CheckBox()
+            {
+                Text = Texts.GetString("dokanyText"),
+                Left = leftMargin,
+                Top = chkDirectX.Bottom + 10,
+                AutoSize = true,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left,
+                Checked = false
+            };
+
+
             progressBar = new ProgressBar()
             {
-                Left = chkDirectX.Left,
-                Top = chkDirectX.Bottom + 20,
+                Left = chkDokany.Left,
+                Top = chkDokany.Bottom + 20,
                 Width = 400,
                 Height = 20,
                 Minimum = 0,
-                Maximum = (chkDirectX.Checked ? 1 : 0) + (chkVCpp.Checked ? vcRedistResources.Count : 0),
+                Maximum = (chkDirectX.Checked ? 1 : 0)
+                            + (chkVCpp.Checked ? vcRedistResources.Count : 0)
+                            + (chkDokany.Checked ? 1 : 0),
                 Value = 0,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
@@ -145,6 +164,7 @@ namespace InstallerHost
             this.Controls.Add(lblIntro);
             this.Controls.Add(chkVCpp);
             this.Controls.Add(chkDirectX);
+            this.Controls.Add(chkDokany);
             this.Controls.Add(btnCancel);
             this.Controls.Add(btnNext);
             this.Controls.Add(btnBack);
@@ -158,7 +178,7 @@ namespace InstallerHost
 
         private void BtnNext_Click(object sender, EventArgs e)
         {
-            if (!chkDirectX.Checked && !chkVCpp.Checked)
+            if (!chkDirectX.Checked && !chkVCpp.Checked && !chkDokany.Checked)
             {
                 mainForm.ShowInstall();
                 return;
@@ -177,6 +197,8 @@ namespace InstallerHost
                     totalSteps++;
                 if (chkVCpp.Checked)
                     totalSteps += vcRedistResources.Count;
+                if (chkDokany.Checked)
+                    totalSteps++;
 
                 progressBar.Value = 0;
                 progressBar.Maximum = totalSteps;
@@ -208,11 +230,19 @@ namespace InstallerHost
                     InstallVCppAll();
                 }
 
+                if (chkDokany.Checked)
+                {
+                    Logger.Log("Launching Dokany installer...");
+                    InstallDokany();
+                }
+
                 int totalSteps = 0;
                 if (chkDirectX.Checked)
                     totalSteps++;
                 if (chkVCpp.Checked)
                     totalSteps += vcRedistResources.Count;
+                if (chkDokany.Checked)
+                    totalSteps++;
             }
             catch (Exception ex)
             {
@@ -366,6 +396,66 @@ namespace InstallerHost
                 Directory.CreateDirectory(tempRoot);
 
             foreach (var kvp in vcRedistResources)
+            {
+                string zipFileName = kvp.Key;
+                InstallerInfo info = kvp.Value;
+
+                string zipLocalPath = Path.Combine(tempRoot, zipFileName);
+                string extractPath = Path.Combine(tempRoot, Path.GetFileNameWithoutExtension(zipFileName));
+                string fullUrl = kvp.Value.Url + zipFileName;
+
+                try
+                {
+                    UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
+
+                    Logger.Log($"Downloading ZIP from {fullUrl}...");
+                    DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
+                    Logger.Log("Download and extraction complete.");
+
+                    ExtractZipToFolder(zipLocalPath, extractPath);
+                    Logger.Log("Extraction complete.");
+
+                    UpdateStatusLabelSafe(Texts.GetString("Installing") + " " + zipFileName + "...");
+
+                    string exePath = Path.Combine(extractPath, zipFileName.Replace(".zip", ".exe"));
+                    if (!File.Exists(exePath))
+                        throw new FileNotFoundException("Installer not found: " + exePath);
+
+                    var process = new Process();
+                    process.StartInfo.FileName = exePath;
+                    process.StartInfo.Arguments = info.Arguments;
+                    process.StartInfo.UseShellExecute = true;
+                    process.StartInfo.CreateNoWindow = false;
+
+                    Logger.Log($"Running installer: {exePath} {info.Arguments}");
+                    process.Start();
+                    process.WaitForExit();
+
+                    try { Directory.Delete(zipLocalPath, true); } catch { }
+                    try { Directory.Delete(extractPath, true); } catch { }
+
+                    Logger.Log($"Installer finished with code {process.ExitCode}");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log($"Failed to install {zipFileName}: {ex.Message}");
+                    MessageBox.Show($"Error installing {zipFileName}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                UpdateProgressBarSafe();
+            }
+
+            try { Directory.Delete(tempRoot, true); } catch { }
+        }
+
+        private void InstallDokany()
+        {
+            string wgetPath = ExtractWgetExecutable();
+
+            string tempRoot = Path.Combine(Path.GetTempPath(), "dokanyDownloads");
+            if (!Directory.Exists(tempRoot))
+                Directory.CreateDirectory(tempRoot);
+
+            foreach (var kvp in dokanResources)
             {
                 string zipFileName = kvp.Key;
                 InstallerInfo info = kvp.Value;
