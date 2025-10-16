@@ -1,0 +1,76 @@
+Installer strings
+Language: German
+"Waiting for selection..."“Warte auf Auswahl…”
+
+"RetroBat Installer "“RetroBat-Installer “
+
+"Welcome to the RetroBat installation program"“Willkommen beim RetroBat-Installationsprogramm”
+
+"Installing DirectX..."“DirectX wird installiert…”
+
+"Installation complete..."“Installation abgeschlossen…”
+
+"Downloading and installing prerequisites...\r\nPlease wait..."“Komponenten werden heruntergeladen und installiert…\r\nBitte warten…”
+
+"DirectX 9 (Legacy)"“DirectX 9 (Altversion)”
+
+"Dokany (used to mount XBOX images with CXBX)"“Dokany (zum Einbinden von XBOX-Images mit CXBX)”
+
+"Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)"“Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)”
+
+"Select components to install before continuing."“Wähle die zu installierenden Komponenten aus, bevor du fortfährst.”
+
+"Startup error occurred. See log file for details.""Startfehler aufgetreten. Siehe Logdatei für Details.”
+
+"Run RetroBat.exe"“RetroBat.exe starten”
+
+"Failed to launch application: "“Start der Anwendung fehlgeschlagen: “
+
+"Executable not found: "“Ausführbare Datei nicht gefunden: “
+
+"Installation failed: "“Installation fehlgeschlagen: “
+
+"Failed to extract installer data: "“Entpacken der Installationsdaten fehlgeschlagen: “
+
+"Failed to create installation folder: "“Erstellen des Installationsordners fehlgeschlagen: “
+
+"Please select a valid installation folder."“Bitte wähle einen gültigen Installationsordner.”
+
+"I accept the terms of the license agreement"“Ich akzeptiere die Lizenzbedingungen”
+
+"Licence Agreement"“Lizenzvereinbarung”
+
+"Select the installation folder:"“Installationsordner auswählen:”
+
+"The selected folder is not empty. Please choose an empty folder or a new folder."“Der gewählte Ordner ist nicht leer. Bitte wähle einen leeren oder neuen Ordner.”
+
+"Are you sure that you want to cancel the installation ?"“Möchtest du die Installation wirklich abbrechen?”
+
+"Cancel"“Abbrechen”
+
+"This wizard will guide you through the installation of RetroBat {0} {1} on your computer.\n\nIt is recommended to close all active applications before the next step.\n\nClick Next to continue or Cancel to exit the installer."“Dieser Assistent führt dich durch die Installation von RetroBat {0} {1}.\n\nSchließe alle laufenden Programme, bevor du fortfährst.\n\nKlicke auf Weiter, um fortzufahren, oder auf Abbrechen, um den Installer zu beenden.”
+
+"The installer program will install RetroBat in the folder below.\n\nTo continue, click Next. If you want to specify another folder, Click Browse."“RetroBat wird im unten angegebenen Ordner installiert.\n\nZum Fortfahren auf Weiter klicken, für einen anderen Ordner auf Durchsuchen.”
+
+"Destination folder"“Zielordner”
+
+"The program requires at least 3.38 GB of free disk space."“Das Programm benötigt mindestens 3,38 GB freien Speicherplatz.\n\nVermeiden Sie Ordner mit Leerzeichen oder Sonderzeichen.”
+
+"Next"“Weiter”
+
+"Back"“Zurück”
+
+"Browse"“Durchsuchen”
+
+"Install"“Installieren”
+
+"Finish"“Fertigstellen”
+
+"Error"“Fehler”
+
+"Downloading"“Wird heruntergeladen”
+
+"Extracting"“Wird entpackt”
+
+"Installing"
+“Wird installiert”
