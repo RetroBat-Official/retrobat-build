@@ -147,48 +147,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
         }
 
         #region todo
-        private static Dictionary<string, string> germanStrings = new Dictionary<string, string>
-        {
-            { "Cancel", "Cancel" },
-            { "WindowsTitle", "RetroBat Installer " },
-            { "Next", "Next" },
-            { "Back", "Back" },
-            { "Browse", "Browse" },
-            { "Install", "Install" },
-            { "Welcome", "Welcome to the RetroBat installation program" },
-            { "WelcomeText", "This wizard will guide you through the installation of RetroBat {0} {1} on your computer.\n\nIt is recommended to close all active applications before the next step.\n\nClick Next to continue or Cancel to exit the installer." },
-            { "CancelSure", "Are you sure that you want to cancel the installation ?" },
-            { "CancelButtonTitle", "Cancel" },
-            { "AgreeText", "I accept the terms of the license agreement" },
-            { "LicenseText", licence },
-            { "LicenseIntro", "Licence Agreement" },
-            { "SelectFolder", "Select the installation folder:" },
-            { "InstallTitle", "Destination folder" },
-            { "InstallInfo", "The installer program will install RetroBat in the folder below.\n\nTo continue, click Next. If you want to specify another folder, Click Browse." },
-            { "InstallFolderHint", "The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters." },
-            { "FolderNotEmpty", "The selected folder is not empty. Please choose an empty folder or a new folder." },
-            { "ValidFolder", "Please select a valid installation folder." },
-            { "FailedFolder", "Failed to create installation folder: " },
-            { "ExtractFail", "Failed to extract installer data: " },
-            { "InstallFail", "Installation failed: " },
-            { "LaunchFail", "Failed to launch application: " },
-            { "ExeNotFound", "Executable not found: " },
-            { "InstallComplete", "Installation completed successfully!" },
-            { "RunRetroBat", "Run RetroBat.exe" },
-            { "Finish", "Finish" },
-            { "Error", "Error" },
-            { "StartupError", "Startup error occurred. See log file for details." },
-            { "PrerequisiteIntro", "Select components to install before continuing." },
-            { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
-            { "dx9text", "DirectX 9 (Legacy)" },
-            { "dokanyText", "Dokany (used to mount XBOX images with CXBX)" },
-            { "DownloadAndInstall", "Downloading and installing prerequisites...\r\nPlease wait..." },
-            { "Downloading", "Downloading" },
-            { "Extracting", "Extracting" },
-            { "InstallDX", "Installing DirectX..." },
-            { "Installing", "Installing" },
-            { "WaitingSelect", "Waiting for selection..." }
-        };
+        
         #endregion
 
         #region done
@@ -276,6 +235,49 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallDX", "Installation de DirectX..." },
             { "Installing", "Installation de" },
             { "WaitingSelect", "En attente des choix..." }
+        };
+
+        private static Dictionary<string, string> germanStrings = new Dictionary<string, string>
+        {
+            { "Cancel", "Abbrechen" },
+            { "WindowsTitle", "RetroBat-Installer " },
+            { "Next", "Weiter" },
+            { "Back", "Zurück" },
+            { "Browse", "Durchsuchen" },
+            { "Install", "Installieren" },
+            { "Welcome", "Willkommen beim RetroBat-Installationsprogramm" },
+            { "WelcomeText", "Dieser Assistent führt dich durch die Installation von RetroBat {0} {1}.\n\nSchließe alle laufenden Programme, bevor du fortfährst.\n\nKlicke auf Weiter, um fortzufahren, oder auf Abbrechen, um den Installer zu beenden." },
+            { "CancelSure", "Möchtest du die Installation wirklich abbrechen?" },
+            { "CancelButtonTitle", "Abbrechen" },
+            { "AgreeText", "Ich akzeptiere die Lizenzbedingungen" },
+            { "LicenseText", licence },
+            { "LicenseIntro", "Lizenzvereinbarung" },
+            { "SelectFolder", "Installationsordner auswählen:" },
+            { "InstallTitle", "Zielordner" },
+            { "InstallInfo", "RetroBat wird im unten angegebenen Ordner installiert.\n\nZum Fortfahren auf Weiter klicken, für einen anderen Ordner auf Durchsuchen." },
+            { "InstallFolderHint", "Das Programm benötigt mindestens 3,38 GB freien Speicherplatz.\n\nVermeiden Sie Ordner mit Leerzeichen oder Sonderzeichen." },
+            { "FolderNotEmpty", "Der gewählte Ordner ist nicht leer. Bitte wähle einen leeren oder neuen Ordner." },
+            { "ValidFolder", "Bitte wähle einen gültigen Installationsordner." },
+            { "FailedFolder", "Erstellen des Installationsordners fehlgeschlagen: " },
+            { "ExtractFail", "Entpacken der Installationsdaten fehlgeschlagen: " },
+            { "InstallFail", "Installation fehlgeschlagen: " },
+            { "LaunchFail", "Start der Anwendung fehlgeschlagen: " },
+            { "ExeNotFound", "Ausführbare Datei nicht gefunden: " },
+            { "InstallComplete", "Installation abgeschlossen." },
+            { "RunRetroBat", "RetroBat.exe starten" },
+            { "Finish", "Fertigstellen" },
+            { "Error", "Fehler" },
+            { "StartupError", "Startfehler aufgetreten. Siehe Logdatei für Details." },
+            { "PrerequisiteIntro", "Wähle die zu installierenden Komponenten aus, bevor du fortfährst." },
+            { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
+            { "dx9text", "DirectX 9 (Altversion)" },
+            { "dokanyText", "Dokany (zum Einbinden von XBOX-Images mit CXBX)" },
+            { "DownloadAndInstall", "Komponenten werden heruntergeladen und installiert…\r\nBitte warten…" },
+            { "Downloading", "Wird heruntergeladen" },
+            { "Extracting", "Wird entpackt" },
+            { "InstallDX", "DirectX wird installiert…" },
+            { "Installing", "Wird installiert" },
+            { "WaitingSelect", "Warte auf Auswahl…" }
         };
 
         private static Dictionary<string, string> italianStrings = new Dictionary<string, string>
