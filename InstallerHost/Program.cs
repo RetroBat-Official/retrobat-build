@@ -11,11 +11,11 @@ namespace InstallerHost
     static class Program
     {
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
             {
-                var requestedAssemblyName = new AssemblyName(args.Name).Name;
+                var requestedAssemblyName = new AssemblyName(resolveArgs.Name).Name;
                 if (requestedAssemblyName == "ICSharpCode.SharpZipLib")
                 {
                     var currentAssembly = Assembly.GetExecutingAssembly();
@@ -34,6 +34,24 @@ namespace InstallerHost
                 return null;
             };
             CultureInfo windowsCulture = CultureInfo.CurrentUICulture;
+
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                if (args[i].Equals("-lang", StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        windowsCulture = new CultureInfo(args[i + 1]);
+                        Thread.CurrentThread.CurrentCulture = windowsCulture;
+                        Thread.CurrentThread.CurrentUICulture = windowsCulture;
+                        Logger.Log($"Langue forcée : {windowsCulture.Name}");
+                    }
+                    catch (CultureNotFoundException)
+                    {
+                        Logger.Log($"Langue non reconnue : {args[i + 1]} — langue système conservée.");
+                    }
+                }
+            }
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

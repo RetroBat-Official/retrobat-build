@@ -367,34 +367,42 @@ namespace InstallerHost
         private void ExtractEmbeddedZip(string outputZipPath)
         {
             string exePath = Application.ExecutablePath;
-            //byte[] exeBytes = File.ReadAllBytes(exePath);
-
-            // ZIP files start with "PK" signature: 0x50, 0x4B, 0x03, 0x04
-            byte[] zipHeader = { 0x50, 0x4B, 0x03, 0x04 };
-            /*int index = FindBytes(exeBytes, zipHeader);
-
-            if (index < 0)
-                throw new Exception("No ZIP header found in executable.");
-
-            // Copy everything from the header to the end of the exe
-            byte[] zipBytes = new byte[exeBytes.Length - index];
-            Array.Copy(exeBytes, index, zipBytes, 0, zipBytes.Length);
-
-            File.WriteAllBytes(outputZipPath, zipBytes);*/
 
             using (FileStream fs = new FileStream(exePath, FileMode.Open, FileAccess.Read))
             {
-                int index = FindBytesInStream(fs, zipHeader);
-                if (index < 0)
-                    throw new Exception("No ZIP header found in executable.");
+                if (fs.Length < 8)
+                    throw new Exception("Invalid installer: file too small.");
 
-                // On se place au début du ZIP dans l’exécutable
-                fs.Seek(index, SeekOrigin.Begin);
+                // Read ZIP length stored in the last 8 bytes
+                fs.Seek(-8, SeekOrigin.End);
+                byte[] lengthBytes = new byte[8];
+                int read = fs.Read(lengthBytes, 0, 8);
+                if (read != 8)
+                    throw new Exception("Failed to read zip length footer.");
 
-                // Copie le reste du flux directement dans le fichier ZIP de sortie
+                long zipLength = BitConverter.ToInt64(lengthBytes, 0);
+                long zipStart = fs.Length - zipLength - 8;
+
+                if (zipLength <= 0 || zipStart < 0)
+                    throw new Exception("Invalid ZIP length in installer footer.");
+
+                // Copy exactly zipLength bytes to output ZIP
+                fs.Seek(zipStart, SeekOrigin.Begin);
                 using (FileStream outFs = new FileStream(outputZipPath, FileMode.Create, FileAccess.Write))
                 {
-                    fs.CopyTo(outFs); // Copie par chunks, pas de gros buffer en mémoire
+                    byte[] buffer = new byte[81920];
+                    long remaining = zipLength;
+                    while (remaining > 0)
+                    {
+                        int toRead = (int)Math.Min(buffer.Length, remaining);
+                        int n = fs.Read(buffer, 0, toRead);
+                        if (n <= 0) break;
+                        outFs.Write(buffer, 0, n);
+                        remaining -= n;
+                    }
+
+                    if (remaining != 0)
+                        throw new Exception("Failed to extract full ZIP data (short read).");
                 }
             }
         }
