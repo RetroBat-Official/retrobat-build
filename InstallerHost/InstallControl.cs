@@ -20,6 +20,7 @@ namespace InstallerHost
         private Button btnBrowse;
         private Button btnInstall;
         private ProgressBar progressBar;
+        private ProgressBar preloadProgress;
         private Button btnCancel;
         private Button btnBack;
         private Label lblTitle;
@@ -136,6 +137,15 @@ namespace InstallerHost
             };
             btnBack.Click += (s, e) => mainForm.ShowPrerequisites();
 
+            preloadProgress = new ProgressBar()
+            {
+                Height = 6,
+                Style = ProgressBarStyle.Marquee,
+                MarqueeAnimationSpeed = 30,
+                Visible = false,             // hidden until Load
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+
             // Add controls to this UserControl
             this.Controls.Add(lblTitle);
             this.Controls.Add(txtInfo);
@@ -147,6 +157,7 @@ namespace InstallerHost
             this.Controls.Add(btnCancel);
             this.Controls.Add(btnInstall);
             this.Controls.Add(btnBack);
+            this.Controls.Add(preloadProgress);
 
             this.ResumeLayout(false);
             this.PerformLayout(); // Perform layout now for autosize labels
@@ -216,6 +227,10 @@ namespace InstallerHost
 
             btnBack.Top = bottom;
             btnBack.Left = btnInstall.Left - mainForm.spacing - btnBack.Width;
+
+            preloadProgress.Left = 20;
+            preloadProgress.Top = btnInstall.Top - preloadProgress.Height - 10;
+            preloadProgress.Width = this.ClientSize.Width - 40;
         }
 
         private void InstallControl_Load(object sender, EventArgs e)
@@ -223,38 +238,43 @@ namespace InstallerHost
             string defaultPath = "C:\\RetroBat";
             txtFolder.Text = defaultPath;
 
+            btnInstall.ForeColor = Color.DarkGray;
+            btnInstall.Enabled = false;
+            btnBrowse.Enabled = false;
+            btnInstall.Text = Texts.GetString("Wait...");
+            preloadProgress.Visible = true;
+
             zipFilePath = Path.Combine(Path.GetTempPath(), "embedded_installer.zip");
 
-            try
+            Task.Run(() =>
             {
-                Logger.Log("Extracting zip content.");
-                Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        Logger.Log("Extracting zip content in background...");
-                        ExtractEmbeddedZip(zipFilePath);
-                        Logger.Log("Zip extraction completed.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log("Failed to extract installer data.");
-                        this.Invoke(new Action(() =>
-                        {
-                            MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
-                            Application.Exit();
-                        }));
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Logger.Log("Failed to extract installer data.");
-                MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
-                Application.Exit();
-            }
+                    Logger.Log("Extracting zip content in background...");
+                    ExtractEmbeddedZip(zipFilePath);
 
-            // Force layout to update sizes properly after load
+                    this.Invoke(new Action(() =>
+                    {
+                        preloadProgress.Visible = false;
+                        btnInstall.Enabled = true;
+                        btnBrowse.Enabled = true;
+                        btnInstall.Text = Texts.GetString("Install");
+                        btnInstall.ForeColor = SystemColors.ControlText;
+                        Logger.Log("Zip extraction completed.");
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed to extract installer data.");
+
+                    this.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
+                        Application.Exit();
+                    }));
+                }
+            });
+
             InstallControl_Resize(this, EventArgs.Empty);
         }
 
@@ -367,34 +387,42 @@ namespace InstallerHost
         private void ExtractEmbeddedZip(string outputZipPath)
         {
             string exePath = Application.ExecutablePath;
-            //byte[] exeBytes = File.ReadAllBytes(exePath);
-
-            // ZIP files start with "PK" signature: 0x50, 0x4B, 0x03, 0x04
-            byte[] zipHeader = { 0x50, 0x4B, 0x03, 0x04 };
-            /*int index = FindBytes(exeBytes, zipHeader);
-
-            if (index < 0)
-                throw new Exception("No ZIP header found in executable.");
-
-            // Copy everything from the header to the end of the exe
-            byte[] zipBytes = new byte[exeBytes.Length - index];
-            Array.Copy(exeBytes, index, zipBytes, 0, zipBytes.Length);
-
-            File.WriteAllBytes(outputZipPath, zipBytes);*/
 
             using (FileStream fs = new FileStream(exePath, FileMode.Open, FileAccess.Read))
             {
-                int index = FindBytesInStream(fs, zipHeader);
-                if (index < 0)
-                    throw new Exception("No ZIP header found in executable.");
+                if (fs.Length < 8)
+                    throw new Exception("Invalid installer: file too small.");
 
-                // On se place au début du ZIP dans l’exécutable
-                fs.Seek(index, SeekOrigin.Begin);
+                // Read ZIP length stored in the last 8 bytes
+                fs.Seek(-8, SeekOrigin.End);
+                byte[] lengthBytes = new byte[8];
+                int read = fs.Read(lengthBytes, 0, 8);
+                if (read != 8)
+                    throw new Exception("Failed to read zip length footer.");
 
-                // Copie le reste du flux directement dans le fichier ZIP de sortie
+                long zipLength = BitConverter.ToInt64(lengthBytes, 0);
+                long zipStart = fs.Length - zipLength - 8;
+
+                if (zipLength <= 0 || zipStart < 0)
+                    throw new Exception("Invalid ZIP length in installer footer.");
+
+                // Copy exactly zipLength bytes to output ZIP
+                fs.Seek(zipStart, SeekOrigin.Begin);
                 using (FileStream outFs = new FileStream(outputZipPath, FileMode.Create, FileAccess.Write))
                 {
-                    fs.CopyTo(outFs); // Copie par chunks, pas de gros buffer en mémoire
+                    byte[] buffer = new byte[81920];
+                    long remaining = zipLength;
+                    while (remaining > 0)
+                    {
+                        int toRead = (int)Math.Min(buffer.Length, remaining);
+                        int n = fs.Read(buffer, 0, toRead);
+                        if (n <= 0) break;
+                        outFs.Write(buffer, 0, n);
+                        remaining -= n;
+                    }
+
+                    if (remaining != 0)
+                        throw new Exception("Failed to extract full ZIP data (short read).");
                 }
             }
         }
