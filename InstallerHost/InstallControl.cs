@@ -20,6 +20,7 @@ namespace InstallerHost
         private Button btnBrowse;
         private Button btnInstall;
         private ProgressBar progressBar;
+        private ProgressBar preloadProgress;
         private Button btnCancel;
         private Button btnBack;
         private Label lblTitle;
@@ -136,6 +137,15 @@ namespace InstallerHost
             };
             btnBack.Click += (s, e) => mainForm.ShowPrerequisites();
 
+            preloadProgress = new ProgressBar()
+            {
+                Height = 6,
+                Style = ProgressBarStyle.Marquee,
+                MarqueeAnimationSpeed = 30,
+                Visible = false,             // hidden until Load
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
+            };
+
             // Add controls to this UserControl
             this.Controls.Add(lblTitle);
             this.Controls.Add(txtInfo);
@@ -147,6 +157,7 @@ namespace InstallerHost
             this.Controls.Add(btnCancel);
             this.Controls.Add(btnInstall);
             this.Controls.Add(btnBack);
+            this.Controls.Add(preloadProgress);
 
             this.ResumeLayout(false);
             this.PerformLayout(); // Perform layout now for autosize labels
@@ -216,6 +227,10 @@ namespace InstallerHost
 
             btnBack.Top = bottom;
             btnBack.Left = btnInstall.Left - mainForm.spacing - btnBack.Width;
+
+            preloadProgress.Left = 20;
+            preloadProgress.Top = btnInstall.Top - preloadProgress.Height - 10;
+            preloadProgress.Width = this.ClientSize.Width - 40;
         }
 
         private void InstallControl_Load(object sender, EventArgs e)
@@ -223,38 +238,43 @@ namespace InstallerHost
             string defaultPath = "C:\\RetroBat";
             txtFolder.Text = defaultPath;
 
+            btnInstall.ForeColor = Color.DarkGray;
+            btnInstall.Enabled = false;
+            btnBrowse.Enabled = false;
+            btnInstall.Text = Texts.GetString("Wait...");
+            preloadProgress.Visible = true;
+
             zipFilePath = Path.Combine(Path.GetTempPath(), "embedded_installer.zip");
 
-            try
+            Task.Run(() =>
             {
-                Logger.Log("Extracting zip content.");
-                Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        Logger.Log("Extracting zip content in background...");
-                        ExtractEmbeddedZip(zipFilePath);
-                        Logger.Log("Zip extraction completed.");
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Log("Failed to extract installer data.");
-                        this.Invoke(new Action(() =>
-                        {
-                            MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
-                            Application.Exit();
-                        }));
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Logger.Log("Failed to extract installer data.");
-                MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
-                Application.Exit();
-            }
+                    Logger.Log("Extracting zip content in background...");
+                    ExtractEmbeddedZip(zipFilePath);
 
-            // Force layout to update sizes properly after load
+                    this.Invoke(new Action(() =>
+                    {
+                        preloadProgress.Visible = false;
+                        btnInstall.Enabled = true;
+                        btnBrowse.Enabled = true;
+                        btnInstall.Text = Texts.GetString("Install");
+                        btnInstall.ForeColor = SystemColors.ControlText;
+                        Logger.Log("Zip extraction completed.");
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("Failed to extract installer data.");
+
+                    this.Invoke(new Action(() =>
+                    {
+                        MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
+                        Application.Exit();
+                    }));
+                }
+            });
+
             InstallControl_Resize(this, EventArgs.Empty);
         }
 
