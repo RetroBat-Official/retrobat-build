@@ -111,20 +111,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\retrobat_wizard.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="resources\Builder.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="resources\wget.exe" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\ICSharpCode.SharpZipLib.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="resources\Builder.ico" />
     <Content Include="resources\discord.png" />
     <Content Include="resources\forum.png" />
+    <EmbeddedResource Include="resources\retrobat_wizard.jpg" />
     <Content Include="resources\website.png" />
     <Content Include="resources\wiki.png" />
   </ItemGroup>
