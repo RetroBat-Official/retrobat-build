@@ -44,7 +44,7 @@ namespace InstallerHost
             this.BackColor = Color.White;
 
             // Load banner image first so we know its height
-            var bannerImage = LoadEmbeddedBitmap("InstallerHost.resources.retrobat_wizard.bmp");
+            var bannerImage = LoadEmbeddedBitmap("InstallerHost.resources.retrobat_wizard.jpg");
 
             // Setup SplitContainer
             splitContainer = new SplitContainer
@@ -112,7 +112,10 @@ namespace InstallerHost
             {
                 if (stream == null)
                     throw new Exception($"Resource '{resourceName}' not found in assembly.");
-                return new Bitmap(stream);
+                using (var temp = new Bitmap(stream))
+                {
+                    return new Bitmap(temp);
+                }
             }
         }
 
@@ -126,13 +129,20 @@ namespace InstallerHost
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "BaseForm";
+            this.Load += new System.EventHandler(this.BaseForm_Load);
             this.ResumeLayout(false);
+
         }
 
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
             splitContainer.SplitterDistance = BannerWidth; // enforce banner width after form fully shown
+        }
+
+        private void BaseForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
