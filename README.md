@@ -3,7 +3,7 @@
   <a href="https://www.retrobat.org/"><img src="https://github.com/RetroBat-Official/retrobat/blob/main/system/resources/retrobat_logo_v7.png" alt="retrobat" width="500"></a>
 </h1>
 
-RetroBuild repository contains the code of the tools to build the [Retrobat-Setup](https://github.com/RetroBat-Official/retrobat-setup)
+RetroBuild repository contains the code of the tools to build the [Retrobat setup](https://github.com/RetroBat-Official/retrobat)
 
 The deployment of these tools is available on the RetroBat-Setup project as:
 - InstallerHost.exe (.Net4.0 and Forms)
