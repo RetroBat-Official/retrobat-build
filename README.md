@@ -1,6 +1,6 @@
 <h1 align="left">
   <br>
-  <a href="https://www.retrobat.org/"><img src="https://raw.githubusercontent.com/kaylh/RetroBat/master/system/resources/retrobat_logo.svg" alt="retrobat" width="500"></a>
+  <a href="https://www.retrobat.org/"><img src="https://github.com/RetroBat-Official/retrobat/blob/main/system/resources/retrobat_logo_v7.png" alt="retrobat" width="500"></a>
 </h1>
 
 RetroBuild repository contains the code of the tools to build the [Retrobat-Setup](https://github.com/RetroBat-Official/retrobat-setup)
@@ -29,7 +29,7 @@ Retrobuild.exe is the executable that:
 
 ## © Credits
 
-- RetroBuild 2025 RetroBat Team.
+- RetroBuild 2026 RetroBat Team.
 
 
 ## 💬 Social & Support
