@@ -69,6 +69,8 @@ namespace RetroBuild
             {
                 using (var client = new System.Net.WebClient())
                 {
+                    client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                    client.Headers.Add("Accept", "*/*");
                     client.DownloadFile(url, tempFile);
                 }
 
