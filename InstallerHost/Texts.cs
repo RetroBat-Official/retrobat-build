@@ -13,7 +13,7 @@ namespace InstallerHost
 RetroBat is a Windows softwares distribution dedicated to retrogaming and emulation.
 
 Copyright (c) 2017-2019 Adrien Chalard ""Kayl""
-Copyright (c) 2020-2025 RetroBat Team
+Copyright (c) 2020-2026 RetroBat Team
 
 RetroBat is free and open source project. It should not be used for commercial purposes. 
 It is done by a team of enthusiasts in their free time mainly for fun.

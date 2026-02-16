@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace RetroBuild
@@ -124,7 +125,9 @@ namespace RetroBuild
                     CreateVersionFile(options);
                     Console.WriteLine("=====================");
                     CopyTemplateFiles(options);
-                    
+                    Console.WriteLine("=====================");
+                    SetVersion(options);
+
                     break;
                 case "2":
                     Logger.Log("Option selected: Create archive.");
@@ -1066,6 +1069,30 @@ namespace RetroBuild
 
             // Convert URI slashes to system directory separator
             return relativePath.Replace('/', Path.DirectorySeparatorChar);
+        }
+
+        static void SetVersion(BuilderOptions options)
+        {
+            string branch = options.Branch;
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string buildPath = Path.Combine(rootPath, "build");
+            string settingsFile = Path.Combine(buildPath, "emulationstation", ".emulationstation", "es_settings.cfg");
+
+            if (!File.Exists(settingsFile))
+                return;
+
+            XmlDocument doc = new XmlDocument();
+            doc.Load(settingsFile);
+
+            XmlNode node = doc.SelectSingleNode("/config/string[@name='updates.type']");
+
+            if (node?.Attributes != null && branch != null)
+            {
+                node.Attributes["value"].Value = branch;
+                doc.Save(settingsFile);
+
+                Logger.LogInfo($"Update type set to: {branch}");
+            }
         }
     }
 }
