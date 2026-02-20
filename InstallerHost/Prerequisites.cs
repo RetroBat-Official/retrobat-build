@@ -16,6 +16,7 @@ namespace InstallerHost
         private MainForm mainForm;
 
         private Label lblIntro;
+        private Label lblAllInstalled;
         private Label statusLabel;
         private CheckBox chkVCpp;
         private CheckBox chkDirectX;
@@ -32,7 +33,29 @@ namespace InstallerHost
         {
             mainForm = main;
             InitializeComponent();
+            UpdatePrerequisiteCheckboxes();
+
+            this.Load += (s, e) =>
+            {
+                SkipIfAllInstalled();
+            };
+
             this.Resize += PrerequisiteControl_Resize;
+        }
+
+        private void SkipIfAllInstalled()
+        {
+            if (!chkVCpp.Checked && !chkDirectX.Checked && !chkDokany.Checked)
+            {
+                progressBar.Value = progressBar.Maximum;
+                progressBar.Refresh();
+
+                lblAllInstalled.Visible = true;
+                statusLabel.Visible = false;
+
+                // Delay call slightly to ensure form is fully ready
+                this.BeginInvoke((Action)(() => mainForm.ShowInstall()));
+            }
         }
 
         private readonly Dictionary<string, InstallerInfo> vcRedistResources = new Dictionary<string, InstallerInfo>
@@ -77,11 +100,22 @@ namespace InstallerHost
                 Anchor = AnchorStyles.Top | AnchorStyles.Left
             };
 
+            lblAllInstalled = new Label()
+            {
+                Text = Texts.GetString("All prerequisites installed"),
+                Font = new Font("Segoe UI", 11),
+                AutoSize = true,
+                Left = leftMargin,
+                Top = lblIntro.Bottom + 20,
+                Anchor = AnchorStyles.Top | AnchorStyles.Left,
+                Visible = false
+            };
+
             chkVCpp = new CheckBox()
             {
                 Text = Texts.GetString("vcText"),
                 Left = leftMargin,
-                Top = lblIntro.Bottom + 20,
+                Top = lblAllInstalled.Bottom + 20,
                 AutoSize = true,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left,
                 Checked = true
@@ -106,7 +140,6 @@ namespace InstallerHost
                 Anchor = AnchorStyles.Top | AnchorStyles.Left,
                 Checked = false
             };
-
 
             progressBar = new ProgressBar()
             {
@@ -162,6 +195,7 @@ namespace InstallerHost
             btnBack.Click += (s, e) => mainForm.ShowLicense();
 
             this.Controls.Add(lblIntro);
+            this.Controls.Add(lblAllInstalled);
             this.Controls.Add(chkVCpp);
             this.Controls.Add(chkDirectX);
             this.Controls.Add(chkDokany);
@@ -656,6 +690,62 @@ namespace InstallerHost
             else
             {
                 statusLabel.Text = text;
+            }
+        }
+
+        private void UpdatePrerequisiteCheckboxes()
+        {
+            try
+            {
+                // VC++
+                bool vcppInstalled = PrerequisiteDetector.IsVCppFullyInstalled();
+                chkVCpp.Visible = !vcppInstalled;
+                chkVCpp.Checked = !vcppInstalled;
+
+                // DirectX
+                bool dxInstalled = PrerequisiteDetector.IsDirectXJun2010Installed();
+                chkDirectX.Visible = !dxInstalled;
+                chkDirectX.Checked = !dxInstalled;
+
+                // Dokany
+                bool dokanyInstalled = PrerequisiteDetector.IsDokanyInstalled();
+                chkDokany.Visible = !dokanyInstalled;
+                chkDokany.Checked = !dokanyInstalled;
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("Error detecting prerequisites: " + ex.Message);
+                // fallback to defaults if detection fails
+                chkVCpp.Visible = true;
+                chkVCpp.Checked = true;
+
+                chkDirectX.Visible = true;
+                chkDirectX.Checked = true;
+
+                chkDokany.Visible = true;
+                chkDokany.Checked = false;
+            }
+
+            // Update progress bar max
+            int totalSteps = 0;
+            if (chkDirectX.Checked) totalSteps++;
+            if (chkVCpp.Checked) totalSteps += vcRedistResources.Count;
+            if (chkDokany.Checked) totalSteps++;
+
+            progressBar.Maximum = Math.Max(1, totalSteps);
+            progressBar.Value = 0;
+
+            // Optionally, hide the entire control if everything is already installed
+            if (totalSteps == 0)
+            {
+                progressBar.Value = totalSteps;
+                lblAllInstalled.Visible = true;
+                statusLabel.Visible = false;
+                mainForm.ShowInstall();
+            }
+            else
+            {
+                progressBar.Value = 0;
             }
         }
     }
