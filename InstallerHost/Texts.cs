@@ -71,7 +71,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                         text = "DirectX 9 (Legacy)";
                         break;
                     case "dokanyText":
-                        text = "Dokany (used to mount XBOX images with CXBX)";
+                        text = "Dokan (used to mount XBOX images with CXBX)";
                         break;
                     case "vcText":
                         text = "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)";
@@ -139,6 +139,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                     case "InstallFolderHint":
                         text = "The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters.";
                         break;
+                    case "InstallCompleteDescription":
+                        text = "Retrobat has been installer to your computer.\n\nPress finish to close this wizard";
+                        break;
                     default:
                         text = key;
                         break;
@@ -155,9 +158,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
         {
             { "Cancel", "Отказ" },
             { "WindowsTitle", "Инсталатор RetroBat " },
-            { "Next", "Напред" },
-            { "Back", "Назад" },
-            { "Browse", "Преглед" },
+            { "Next >", "Напред >" },
+            { "< Back", "< Назад" },
+            { "Browse...", "Преглед" },
             { "Install", "Инсталирай" },
             { "Welcome", "Добре дошли в програмата за инсталиране на RetroBat" },
             { "WelcomeText", "Този помощник ще ви преведе през инсталацията на RetroBat {0} {1} на вашия компютър.\n\nПрепоръчва се да затворите всички активни приложения преди следващата стъпка.\n\nЩракнете върху „Напред“, за да продължите, или върху „Отказ“, за да излезете от инсталатора." },
@@ -185,7 +188,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "PrerequisiteIntro", "Изберете компонентите за инсталиране, преди да продължите." },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Наследена версия)" },
-            { "dokanyText", "Dokany (използва се за монтиране на XBOX образи с CXBX)" },
+            { "dokanyText", "Dokan (използва се за монтиране на XBOX образи с CXBX)" },
             { "DownloadAndInstall", "Изтегляне и инсталиране на предварителни компоненти...\r\nМоля, изчакайте..." },
             { "Downloading", "Изтегляне" },
             { "Extracting", "Извличане" },
@@ -198,9 +201,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
         {
             { "Cancel", "Annuler" },
             { "WindowsTitle", "Installation de RetroBat " },
-            { "Next", "Suivant" },
-            { "Back", "Retour" },
-            { "Browse", "Parcourir" },
+            { "Next >", "Suivant >" },
+            { "< Back", "< Retour" },
+            { "Browse...", "Parcourir..." },
             { "Install", "Installer" },
             { "Welcome", "Bienvenue dans l'assistant d'installation de RetroBat" },
             { "WelcomeText", "Cet assistant va vous guider dans l'installation de RetroBat {0} {1} sur votre ordinateur.\n\nIl est recommandé de fermer toutes les applications actives avant de continuer.\n\nCliquez sur Suivant pour continuer ou sur Annuler pour abandonner l'installation." },
@@ -213,6 +216,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallTitle", "Dossier de destination" },
             { "InstallInfo", "L'assistant va installer RetroBat dans le dossier suivant.\nPour continuer, cliquez sur Suivant. Si vous souhaitez choisir un dossier différent, cliquez sur Parcourir." },
             { "InstallFolderHint", "Le programme requiert au moins 3,38 Go d'espace disque disponible.\n\nN'utilisez pas de dossier avec des espaces ou des caractères spéciaux !" },
+            {  "InstallCompleteDescription", "Retrobat a été installé sur votre ordinateur.\n\nAppuyez sur terminer pour fermer cet assistant." },
             { "FolderNotEmpty", "Le dossier sélectionné n'est pas vide. Veuillez choisir un dossier vide ou créez un nouveau dossier." },
             { "ValidFolder", "Veuillez sélectionner un dossier valide." },
             { "FailedFolder", "Erreur lors de la création du dossier: " },
@@ -228,7 +232,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "PrerequisiteIntro", "Sélectionnez les prérequis à installer." },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
-            { "dokanyText", "Dokany (permet de monter les images Xbox avec CXBX)" },
+            { "dokanyText", "Dokan (permet de monter les images Xbox avec CXBX)" },
             { "DownloadAndInstall", "Téléchargement et installation des prérequis...\r\nVeuillez patienter..." },
             { "Downloading", "Téléchargement de" },
             { "Extracting", "Extraction de" },
@@ -241,9 +245,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
         {
             { "Cancel", "Abbrechen" },
             { "WindowsTitle", "RetroBat-Installer " },
-            { "Next", "Weiter" },
-            { "Back", "Zurück" },
-            { "Browse", "Durchsuchen" },
+            { "Next >", "Weiter >" },
+            { "< Back", "< Zurück" },
+            { "Browse...", "Durchsuchen..." },
             { "Install", "Installieren" },
             { "Welcome", "Willkommen beim RetroBat-Installationsprogramm" },
             { "WelcomeText", "Dieser Assistent führt dich durch die Installation von RetroBat {0} {1}.\n\nSchließe alle laufenden Programme, bevor du fortfährst.\n\nKlicke auf Weiter, um fortzufahren, oder auf Abbrechen, um den Installer zu beenden." },
@@ -271,7 +275,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "PrerequisiteIntro", "Wähle die zu installierenden Komponenten aus, bevor du fortfährst." },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Altversion)" },
-            { "dokanyText", "Dokany (zum Einbinden von XBOX-Images mit CXBX)" },
+            { "dokanyText", "Dokan (zum Einbinden von XBOX-Images mit CXBX)" },
             { "DownloadAndInstall", "Komponenten werden heruntergeladen und installiert…\r\nBitte warten…" },
             { "Downloading", "Wird heruntergeladen" },
             { "Extracting", "Wird entpackt" },
@@ -284,9 +288,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
         {
             { "Cancel", "Annulla" },
             { "WindowsTitle", "Installatore RetroBat " },
-            { "Next", "Avanti" },
-            { "Back", "Indietro" },
-            { "Browse", "Sfoglia" },
+            { "Next >", "Avanti >" },
+            { "< Back", "< Indietro" },
+            { "Browse...", "Sfoglia..." },
             { "Install", "Installa" },
             { "Welcome", "Benvenuto nel programma di installazione di RetroBat" },
             { "WelcomeText", "Questa procedura guidata ti accompagnerà nell'installazione di RetroBat {0} {1} sul tuo computer.\n\nSi consiglia di chiudere tutte le applicazioni attive prima del passaggio successivo.\n\nFai clic su Avanti per continuare o su Annulla per uscire dal programma di installazione." },
@@ -314,7 +318,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "PrerequisiteIntro", "Seleziona i componenti da installare prima di continuare." },
             { "vcText", "Microsoft Visual C++ Redistributable (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Eredità)" },
-            { "dokanyText", "Dokany (usato per montare immagini XBOX con CXBX)" },
+            { "dokanyText", "Dokan (usato per montare immagini XBOX con CXBX)" },
             { "DownloadAndInstall", "Download e installazione dei prerequisiti...\r\nAttendere prego..." },
             { "Downloading", "Download in corso" },
             { "Extracting", "Estrazione in corso" },
@@ -327,9 +331,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
         {
             { "Cancel", "Anuluj" },
             { "WindowsTitle", "Instalator RetroBat " },
-            { "Next", "Dalej" },
-            { "Back", "Cofnij" },
-            { "Browse", "Przeglądaj" },
+            { "Next >", "Dalej >" },
+            { "< Back", "< Cofnij" },
+            { "Browse...", "Przeglądaj..." },
             { "Install", "Zainstaluj" },
             { "Welcome", "Witamy w programie instalacyjnym RetroBat" },
             { "WelcomeText", "Ten kreator poprowadzi Cię przez proces instalacji programu RetroBat {0} {1} na Twoim komputerze.\n\nPrzed wykonaniem kolejnego kroku zaleca się zamknięcie wszystkich aktywnych aplikacji.\n\nKliknij Dalej, aby kontynuować, lub Anuluj, aby zamknąć instalator." },
@@ -357,7 +361,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "PrerequisiteIntro", "Przed kontynuowaniem wybierz komponenty do zainstalowania." },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
-            { "dokanyText", "Dokany (używany do montowania obrazów XBOX za pomocą CXBX)" },
+            { "dokanyText", "Dokan (używany do montowania obrazów XBOX za pomocą CXBX)" },
             { "DownloadAndInstall", "Pobieranie i instalowanie wymaganych komponentów...\r\nProszę czekać..." },
             { "Downloading", "Pobieranie" },
             { "Extracting", "Rozpakowywanie" },
@@ -370,9 +374,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
         {
             { "Cancel", "Cancelar" },
             { "WindowsTitle", "Instalador de RetroBat " },
-            { "Next", "Siguiente" },
-            { "Back", "Atrás" },
-            { "Browse", "Examinar" },
+            { "Next >", "Siguiente >" },
+            { "< Back", "< Atrás" },
+            { "Browse...", "Examinar..." },
             { "Install", "Instalar" },
             { "Welcome", "Bienvenido al programa de instalación de Retrobat" },
             { "WelcomeText", "Este asistente lo guiará a través de la instalación de RetroBat {0} {1} en su computadora.\n\nSe recomienda cerrar todas las aplicaciones activas antes del siguiente paso.\n\nHaga click en Siguiente para continuar o en Cancelar para salir del instalador." },
@@ -400,7 +404,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "PrerequisiteIntro", "Seleccione los componentes que desea instalar antes de continuar." },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
-            { "dokanyText", "Dokany (usado para montar imágenes de XBOX con CXBX)" },
+            { "dokanyText", "Dokan (usado para montar imágenes de XBOX con CXBX)" },
             { "DownloadAndInstall", "Descargando e instalando los requisitos previos...\r\nPor favor espere..." },
             { "Downloading", "Descargando" },
             { "Extracting", "Extrayendo" },
