@@ -12,281 +12,204 @@ namespace InstallerHost
 {
     public partial class InstallControl : UserControl
     {
-        private MainForm mainForm;
-        private string zipFilePath;
+        private MainForm mainForm;        
         private BackgroundWorker worker;
 
         private TextBox txtFolder;
         private Button btnBrowse;
         private Button btnInstall;
         private ProgressBar progressBar;
-        private ProgressBar preloadProgress;
         private Button btnCancel;
         private Button btnBack;
-        private Label lblTitle;
         private Label txtInfo;
         private Label lblFolderHint;
+        private Allegoria.Controls.WizardPanel wizardHeader;
+        private HorizontalLineCtrl horizontalLineCtrl1;
+        private Label lblSelectFolder;
 
         public InstallControl(MainForm main)
         {
             mainForm = main;
             InitializeComponent();
 
-            this.Load += InstallControl_Load;
-            this.Resize += InstallControl_Resize;
+            wizardHeader.Text = Texts.GetString("InstallTitle");
+            txtInfo.Text = Texts.GetString("InstallInfo");
+            lblSelectFolder.Text = Texts.GetString("SelectFolder");
+            btnBrowse.Text = Texts.GetString("Browse...");
+            lblFolderHint.Text = Texts.GetString("InstallFolderHint");
+            btnCancel.Text = Texts.GetString("Cancel");
+            btnInstall.Text = Texts.GetString("Install");
+            btnBack.Text = Texts.GetString("< Back");            
         }
 
         private void InitializeComponent()
         {
+            this.txtInfo = new System.Windows.Forms.Label();
+            this.lblSelectFolder = new System.Windows.Forms.Label();
+            this.txtFolder = new System.Windows.Forms.TextBox();
+            this.btnBrowse = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.lblFolderHint = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnInstall = new System.Windows.Forms.Button();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.horizontalLineCtrl1 = new InstallerHost.HorizontalLineCtrl();
+            this.wizardHeader = new Allegoria.Controls.WizardPanel();
             this.SuspendLayout();
-
-            int leftMargin = 20;
-            int rightMargin = 20;
-            int spacing = 10;
-
-            // Title Label
-            lblTitle = new Label()
-            {
-                Text = Texts.GetString("InstallTitle"),
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                Left = leftMargin,
-                Top = 20,
-                AutoSize = true,  // size will be adjusted automatically here
-            };
-
-            // Info Label - set AutoSize = false here, width and height will be set on Resize
-            txtInfo = new Label()
-            {
-                Text = Texts.GetString("InstallInfo"),
-                Font = new Font("Segoe UI", 8, FontStyle.Regular),
-                Left = leftMargin,
-                Top = lblTitle.Bottom + spacing,
-                AutoSize = false,
-                // Width and Height will be set in Resize event handler
-            };
-
-            // Folder selection Label
-            Label lblSelectFolder = new Label()
-            {
-                Text = Texts.GetString("SelectFolder"),
-                Font = new Font("Segoe UI", 8, FontStyle.Regular),
-                Left = leftMargin,
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-            };
-
-            // TextBox for folder path
-            txtFolder = new TextBox()
-            {
-                Left = leftMargin,
-                Width = 200,  // initial width, will be resized in Resize event
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-            };
-
-            // Browse button
-            btnBrowse = new Button()
-            {
-                Text = Texts.GetString("Browse"),
-                Width = 80,
-                Anchor = AnchorStyles.Top | AnchorStyles.Right,
-            };
-            btnBrowse.Click += BtnBrowse_Click;
-
-            // Progress bar
-            progressBar = new ProgressBar()
-            {
-                Height = 20,
-                Minimum = 0,
-                Maximum = 100,
-                Value = 0,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-            };
-
-            // Hint Label
-            lblFolderHint = new Label()
-            {
-                Text = Texts.GetString("InstallFolderHint"),
-                Font = new Font("Segoe UI", 8, FontStyle.Regular),
-                AutoSize = false,
-                Height = 60,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-            };
-
-            // Buttons Cancel, Install, Back
-            btnCancel = new Button()
-            {
-                Text = Texts.GetString("Cancel"),
-                Width = 80,
-                Height = 30,
-            };
-            btnCancel.Click += BtnCancel_Click;
-
-            btnInstall = new Button()
-            {
-                Text = Texts.GetString("Install"),
-                Width = 80,
-                Height = 30,
-            };
-            btnInstall.Click += BtnInstall_Click;
-
-            btnBack = new Button()
-            {
-                Text = Texts.GetString("Back"),
-                Width = 80,
-                Height = 30,
-            };
-            btnBack.Click += (s, e) => mainForm.ShowPrerequisites();
-
-            preloadProgress = new ProgressBar()
-            {
-                Height = 6,
-                Style = ProgressBarStyle.Marquee,
-                MarqueeAnimationSpeed = 30,
-                Visible = false,             // hidden until Load
-                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right
-            };
-
-            // Add controls to this UserControl
-            this.Controls.Add(lblTitle);
-            this.Controls.Add(txtInfo);
-            this.Controls.Add(lblSelectFolder);
-            this.Controls.Add(txtFolder);
-            this.Controls.Add(btnBrowse);
-            this.Controls.Add(progressBar);
-            this.Controls.Add(lblFolderHint);
-            this.Controls.Add(btnCancel);
-            this.Controls.Add(btnInstall);
-            this.Controls.Add(btnBack);
-            this.Controls.Add(preloadProgress);
-
+            // 
+            // txtInfo
+            // 
+            this.txtInfo.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.txtInfo.Location = new System.Drawing.Point(21, 80);
+            this.txtInfo.Name = "txtInfo";
+            this.txtInfo.Size = new System.Drawing.Size(515, 59);
+            this.txtInfo.TabIndex = 1;
+            this.txtInfo.Text = "The installer program will install RetroBat in the folder below.\r\nTo continue, cl" +
+    "ick Next. If you want to specify another folder, Click Browse.";
+            // 
+            // lblSelectFolder
+            // 
+            this.lblSelectFolder.AutoSize = true;
+            this.lblSelectFolder.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.lblSelectFolder.Location = new System.Drawing.Point(21, 152);
+            this.lblSelectFolder.Name = "lblSelectFolder";
+            this.lblSelectFolder.Size = new System.Drawing.Size(155, 13);
+            this.lblSelectFolder.TabIndex = 2;
+            this.lblSelectFolder.Text = "Select the installation folder:";
+            // 
+            // txtFolder
+            // 
+            this.txtFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFolder.Location = new System.Drawing.Point(23, 178);
+            this.txtFolder.Name = "txtFolder";
+            this.txtFolder.Size = new System.Drawing.Size(427, 20);
+            this.txtFolder.TabIndex = 3;
+            // 
+            // btnBrowse
+            // 
+            this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBrowse.Location = new System.Drawing.Point(453, 177);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(80, 25);
+            this.btnBrowse.TabIndex = 4;
+            this.btnBrowse.Text = "Browse...";
+            this.btnBrowse.Click += new System.EventHandler(this.BtnBrowse_Click);
+            // 
+            // progressBar
+            // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(22, 389);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(510, 20);
+            this.progressBar.TabIndex = 5;
+            this.progressBar.Visible = false;
+            // 
+            // lblFolderHint
+            // 
+            this.lblFolderHint.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblFolderHint.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.lblFolderHint.Location = new System.Drawing.Point(20, 214);
+            this.lblFolderHint.Name = "lblFolderHint";
+            this.lblFolderHint.Size = new System.Drawing.Size(512, 133);
+            this.lblFolderHint.TabIndex = 6;
+            this.lblFolderHint.Text = "The program requires at least 3.38 GB of free disk space.\r\n\r\nDo not use folders w" +
+    "ith spaces or special characters.";
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Location = new System.Drawing.Point(458, 439);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 26);
+            this.btnCancel.TabIndex = 7;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+            // 
+            // btnInstall
+            // 
+            this.btnInstall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnInstall.Location = new System.Drawing.Point(377, 439);
+            this.btnInstall.Name = "btnInstall";
+            this.btnInstall.Size = new System.Drawing.Size(75, 26);
+            this.btnInstall.TabIndex = 8;
+            this.btnInstall.Text = "Install";
+            this.btnInstall.Click += new System.EventHandler(this.BtnInstall_Click);
+            // 
+            // btnBack
+            // 
+            this.btnBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBack.Location = new System.Drawing.Point(296, 439);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 26);
+            this.btnBack.TabIndex = 9;
+            this.btnBack.Text = "< Back";
+            this.btnBack.Click += new System.EventHandler(this.BtnBack_Click);
+            // 
+            // horizontalLineCtrl1
+            // 
+            this.horizontalLineCtrl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.horizontalLineCtrl1.Location = new System.Drawing.Point(0, 427);
+            this.horizontalLineCtrl1.Name = "horizontalLineCtrl1";
+            this.horizontalLineCtrl1.Size = new System.Drawing.Size(547, 2);
+            this.horizontalLineCtrl1.TabIndex = 12;
+            this.horizontalLineCtrl1.Text = "horizontalLineCtrl1";
+            // 
+            // wizardHeader
+            // 
+            this.wizardHeader.BackColor = System.Drawing.SystemColors.Window;
+            this.wizardHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.wizardHeader.Image = global::InstallerHost.Properties.Resources.logo_icon;
+            this.wizardHeader.Location = new System.Drawing.Point(0, 0);
+            this.wizardHeader.Name = "wizardHeader";
+            this.wizardHeader.Size = new System.Drawing.Size(548, 60);
+            this.wizardHeader.TabIndex = 11;
+            this.wizardHeader.Title = "InstallTitle";
+            // 
+            // InstallControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.Controls.Add(this.horizontalLineCtrl1);
+            this.Controls.Add(this.wizardHeader);
+            this.Controls.Add(this.txtInfo);
+            this.Controls.Add(this.lblSelectFolder);
+            this.Controls.Add(this.txtFolder);
+            this.Controls.Add(this.btnBrowse);
+            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.lblFolderHint);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnInstall);
+            this.Controls.Add(this.btnBack);
+            this.Name = "InstallControl";
+            this.Size = new System.Drawing.Size(548, 479);
             this.ResumeLayout(false);
-            this.PerformLayout(); // Perform layout now for autosize labels
+            this.PerformLayout();
+
         }
 
-        private void InstallControl_Resize(object sender, EventArgs e)
+        private void BtnBack_Click(object sender, EventArgs e)
         {
-            int leftMargin = 20;
-            int rightMargin = 20;
-            int spacing = 10;
-            int extraSpacingBelowInfo = 15;
-
-            int controlWidth = this.ClientSize.Width - leftMargin - rightMargin;
-            if (controlWidth < 100) controlWidth = 100;
-
-            // Position and size Title label
-            lblTitle.Left = leftMargin;
-            lblTitle.Top = 20;
-            lblTitle.Width = controlWidth;
-
-            // Position and size Info label (txtInfo)
-            txtInfo.Left = leftMargin;
-            txtInfo.Top = lblTitle.Bottom + spacing;
-
-            // Crucial: set width and update height for wrapping text
-            txtInfo.MaximumSize = new Size(controlWidth, 0);
-            txtInfo.Width = controlWidth;
-            txtInfo.Height = txtInfo.PreferredHeight;
-
-            // Position SelectFolder label
-            var lblSelectFolder = this.Controls.OfType<Label>().FirstOrDefault(l => l.Text == Texts.GetString("SelectFolder"));
-            if (lblSelectFolder != null)
-            {
-                lblSelectFolder.Left = leftMargin;
-                lblSelectFolder.Top = txtInfo.Bottom + extraSpacingBelowInfo;
-            }
-
-            // Position and size Folder TextBox
-            txtFolder.Left = leftMargin;
-            txtFolder.Top = lblSelectFolder != null ? lblSelectFolder.Bottom + 5 : txtInfo.Bottom + extraSpacingBelowInfo;
-
-            // Width calculation for folder TextBox - leave room for Browse button + spacing
-            txtFolder.Width = Math.Max(200, controlWidth - btnBrowse.Width - spacing);
-
-            // Position Browse button
-            btnBrowse.Left = txtFolder.Right + spacing;
-            btnBrowse.Top = txtFolder.Top - 2;
-
-            // Position and size Progress bar
-            progressBar.Left = leftMargin;
-            progressBar.Top = txtFolder.Bottom + spacing;
-            progressBar.Width = controlWidth;
-
-            // Position Folder hint label
-            lblFolderHint.Left = leftMargin;
-            lblFolderHint.Top = progressBar.Bottom + 5;
-            lblFolderHint.Width = controlWidth;
-
-            // Position bottom buttons (Cancel, Install, Back)
-            int bottom = this.ClientSize.Height - mainForm.bottomMargin - mainForm.buttonHeight;
-
-            btnCancel.Top = bottom;
-            btnCancel.Left = this.ClientSize.Width - mainForm.rightMargin - btnCancel.Width;
-
-            btnInstall.Top = bottom;
-            btnInstall.Left = btnCancel.Left - mainForm.spacing - btnInstall.Width;
-
-            btnBack.Top = bottom;
-            btnBack.Left = btnInstall.Left - mainForm.spacing - btnBack.Width;
-
-            preloadProgress.Left = 20;
-            preloadProgress.Top = btnInstall.Top - preloadProgress.Height - 10;
-            preloadProgress.Width = this.ClientSize.Width - 40;
+            mainForm.ShowPrerequisites(false);
         }
 
-        private void InstallControl_Load(object sender, EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            string defaultPath = "C:\\RetroBat";
-            txtFolder.Text = defaultPath;
+            base.OnLoad(e);
 
-            btnInstall.ForeColor = Color.DarkGray;
-            btnInstall.Enabled = false;
-            btnBrowse.Enabled = false;
-            btnInstall.Text = Texts.GetString("Wait...");
-            preloadProgress.Visible = true;
-
-            zipFilePath = Path.Combine(Path.GetTempPath(), "embedded_installer.zip");
-
-            Task.Run(() =>
-            {
-                try
-                {
-                    Logger.Log("Extracting zip content in background...");
-                    ExtractEmbeddedZip(zipFilePath);
-
-                    this.Invoke(new Action(() =>
-                    {
-                        preloadProgress.Visible = false;
-                        btnInstall.Enabled = true;
-                        btnBrowse.Enabled = true;
-                        btnInstall.Text = Texts.GetString("Install");
-                        btnInstall.ForeColor = SystemColors.ControlText;
-                        Logger.Log("Zip extraction completed.");
-                    }));
-                }
-                catch (Exception ex)
-                {
-                    Logger.Log("Failed to extract installer data.");
-
-                    this.Invoke(new Action(() =>
-                    {
-                        MessageBox.Show(Texts.GetString("ExtractFail") + ex.Message);
-                        Application.Exit();
-                    }));
-                }
-            });
-
-            InstallControl_Resize(this, EventArgs.Empty);
+            txtFolder.Text = "C:\\RetroBat";
+            ActiveControl = btnInstall;  
         }
 
         private void BtnBrowse_Click(object sender, EventArgs e)
         {
             using (var fbd = new FolderBrowserDialog())
-            {
                 if (fbd.ShowDialog() == DialogResult.OK)
-                {
                     txtFolder.Text = fbd.SelectedPath;
-                }
-            }
         }
 
         private void BtnInstall_Click(object sender, EventArgs e)
@@ -304,8 +227,8 @@ namespace InstallerHost
                 if (Directory.EnumerateFileSystemEntries(selectedPath).Any())
                 {
                     Logger.Log("[WARNING] Installation folder not empty.");
-                    MessageBox.Show(Texts.GetString("FolderNotEmpty"));
-                    return;
+                 //   MessageBox.Show(Texts.GetString("FolderNotEmpty"));
+                //    return;
                 }
             }
             else
@@ -323,20 +246,21 @@ namespace InstallerHost
                 }
             }
 
+            progressBar.Visible = true;
+            btnBack.Enabled = false;
             btnInstall.Enabled = false;
             btnBrowse.Enabled = false;
 
-            worker = new BackgroundWorker
-            {
-                WorkerReportsProgress = true
-            };
+            worker = new BackgroundWorker() { WorkerReportsProgress = true };
 
             worker.DoWork += (workSender, workArgs) =>
             {
                 try
                 {
                     string destinationPath = txtFolder.Text;
-                    ExtractZipToFolder(zipFilePath, destinationPath);
+
+                    using (var stream = GetEmbeddedZipStream())
+                        ExtractZipStreamToFolder(stream, destinationPath);                    
                 }
                 catch (Exception ex)
                 {
@@ -349,21 +273,27 @@ namespace InstallerHost
                 if (progressBar.InvokeRequired)
                 {
                     progressBar.Invoke(new Action(() => progressBar.Value = progressArgs.ProgressPercentage));
+                    return;
                 }
-                else
-                {
-                    progressBar.Value = progressArgs.ProgressPercentage;
-                }
+                    
+                progressBar.Value = progressArgs.ProgressPercentage;
             };
 
             worker.RunWorkerCompleted += (completeSender, completeArgs) =>
             {
                 btnInstall.Enabled = true;
                 btnBrowse.Enabled = true;
+                btnBack.Enabled = true;
+                progressBar.Visible = false;
 
                 if (completeArgs.Result is Exception ex)
                 {
-                    MessageBox.Show(Texts.GetString("InstallFail") + ex.Message);
+#if DEBUG
+                    if (MessageBox.Show(this, Texts.GetString("InstallFail") + ex.Message, null, MessageBoxButtons.OKCancel, MessageBoxIcon.Error) == DialogResult.OK)
+                        mainForm.ShowFinish(txtFolder.Text);
+#else
+                    MessageBox.Show(this, Texts.GetString("InstallFail") + ex.Message, null, MessageBoxButtons.OK, MessageBoxIcon.Error);
+#endif
                 }
                 else
                 {
@@ -379,95 +309,108 @@ namespace InstallerHost
         {
             var result = MessageBox.Show(Texts.GetString("CancelSure"), Texts.GetString("CancelButtonTitle"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
-            {
                 Application.Exit();
-            }
         }
 
-        private void ExtractEmbeddedZip(string outputZipPath)
+        private Stream GetEmbeddedZipStream()
         {
             string exePath = Application.ExecutablePath;
 
-            using (FileStream fs = new FileStream(exePath, FileMode.Open, FileAccess.Read))
-            {
-                if (fs.Length < 8)
-                    throw new Exception("Invalid installer: file too small.");
+            var fs = new FileStream(exePath, FileMode.Open, FileAccess.Read);
+            if (fs.Length < 8)
+                throw new Exception("Invalid installer: file too small.");
 
-                // Read ZIP length stored in the last 8 bytes
-                fs.Seek(-8, SeekOrigin.End);
-                byte[] lengthBytes = new byte[8];
-                int read = fs.Read(lengthBytes, 0, 8);
-                if (read != 8)
-                    throw new Exception("Failed to read zip length footer.");
+            // Read ZIP length stored in the last 8 bytes
+            fs.Seek(-8, SeekOrigin.End);
+            byte[] lengthBytes = new byte[8];
+            int read = fs.Read(lengthBytes, 0, 8);
+            if (read != 8)
+                throw new Exception("Failed to read zip length footer.");
 
-                long zipLength = BitConverter.ToInt64(lengthBytes, 0);
-                long zipStart = fs.Length - zipLength - 8;
+            long zipLength = BitConverter.ToInt64(lengthBytes, 0);
+            long zipStart = fs.Length - zipLength - 8;
 
-                if (zipLength <= 0 || zipStart < 0)
-                    throw new Exception("Invalid ZIP length in installer footer.");
+            if (zipLength <= 0 || zipStart < 0)
+                throw new Exception("Invalid ZIP length in installer footer.");
 
-                // Copy exactly zipLength bytes to output ZIP
-                fs.Seek(zipStart, SeekOrigin.Begin);
-                using (FileStream outFs = new FileStream(outputZipPath, FileMode.Create, FileAccess.Write))
-                {
-                    byte[] buffer = new byte[81920];
-                    long remaining = zipLength;
-                    while (remaining > 0)
-                    {
-                        int toRead = (int)Math.Min(buffer.Length, remaining);
-                        int n = fs.Read(buffer, 0, toRead);
-                        if (n <= 0) break;
-                        outFs.Write(buffer, 0, n);
-                        remaining -= n;
-                    }
+            // Copy exactly zipLength bytes to output ZIP
+            fs.Seek(zipStart, SeekOrigin.Begin);
 
-                    if (remaining != 0)
-                        throw new Exception("Failed to extract full ZIP data (short read).");
-                }
-            }
+            return new SubStream(fs, zipStart, zipLength);
         }
 
-        private int FindBytesInStream(FileStream fs, byte[] pattern)
+        class SubStream : Stream
         {
-            int matchIndex = 0;
-            int position = 0;
+            private readonly Stream _baseStream;
+            private readonly long _start;
+            private readonly long _length;
+            private long _position;
 
-            int b;
-            while ((b = fs.ReadByte()) != -1)
+            public SubStream(Stream baseStream, long start, long length)
             {
-                if (b == pattern[matchIndex])
-                {
-                    matchIndex++;
-                    if (matchIndex == pattern.Length)
-                        return position - pattern.Length + 1;
-                }
+                _baseStream = baseStream;
+                _start = start;
+                _length = length;
+                _position = 0;
+
+                _baseStream.Seek(_start, SeekOrigin.Begin);
+            }
+
+            public override bool CanRead => _baseStream.CanRead;
+            public override bool CanSeek => _baseStream.CanSeek;
+            public override bool CanWrite => false;
+
+            public override long Length => _length;
+
+            public override long Position
+            {
+                get => _position;
+                set => Seek(value, SeekOrigin.Begin);
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                long remaining = _length - _position;
+                if (remaining <= 0)
+                    return 0;
+
+                if (count > remaining)
+                    count = (int)remaining;
+
+                int read = _baseStream.Read(buffer, offset, count);
+                _position += read;
+                return read;
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                long newPos;
+
+                if (origin == SeekOrigin.Begin)
+                    newPos = offset;
+                else if (origin == SeekOrigin.Current)
+                    newPos = _position + offset;
+                else if (origin == SeekOrigin.End)
+                    newPos = _length + offset;
                 else
-                {
-                    matchIndex = 0;
-                }
-                position++;
+                    throw new ArgumentOutOfRangeException("origin");
+
+                if (newPos < 0 || newPos > _length)
+                    throw new ArgumentOutOfRangeException(nameof(offset));
+
+                _baseStream.Seek(_start + newPos, SeekOrigin.Begin);
+                _position = newPos;
+                return _position;
             }
-            return -1;
+
+            public override void Flush() => throw new NotSupportedException();
+            public override void SetLength(long value) => throw new NotSupportedException();
+            public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
         }
 
-        private int FindBytes(byte[] buffer, byte[] pattern)
+        private void ExtractZipStreamToFolder(Stream fs, string destinationFolder)
         {
-            for (int i = 0; i <= buffer.Length - pattern.Length; i++)
-            {
-                bool match = true;
-                for (int j = 0; j < pattern.Length; j++)
-                {
-                    if (buffer[i + j] != pattern[j]) { match = false; break; }
-                }
-                if (match) return i;
-            }
-            return -1;
-        }
-
-        private void ExtractZipToFolder(string zipFilePath, string destinationFolder)
-        {
-            using (FileStream fs = File.OpenRead(zipFilePath))
-            using (ZipFile zipFile = new ZipFile(fs))
+            using (var zipFile = new ZipFile(fs))
             {
                 zipFile.IsStreamOwner = true;
                 zipFile.UseZip64 = UseZip64.On;
@@ -517,6 +460,6 @@ namespace InstallerHost
                     }
                 }
             }
-        }
+        }        
     }
 }
