@@ -14,8 +14,6 @@ namespace InstallerHost
     public class PrerequisiteControl : UserControl
     {
         private MainForm mainForm;
-
-        private Label lblIntro;
         private Label lblAllInstalled;
         private Label statusLabel;
         private CheckBox chkVCpp;
@@ -27,35 +25,40 @@ namespace InstallerHost
         private BackgroundWorker installerWorker;
         private ProgressBar progressBar;
         private bool installationComplete = false;
-        private BackgroundWorker worker;
+        private Allegoria.Controls.WizardPanel wizardHeader;
+        private HorizontalLineCtrl horizontalLineCtrl1;
 
         public PrerequisiteControl(MainForm main)
         {
             mainForm = main;
             InitializeComponent();
-            UpdatePrerequisiteCheckboxes();
 
-            this.Load += (s, e) =>
-            {
-                SkipIfAllInstalled();
-            };
+            wizardHeader.Text = Texts.GetString("PrerequisiteIntro");
+            lblAllInstalled.Text = Texts.GetString("All prerequisites installed");
+            chkVCpp.Text = Texts.GetString("vcText");
+            chkDirectX.Text = Texts.GetString("dx9text");
+            chkDokany.Text = Texts.GetString("dokanyText");
+            btnCancel.Text = Texts.GetString("Cancel");
+            btnNext.Text = Texts.GetString("Next >");
+            btnBack.Text = Texts.GetString("< Back");
 
-            this.Resize += PrerequisiteControl_Resize;
+            UpdateStatusLabelSafe(Texts.GetString("WaitingSelect"));
+            UpdatePrerequisiteCheckboxes();            
         }
 
-        private void SkipIfAllInstalled()
+        public bool SkipIfAllInstalled()
         {
-            if (!chkVCpp.Checked && !chkDirectX.Checked && !chkDokany.Checked)
-            {
-                progressBar.Value = progressBar.Maximum;
-                progressBar.Refresh();
+#if DEBUG
+            return false;
+#endif 
+            return !chkVCpp.Enabled && !chkDirectX.Enabled && !chkDokany.Enabled;
+        }
 
-                lblAllInstalled.Visible = true;
-                statusLabel.Visible = false;
 
-                // Delay call slightly to ensure form is fully ready
-                this.BeginInvoke((Action)(() => mainForm.ShowInstall()));
-            }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ActiveControl = btnNext;
         }
 
         private readonly Dictionary<string, InstallerInfo> vcRedistResources = new Dictionary<string, InstallerInfo>
@@ -86,133 +89,166 @@ namespace InstallerHost
 
         private void InitializeComponent()
         {
+            this.lblAllInstalled = new System.Windows.Forms.Label();
+            this.chkVCpp = new System.Windows.Forms.CheckBox();
+            this.chkDirectX = new System.Windows.Forms.CheckBox();
+            this.chkDokany = new System.Windows.Forms.CheckBox();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.statusLabel = new System.Windows.Forms.Label();
+            this.btnCancel = new System.Windows.Forms.Button();
+            this.btnNext = new System.Windows.Forms.Button();
+            this.btnBack = new System.Windows.Forms.Button();
+            this.horizontalLineCtrl1 = new InstallerHost.HorizontalLineCtrl();
+            this.wizardHeader = new Allegoria.Controls.WizardPanel();
             this.SuspendLayout();
-
-            int leftMargin = 20;
-
-            lblIntro = new Label()
-            {
-                Text = Texts.GetString("PrerequisiteIntro"),
-                Font = new Font("Segoe UI", 12, FontStyle.Bold),
-                AutoSize = true,
-                Left = leftMargin,
-                Top = 20,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left
-            };
-
-            lblAllInstalled = new Label()
-            {
-                Text = Texts.GetString("All prerequisites installed"),
-                Font = new Font("Segoe UI", 11),
-                AutoSize = true,
-                Left = leftMargin,
-                Top = lblIntro.Bottom + 20,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-                Visible = false
-            };
-
-            chkVCpp = new CheckBox()
-            {
-                Text = Texts.GetString("vcText"),
-                Left = leftMargin,
-                Top = lblAllInstalled.Bottom + 20,
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-                Checked = true
-            };
-
-            chkDirectX = new CheckBox()
-            {
-                Text = Texts.GetString("dx9text"),
-                Left = leftMargin,
-                Top = chkVCpp.Bottom + 10,
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-                Checked = true
-            };
-
-            chkDokany = new CheckBox()
-            {
-                Text = Texts.GetString("dokanyText"),
-                Left = leftMargin,
-                Top = chkDirectX.Bottom + 10,
-                AutoSize = true,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left,
-                Checked = false
-            };
-
-            progressBar = new ProgressBar()
-            {
-                Left = chkDokany.Left,
-                Top = chkDokany.Bottom + 20,
-                Width = 400,
-                Height = 20,
-                Minimum = 0,
-                Maximum = (chkDirectX.Checked ? 1 : 0)
-                            + (chkVCpp.Checked ? vcRedistResources.Count : 0)
-                            + (chkDokany.Checked ? 1 : 0),
-                Value = 0,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left
-            };
-
-            statusLabel = new Label()
-            {
-                Left = progressBar.Left,
-                Top = progressBar.Bottom + 10,
-                Width = progressBar.Width,
-                Height = 30,
-                Text = "",
-                Font = new Font("Segoe UI", 10),
-                AutoSize = false,
-                Anchor = AnchorStyles.Top | AnchorStyles.Left
-            };
-
-            btnCancel = new Button()
-            {
-                Text = Texts.GetString("Cancel"),
-                Width = mainForm.buttonWidth,
-                Height = mainForm.buttonHeight,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right,
-            };
-            btnCancel.Click += BtnCancel_Click;
-
-            btnNext = new Button()
-            {
-                Text = Texts.GetString("Next"),
-                Width = mainForm.buttonWidth,
-                Height = mainForm.buttonHeight,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
-            };
-            btnNext.Click += BtnNext_Click;
-
-            btnBack = new Button()
-            {
-                Text = Texts.GetString("Back"),
-                Width = mainForm.buttonWidth,
-                Height = mainForm.buttonHeight,
-                Anchor = AnchorStyles.Bottom | AnchorStyles.Right
-            };
-            btnBack.Click += (s, e) => mainForm.ShowLicense();
-
-            this.Controls.Add(lblIntro);
-            this.Controls.Add(lblAllInstalled);
-            this.Controls.Add(chkVCpp);
-            this.Controls.Add(chkDirectX);
-            this.Controls.Add(chkDokany);
-            this.Controls.Add(btnCancel);
-            this.Controls.Add(btnNext);
-            this.Controls.Add(btnBack);
-            this.Controls.Add(progressBar);
-            this.Controls.Add(statusLabel);
-
-            UpdateStatusLabelSafe(Texts.GetString("WaitingSelect"));
-
+            // 
+            // lblAllInstalled
+            // 
+            this.lblAllInstalled.AutoSize = true;
+            this.lblAllInstalled.Font = new System.Drawing.Font("Segoe UI", 11F);
+            this.lblAllInstalled.Location = new System.Drawing.Point(20, 81);
+            this.lblAllInstalled.Name = "lblAllInstalled";
+            this.lblAllInstalled.Size = new System.Drawing.Size(176, 20);
+            this.lblAllInstalled.TabIndex = 1;
+            this.lblAllInstalled.Text = "All prerequisites installed";
+            this.lblAllInstalled.Visible = false;
+            // 
+            // chkVCpp
+            // 
+            this.chkVCpp.AutoSize = true;
+            this.chkVCpp.Checked = true;
+            this.chkVCpp.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkVCpp.Location = new System.Drawing.Point(24, 117);
+            this.chkVCpp.Name = "chkVCpp";
+            this.chkVCpp.Size = new System.Drawing.Size(59, 17);
+            this.chkVCpp.TabIndex = 2;
+            this.chkVCpp.Text = "vcText";
+            // 
+            // chkDirectX
+            // 
+            this.chkDirectX.AutoSize = true;
+            this.chkDirectX.Checked = true;
+            this.chkDirectX.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkDirectX.Location = new System.Drawing.Point(24, 143);
+            this.chkDirectX.Name = "chkDirectX";
+            this.chkDirectX.Size = new System.Drawing.Size(60, 17);
+            this.chkDirectX.TabIndex = 3;
+            this.chkDirectX.Text = "dx9text";
+            // 
+            // chkDokany
+            // 
+            this.chkDokany.AutoSize = true;
+            this.chkDokany.Location = new System.Drawing.Point(24, 169);
+            this.chkDokany.Name = "chkDokany";
+            this.chkDokany.Size = new System.Drawing.Size(82, 17);
+            this.chkDokany.TabIndex = 4;
+            this.chkDokany.Text = "dokanyText";
+            // 
+            // progressBar
+            // 
+            this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar.Location = new System.Drawing.Point(23, 300);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(510, 22);
+            this.progressBar.TabIndex = 8;
+            this.progressBar.Visible = false;
+            // 
+            // statusLabel
+            // 
+            this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.statusLabel.Location = new System.Drawing.Point(21, 325);
+            this.statusLabel.Name = "statusLabel";
+            this.statusLabel.Size = new System.Drawing.Size(512, 23);
+            this.statusLabel.TabIndex = 9;
+            this.statusLabel.Text = "status";
+            this.statusLabel.Visible = false;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnCancel.Location = new System.Drawing.Point(458, 439);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 26);
+            this.btnCancel.TabIndex = 5;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+            // 
+            // btnNext
+            // 
+            this.btnNext.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnNext.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnNext.Location = new System.Drawing.Point(377, 439);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(75, 26);
+            this.btnNext.TabIndex = 6;
+            this.btnNext.Text = "Next >";
+            this.btnNext.Click += new System.EventHandler(this.BtnNext_Click);
+            // 
+            // btnBack
+            // 
+            this.btnBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBack.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.btnBack.Location = new System.Drawing.Point(296, 439);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(75, 26);
+            this.btnBack.TabIndex = 7;
+            this.btnBack.Text = "< Back";
+            this.btnBack.Click += new System.EventHandler(this.BtnBack_Click);
+            // 
+            // horizontalLineCtrl1
+            // 
+            this.horizontalLineCtrl1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.horizontalLineCtrl1.Location = new System.Drawing.Point(0, 427);
+            this.horizontalLineCtrl1.Name = "horizontalLineCtrl1";
+            this.horizontalLineCtrl1.Size = new System.Drawing.Size(547, 2);
+            this.horizontalLineCtrl1.TabIndex = 11;
+            this.horizontalLineCtrl1.Text = "horizontalLineCtrl1";
+            // 
+            // wizardHeader
+            // 
+            this.wizardHeader.BackColor = System.Drawing.SystemColors.Window;
+            this.wizardHeader.Dock = System.Windows.Forms.DockStyle.Top;
+            this.wizardHeader.Image = global::InstallerHost.Properties.Resources.logo_icon;
+            this.wizardHeader.Location = new System.Drawing.Point(0, 0);
+            this.wizardHeader.Name = "wizardHeader";
+            this.wizardHeader.Size = new System.Drawing.Size(548, 60);
+            this.wizardHeader.TabIndex = 10;
+            this.wizardHeader.Title = "PrerequisiteIntro";
+            // 
+            // PrerequisiteControl
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.Controls.Add(this.horizontalLineCtrl1);
+            this.Controls.Add(this.wizardHeader);
+            this.Controls.Add(this.lblAllInstalled);
+            this.Controls.Add(this.chkVCpp);
+            this.Controls.Add(this.chkDirectX);
+            this.Controls.Add(this.chkDokany);
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnNext);
+            this.Controls.Add(this.btnBack);
+            this.Controls.Add(this.progressBar);
+            this.Controls.Add(this.statusLabel);
+            this.Name = "PrerequisiteControl";
+            this.Size = new System.Drawing.Size(548, 479);
             this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        private void BtnBack_Click(object sender, EventArgs e)
+        {
+            mainForm.ShowLicense();
         }
 
         private void BtnNext_Click(object sender, EventArgs e)
         {
-            if (!chkDirectX.Checked && !chkVCpp.Checked && !chkDokany.Checked)
+            if (!(chkDirectX.Enabled && chkDirectX.Checked) && !(chkVCpp.Enabled && chkVCpp.Checked) && !(chkDokany.Enabled && chkDokany.Checked))
             {
                 mainForm.ShowInstall();
                 return;
@@ -225,17 +261,19 @@ namespace InstallerHost
                 btnCancel.Enabled = false;
 
                 statusLabel.Text = Texts.GetString("DownloadAndInstall");
+                statusLabel.Visible = true;
 
                 int totalSteps = 0;
-                if (chkDirectX.Checked)
+                if (chkDirectX.Enabled && chkDirectX.Checked)
                     totalSteps++;
-                if (chkVCpp.Checked)
+                if (chkVCpp.Enabled && chkVCpp.Checked)
                     totalSteps += vcRedistResources.Count;
-                if (chkDokany.Checked)
+                if (chkDokany.Enabled && chkDokany.Checked)
                     totalSteps++;
 
                 progressBar.Value = 0;
                 progressBar.Maximum = totalSteps;
+                progressBar.Visible = true;
 
                 installerWorker = new BackgroundWorker();
                 installerWorker.DoWork += InstallerWorker_DoWork;
@@ -252,30 +290,30 @@ namespace InstallerHost
         {
             try
             {
-                if (chkDirectX.Checked)
+                if (chkDirectX.Enabled && chkDirectX.Checked)
                 {
                     Logger.Log("Launching DirectX installer...");
                     InstallDirectX();
                 }
 
-                if (chkVCpp.Checked)
+                if (chkVCpp.Enabled && chkVCpp.Checked)
                 {
                     Logger.Log("Launching VC++ installer...");
                     InstallVCppAll();
                 }
 
-                if (chkDokany.Checked)
+                if (chkDokany.Enabled && chkDokany.Checked)
                 {
                     Logger.Log("Launching Dokany installer...");
                     InstallDokany();
                 }
 
                 int totalSteps = 0;
-                if (chkDirectX.Checked)
+                if (chkDirectX.Enabled && chkDirectX.Checked)
                     totalSteps++;
-                if (chkVCpp.Checked)
+                if (chkVCpp.Enabled && chkVCpp.Checked)
                     totalSteps += vcRedistResources.Count;
-                if (chkDokany.Checked)
+                if (chkDokany.Enabled && chkDokany.Checked)
                     totalSteps++;
             }
             catch (Exception ex)
@@ -304,18 +342,6 @@ namespace InstallerHost
                 btnCancel.Enabled = true;
                 progressBar.Value = progressBar.Maximum;
             }
-        }
-
-        private void PrerequisiteControl_Resize(object sender, EventArgs e)
-        {
-            btnCancel.Top = this.ClientSize.Height - btnCancel.Height - mainForm.bottomMargin;
-            btnCancel.Left = this.ClientSize.Width - btnCancel.Width - mainForm.rightMargin;
-
-            btnNext.Top = btnCancel.Top;
-            btnNext.Left = btnCancel.Left - btnNext.Width - mainForm.spacing;
-
-            btnBack.Top = btnCancel.Top;
-            btnBack.Left = btnNext.Left - btnBack.Width - mainForm.spacing;
         }
 
         private void InstallDirectX()
@@ -563,9 +589,7 @@ namespace InstallerHost
         {
             var result = MessageBox.Show(Texts.GetString("CancelSure"), Texts.GetString("CancelButtonTitle"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
-            {
                 Application.Exit();
-            }
         }
 
         private void UpdateProgressBarSafe()
@@ -607,7 +631,7 @@ namespace InstallerHost
             return tempPath;
         }
 
-        private void ExtractZipToFolder(string zipFilePath, string destinationFolder)
+        private void ExtractZipToFolder(string zipFilePath, string destinationFolder, Action<int> progress = null)
         {
             using (FileStream fs = File.OpenRead(zipFilePath))
             using (ZipFile zipFile = new ZipFile(fs))
@@ -644,8 +668,11 @@ namespace InstallerHost
                             outputStream.Write(buffer, 0, bytesRead);
                             extractedSize += bytesRead;
 
-                            int percent = (int)((extractedSize * 100) / totalSize);
-                            worker?.ReportProgress(percent);
+                            if (progress != null)
+                            {
+                                int percent = (int)((extractedSize * 100) / totalSize);
+                                progress(percent);
+                            }
                         }
                     }
                 }
@@ -686,11 +713,10 @@ namespace InstallerHost
             if (statusLabel.InvokeRequired)
             {
                 statusLabel.Invoke(new Action(() => statusLabel.Text = text));
+                return;
             }
-            else
-            {
-                statusLabel.Text = text;
-            }
+                
+            statusLabel.Text = text;
         }
 
         private void UpdatePrerequisiteCheckboxes()
@@ -698,55 +724,48 @@ namespace InstallerHost
             try
             {
                 // VC++
-                bool vcppInstalled = PrerequisiteDetector.IsVCppFullyInstalled();
-                chkVCpp.Visible = !vcppInstalled;
-                chkVCpp.Checked = !vcppInstalled;
+                chkVCpp.Enabled = !PrerequisiteDetector.IsVCppFullyInstalled();
+                if (!chkVCpp.Enabled)
+                    chkVCpp.Checked = true;
 
                 // DirectX
-                bool dxInstalled = PrerequisiteDetector.IsDirectXJun2010Installed();
-                chkDirectX.Visible = !dxInstalled;
-                chkDirectX.Checked = !dxInstalled;
+                chkDirectX.Enabled = !PrerequisiteDetector.IsDirectXJun2010Installed();
+                if (!chkDirectX.Enabled)
+                    chkDirectX.Checked = true;
 
                 // Dokany
-                bool dokanyInstalled = PrerequisiteDetector.IsDokanyInstalled();
-                chkDokany.Visible = !dokanyInstalled;
-                chkDokany.Checked = !dokanyInstalled;
+                chkDokany.Enabled = !PrerequisiteDetector.IsDokanyInstalled();
+                if (!chkDokany.Enabled)
+                    chkDokany.Checked = true;
             }
             catch (Exception ex)
             {
                 Logger.Log("Error detecting prerequisites: " + ex.Message);
+
                 // fallback to defaults if detection fails
-                chkVCpp.Visible = true;
+                chkVCpp.Enabled = true;
                 chkVCpp.Checked = true;
 
-                chkDirectX.Visible = true;
+                chkDirectX.Enabled = true;
                 chkDirectX.Checked = true;
 
-                chkDokany.Visible = true;
+                chkDokany.Enabled = true;
                 chkDokany.Checked = false;
             }
 
             // Update progress bar max
             int totalSteps = 0;
-            if (chkDirectX.Checked) totalSteps++;
-            if (chkVCpp.Checked) totalSteps += vcRedistResources.Count;
-            if (chkDokany.Checked) totalSteps++;
+            if (chkDirectX.Enabled && chkDirectX.Checked) 
+                totalSteps++;
+            if (chkVCpp.Enabled && chkVCpp.Checked) 
+                totalSteps += vcRedistResources.Count;
+            if (chkDokany.Enabled && chkDokany.Checked) 
+                totalSteps++;
 
             progressBar.Maximum = Math.Max(1, totalSteps);
             progressBar.Value = 0;
 
-            // Optionally, hide the entire control if everything is already installed
-            if (totalSteps == 0)
-            {
-                progressBar.Value = totalSteps;
-                lblAllInstalled.Visible = true;
-                statusLabel.Visible = false;
-                mainForm.ShowInstall();
-            }
-            else
-            {
-                progressBar.Value = 0;
-            }
+            lblAllInstalled.Visible = !chkVCpp.Enabled && !chkDirectX.Enabled && !chkDokany.Enabled;
         }
     }
 

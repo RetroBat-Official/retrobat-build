@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace InstallerHost
 {
@@ -6,61 +7,97 @@ namespace InstallerHost
     {
         private UserControl currentControl;
 
-        public string version;
-        public string branch;
-
         public MainForm() : base()
         {
-            ShowWelcome();
+            this.DoubleBuffered = true;                        
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            ShowWelcome();          
         }
 
         private void ShowControl(UserControl control)
         {
+            SuspendLayout();            
+
             if (currentControl != null)
             {
-                contentPanel.Controls.Remove(currentControl);
-                currentControl.Dispose();
+                Focus();
+                Controls.Remove(currentControl);
+                currentControl = null;
             }
-
+           
             currentControl = control;
             currentControl.Dock = DockStyle.Fill;
-            contentPanel.Controls.Add(currentControl);
+            Controls.Add(currentControl);
             currentControl.BringToFront();
+            currentControl.Focus();
+                        
+            ResumeLayout();
+
+            currentControl.Invalidate();
         }
+
+        private WelcomeControl _welcome;
 
         public void ShowWelcome()
         {
-            var welcome = new WelcomeControl(this);
+            if (_welcome == null)
+                _welcome = new WelcomeControl(this);
+
             Logger.Log("Showing Welcome screen.");
-            ShowControl(welcome);
+            ShowControl(_welcome);
         }
+
+        private LicenseControl _license;
 
         public void ShowLicense()
         {
-            var license = new LicenseControl(this);
+            if (_license == null)
+                _license = new LicenseControl(this);
+
             Logger.Log("Showing License screen.");
-            ShowControl(license);
+            ShowControl(_license);
         }
 
-        public void ShowPrerequisites()
+        private PrerequisiteControl _prerequisite;
+
+        public void ShowPrerequisites(bool goForward)
         {
-            var prerequisite = new PrerequisiteControl(this);
-            Logger.Log("Showing Prerequisites screen.");
-            ShowControl(prerequisite);
+            if (_prerequisite == null)
+                _prerequisite = new PrerequisiteControl(this);
+
+            if (_prerequisite.SkipIfAllInstalled())
+            {
+                if (goForward)
+                    ShowInstall();
+                else
+                    ShowLicense();
+            }
+            else
+            {
+                Logger.Log("Showing Prerequisites screen.");
+                ShowControl(_prerequisite);
+            }
         }
+
+        private InstallControl _install;
 
         public void ShowInstall()
         {
-            var install = new InstallControl(this);
+            if (_install == null)
+                _install = new InstallControl(this);
+
             Logger.Log("Showing Install screen.");
-            ShowControl(install);
+            ShowControl(_install);
         }
 
         public void ShowFinish(string installPath)
         {
-            var finish = new FinishControl(this, installPath);
             Logger.Log("Showing Finish screen.");
-            ShowControl(finish);
+            ShowControl(new FinishControl(this, installPath));
         }
 
         private void InitializeComponent()
@@ -68,16 +105,13 @@ namespace InstallerHost
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.SuspendLayout();
             // 
-            // contentPanel
-            // 
-            this.contentPanel.Size = new System.Drawing.Size(353, 394);
-            // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(584, 361);
+            this.ClientSize = new System.Drawing.Size(606, 429);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.ResumeLayout(false);
+
         }
     }
 }
