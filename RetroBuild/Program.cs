@@ -6,7 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Policy;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -226,6 +228,13 @@ namespace RetroBuild
             if (options.GetEmulationstation)
             {
                 string esUrl = options.EmulationstationUrl;
+                if (!esUrl.EndsWith("/") && !esUrl.EndsWith(".zip"))
+                    esUrl += "/";
+                if (options.Architecture == "win32")
+                    esUrl += "EmulationStation-Win32.zip";
+                else
+                    esUrl += "EmulationStation-Win64.zip";
+
                 string esPath = Path.Combine(buildPath, "emulationstation");
                 Methods.DownloadAndExtractArchive_Wget(esUrl, esPath, options);
                 Logger.LogInfo("Emulationstation copied to " + esPath);
@@ -235,6 +244,12 @@ namespace RetroBuild
             if (options.GetBatoceraPorts)
             {
                 string elUrl = options.EmulatorlauncherUrl;
+                if (!elUrl.EndsWith("/") && !elUrl.EndsWith(".zip"))
+                    elUrl += "/";
+                if (options.Architecture == "win32")
+                    elUrl += "batocera-ports.zip";
+                else
+                    elUrl += "batocera-ports-x64.zip";
                 string elPath = Path.Combine(buildPath, "emulationstation");
                 Methods.DownloadAndExtractArchive_Wget(elUrl, elPath, options);
                 Logger.LogInfo("Emulatorlauncher copied to " + elPath);
@@ -369,6 +384,27 @@ namespace RetroBuild
                 string batguiPath = Path.Combine(buildPath);
                 Methods.DownloadAndExtractArchive_Wget(batguiUrl, batguiPath, options);
                 Logger.LogInfo("BatGui copied to " + batguiPath);
+
+                string batGUIPathToDelete = Path.Combine(batguiPath, "cache.gestion de sources");
+
+                if (Directory.Exists(batGUIPathToDelete))
+                {
+                    foreach (var file in Directory.GetFiles(batGUIPathToDelete, "*", SearchOption.AllDirectories))
+                    {
+                        try
+                        {
+                            File.SetAttributes(file, FileAttributes.Normal);
+                            File.Delete(file);
+                            Logger.LogInfo("Deleted file: " + file);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.LogInfo($"[ERROR] Failed to delete {file}: {ex.Message}");
+                        }
+                    }
+                    try { Directory.Delete(batGUIPathToDelete, recursive: true); }
+                    catch { }
+                }
             }
         }
 
@@ -817,6 +853,15 @@ namespace RetroBuild
                     Logger.Log($"[ERROR] Error processing {source}: {ex.Message}");
                 }
             }
+
+            // Copy SDL3
+            string sdl3Path = Path.Combine(rootPath, "system", "tools", "SDL3_x64.dll");
+            if (options.Architecture == "win32")
+                sdl3Path = Path.Combine(rootPath, "system", "tools", "SDL3_x86.dll");
+
+            string sdl3TargetPath = Path.Combine(buildPath, "emulationstation", "SDL3.dll");
+            Logger.LogInfo($"Copying SDL3 from {sdl3Path} to {sdl3TargetPath}");
+            File.Copy(sdl3Path, sdl3TargetPath, true);
         }
 
         static void GetLibretroCores(BuilderOptions options)
@@ -845,7 +890,7 @@ namespace RetroBuild
             }
 
             string ftpRootPath = options.RetrobatFTPPath;
-            string coreUrl = ftpRootPath + options.Architecture + "/" + options.Branch + "/emulators/cores/";
+            string coreUrl = ftpRootPath + "win64/" + options.Branch + "/emulators/cores/";
 
             string[] lrCores = File.ReadAllLines(lrCoreListFile);
 
@@ -915,7 +960,7 @@ namespace RetroBuild
             }
 
             string ftpRootPath = options.RetrobatFTPPath;
-            string emuUrl = ftpRootPath + options.Architecture + "/" + options.Branch + "/emulators/";
+            string emuUrl = ftpRootPath + "win64/" + options.Branch + "/emulators/";
 
             string[] emulators = File.ReadAllLines(emuListFile);
 
