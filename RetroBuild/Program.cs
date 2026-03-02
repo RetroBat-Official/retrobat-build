@@ -384,27 +384,6 @@ namespace RetroBuild
                 string batguiPath = Path.Combine(buildPath);
                 Methods.DownloadAndExtractArchive_Wget(batguiUrl, batguiPath, options);
                 Logger.LogInfo("BatGui copied to " + batguiPath);
-
-                string batGUIPathToDelete = Path.Combine(batguiPath, "cache.gestion de sources");
-
-                if (Directory.Exists(batGUIPathToDelete))
-                {
-                    foreach (var file in Directory.GetFiles(batGUIPathToDelete, "*", SearchOption.AllDirectories))
-                    {
-                        try
-                        {
-                            File.SetAttributes(file, FileAttributes.Normal);
-                            File.Delete(file);
-                            Logger.LogInfo("Deleted file: " + file);
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.LogInfo($"[ERROR] Failed to delete {file}: {ex.Message}");
-                        }
-                    }
-                    try { Directory.Delete(batGUIPathToDelete, recursive: true); }
-                    catch { }
-                }
             }
         }
 
