@@ -1,6 +1,6 @@
 <h1 align="left">
   <br>
-  <a href="https://www.retrobat.org/"><img src="https://github.com/RetroBat-Official/retrobat/blob/main/system/resources/retrobat_logo_v7.png" alt="retrobat" width="500"></a>
+  <a href="https://www.retrobat.org/"><img src="https://github.com/RetroBat-Official/retrobat/blob/main/resources/retrobat_logo.png" alt="retrobat" width="500"></a>
 </h1>
 
 RetroBuild repository contains the code of the tools to build the [Retrobat setup](https://github.com/RetroBat-Official/retrobat)
