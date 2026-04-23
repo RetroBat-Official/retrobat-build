@@ -1,13 +1,14 @@
-﻿using System;
+﻿using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace InstallerHost
 {
@@ -19,6 +20,7 @@ namespace InstallerHost
         private CheckBox chkVCpp;
         private CheckBox chkDirectX;
         private CheckBox chkDokany;
+        private CheckBox chkwinFSP;
         private Button btnCancel;
         private Button btnNext;
         private Button btnBack;
@@ -38,6 +40,7 @@ namespace InstallerHost
             chkVCpp.Text = Texts.GetString("vcText");
             chkDirectX.Text = Texts.GetString("dx9text");
             chkDokany.Text = Texts.GetString("dokanyText");
+            chkwinFSP.Text = Texts.GetString("winFSPtext");
             btnCancel.Text = Texts.GetString("Cancel");
             btnNext.Text = Texts.GetString("Next >");
             btnBack.Text = Texts.GetString("< Back");
@@ -51,7 +54,7 @@ namespace InstallerHost
 #if DEBUG
             return false;
 #endif 
-            return !chkVCpp.Enabled && !chkDirectX.Enabled && !chkDokany.Enabled;
+            return !chkVCpp.Enabled && !chkDirectX.Enabled && !chkDokany.Enabled && !chkwinFSP.Enabled;
         }
 
 
@@ -87,12 +90,18 @@ namespace InstallerHost
             { "DokanSetup.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/quiet") }
         };
 
+        private readonly Dictionary<string, InstallerInfo> winFSPResources = new Dictionary<string, InstallerInfo>
+        {
+            { "winfsp.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "") }
+        };
+
         private void InitializeComponent()
         {
             this.lblAllInstalled = new System.Windows.Forms.Label();
             this.chkVCpp = new System.Windows.Forms.CheckBox();
             this.chkDirectX = new System.Windows.Forms.CheckBox();
             this.chkDokany = new System.Windows.Forms.CheckBox();
+            this.chkwinFSP = new System.Windows.Forms.CheckBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.statusLabel = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -143,6 +152,15 @@ namespace InstallerHost
             this.chkDokany.Size = new System.Drawing.Size(82, 17);
             this.chkDokany.TabIndex = 4;
             this.chkDokany.Text = "dokanyText";
+            // 
+            // chkwinFSP
+            // 
+            this.chkwinFSP.AutoSize = true;
+            this.chkwinFSP.Location = new System.Drawing.Point(24, 195);
+            this.chkwinFSP.Name = "chkwinFSP";
+            this.chkwinFSP.Size = new System.Drawing.Size(82, 17);
+            this.chkwinFSP.TabIndex = 5;
+            this.chkwinFSP.Text = "winFSPtext";
             // 
             // progressBar
             // 
@@ -229,6 +247,7 @@ namespace InstallerHost
             this.Controls.Add(this.chkVCpp);
             this.Controls.Add(this.chkDirectX);
             this.Controls.Add(this.chkDokany);
+            this.Controls.Add(this.chkwinFSP);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnNext);
             this.Controls.Add(this.btnBack);
@@ -248,7 +267,7 @@ namespace InstallerHost
 
         private void BtnNext_Click(object sender, EventArgs e)
         {
-            if (!(chkDirectX.Enabled && chkDirectX.Checked) && !(chkVCpp.Enabled && chkVCpp.Checked) && !(chkDokany.Enabled && chkDokany.Checked))
+            if (!(chkDirectX.Enabled && chkDirectX.Checked) && !(chkVCpp.Enabled && chkVCpp.Checked) && !(chkDokany.Enabled && chkDokany.Checked) && !(chkwinFSP.Enabled && chkwinFSP.Checked))
             {
                 mainForm.ShowInstall();
                 return;
@@ -269,6 +288,8 @@ namespace InstallerHost
                 if (chkVCpp.Enabled && chkVCpp.Checked)
                     totalSteps += vcRedistResources.Count;
                 if (chkDokany.Enabled && chkDokany.Checked)
+                    totalSteps++;
+                if (chkwinFSP.Enabled && chkwinFSP.Checked)
                     totalSteps++;
 
                 progressBar.Value = 0;
@@ -308,12 +329,20 @@ namespace InstallerHost
                     InstallDokany();
                 }
 
+                if (chkwinFSP.Enabled && chkwinFSP.Checked)
+                {
+                    Logger.Log("Launching WinFsp installer...");
+                    InstallWinFsp();
+                }
+
                 int totalSteps = 0;
                 if (chkDirectX.Enabled && chkDirectX.Checked)
                     totalSteps++;
                 if (chkVCpp.Enabled && chkVCpp.Checked)
                     totalSteps += vcRedistResources.Count;
                 if (chkDokany.Enabled && chkDokany.Checked)
+                    totalSteps++;
+                if (chkwinFSP.Enabled && chkwinFSP.Checked)
                     totalSteps++;
             }
             catch (Exception ex)
@@ -567,6 +596,65 @@ namespace InstallerHost
             try { Directory.Delete(tempRoot, true); } catch { }
         }
 
+        private void InstallWinFsp()
+        {
+            string wgetPath = ExtractWgetExecutable();
+            string tempRoot = Path.Combine(Path.GetTempPath(), "winfspDownloads");
+            if (!Directory.Exists(tempRoot))
+                Directory.CreateDirectory(tempRoot);
+
+            try
+            {
+                foreach (var kvp in winFSPResources)
+                {
+                    string zipFileName = kvp.Key;
+                    string zipLocalPath = Path.Combine(tempRoot, zipFileName);
+                    string extractPath = Path.Combine(tempRoot, Path.GetFileNameWithoutExtension(zipFileName));
+                    string fullUrl = kvp.Value.Url + zipFileName;
+
+                    try
+                    {
+                        UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
+                        Logger.Log($"Downloading {fullUrl}...");
+                        DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
+
+                        ExtractZipToFolder(zipLocalPath, extractPath);
+                        Logger.Log("Extraction complete.");
+
+                        // Find the MSI inside the extracted folder
+                        string msiPath = Directory.EnumerateFiles(extractPath, "*.msi", SearchOption.AllDirectories)
+                            .FirstOrDefault();
+
+                        if (msiPath == null)
+                            throw new FileNotFoundException("No MSI found inside " + zipFileName);
+
+                        UpdateStatusLabelSafe(Texts.GetString("Installing") + " " + Path.GetFileName(msiPath) + "...");
+                        Logger.Log("Running WinFsp MSI installer: " + msiPath);
+
+                        var process = new Process();
+                        process.StartInfo.FileName = "msiexec.exe";
+                        process.StartInfo.Arguments = $"/i \"{msiPath}\" /quiet /norestart";
+                        process.StartInfo.UseShellExecute = true;
+                        process.Start();
+                        process.WaitForExit();
+
+                        Logger.Log($"WinFsp installer finished with code {process.ExitCode}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log("WinFsp installation failed: " + ex.Message);
+                        MessageBox.Show("WinFsp installation failed:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+            finally
+            {
+                try { Directory.Delete(tempRoot, true); } catch { }
+            }
+
+            UpdateProgressBarSafe();
+        }
+
         public static string ExtractEmbeddedFile(string resourceName, string outputFile)
         {
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
@@ -737,6 +825,11 @@ namespace InstallerHost
                 chkDokany.Enabled = !PrerequisiteDetector.IsDokanyInstalled();
                 if (!chkDokany.Enabled)
                     chkDokany.Checked = true;
+
+                // WinFsp
+                chkwinFSP.Enabled = !PrerequisiteDetector.IsWinFspInstalled();
+                if (!chkwinFSP.Enabled)
+                    chkwinFSP.Checked = true;
             }
             catch (Exception ex)
             {
@@ -751,6 +844,9 @@ namespace InstallerHost
 
                 chkDokany.Enabled = true;
                 chkDokany.Checked = false;
+
+                chkwinFSP.Enabled = true;
+                chkwinFSP.Checked = false;
             }
 
             // Update progress bar max
@@ -761,11 +857,13 @@ namespace InstallerHost
                 totalSteps += vcRedistResources.Count;
             if (chkDokany.Enabled && chkDokany.Checked) 
                 totalSteps++;
+            if (chkwinFSP.Enabled && chkwinFSP.Checked)
+                totalSteps++;
 
             progressBar.Maximum = Math.Max(1, totalSteps);
             progressBar.Value = 0;
 
-            lblAllInstalled.Visible = !chkVCpp.Enabled && !chkDirectX.Enabled && !chkDokany.Enabled;
+            lblAllInstalled.Visible = !chkVCpp.Enabled && !chkDirectX.Enabled && !chkDokany.Enabled && !chkwinFSP.Enabled;
         }
     }
 
