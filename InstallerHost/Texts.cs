@@ -73,6 +73,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                     case "dokanyText":
                         text = "Dokan (used to mount XBOX images with CXBX)";
                         break;
+                    case "winFSPtext":
+                        text = "WinFsp (used to mount Squashfs files)";
+                        break;
                     case "vcText":
                         text = "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)";
                         break;
@@ -189,6 +192,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Наследена версия)" },
             { "dokanyText", "Dokan (използва се за монтиране на XBOX образи с CXBX)" },
+            { "winFSPtext", "WinFsp" },
             { "DownloadAndInstall", "Изтегляне и инсталиране на предварителни компоненти...\r\nМоля, изчакайте..." },
             { "Downloading", "Изтегляне" },
             { "Extracting", "Извличане" },
@@ -233,6 +237,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
             { "dokanyText", "Dokan (permet de monter les images Xbox avec CXBX)" },
+            { "winFSPtext", "WinFsp (permet de monter les images SquashFS)" },
             { "DownloadAndInstall", "Téléchargement et installation des prérequis...\r\nVeuillez patienter..." },
             { "Downloading", "Téléchargement de" },
             { "Extracting", "Extraction de" },
@@ -276,6 +281,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Altversion)" },
             { "dokanyText", "Dokan (zum Einbinden von XBOX-Images mit CXBX)" },
+            { "winFSPtext", "WinFsp" },
             { "DownloadAndInstall", "Komponenten werden heruntergeladen und installiert…\r\nBitte warten…" },
             { "Downloading", "Wird heruntergeladen" },
             { "Extracting", "Wird entpackt" },
@@ -319,6 +325,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "vcText", "Microsoft Visual C++ Redistributable (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Eredità)" },
             { "dokanyText", "Dokan (usato per montare immagini XBOX con CXBX)" },
+            { "winFSPtext", "WinFsp (usato per montare file SquashFS)" },
             { "DownloadAndInstall", "Download e installazione dei prerequisiti...\r\nAttendere prego..." },
             { "Downloading", "Download in corso" },
             { "Extracting", "Estrazione in corso" },
@@ -362,6 +369,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
             { "dokanyText", "Dokan (używany do montowania obrazów XBOX za pomocą CXBX)" },
+            { "winFSPtext", "WinFsp" },
             { "DownloadAndInstall", "Pobieranie i instalowanie wymaganych komponentów...\r\nProszę czekać..." },
             { "Downloading", "Pobieranie" },
             { "Extracting", "Rozpakowywanie" },
@@ -405,6 +413,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
             { "dokanyText", "Dokan (usado para montar imágenes de XBOX con CXBX)" },
+            { "winFSPtext", "WinFsp" },
             { "DownloadAndInstall", "Descargando e instalando los requisitos previos...\r\nPor favor espere..." },
             { "Downloading", "Descargando" },
             { "Extracting", "Extrayendo" },

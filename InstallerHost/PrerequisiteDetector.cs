@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -138,6 +139,14 @@ namespace InstallerHost
             }
 
             return false;
+        }
+
+        public static bool IsWinFspInstalled()
+        {
+            string dll64 = @"C:\Program Files (x86)\WinFsp\bin\winfsp-x64.dll";
+            string dll32 = @"C:\Program Files (x86)\WinFsp\bin\winfsp-x86.dll";
+
+            return File.Exists(dll64) || File.Exists(dll32);
         }
     }
 }
