@@ -103,22 +103,35 @@ namespace InstallerHost
 
         public static bool IsDirectXJun2010Installed()
         {
+            const string marker = "XAudio2_7.dll";
+
             try
             {
-                using (var key = Registry.LocalMachine.OpenSubKey(
-                    @"SOFTWARE\Microsoft\DirectX", RegistryKeyPermissionCheck.ReadSubTree))
-                {
-                    if (key == null)
-                        return false;
+                if (!File.Exists(Path.Combine(GetSystemDir(false), marker)))
+                    return false;
 
-                    string version = key.GetValue("Version")?.ToString();
-                    return !string.IsNullOrEmpty(version);
-                }
+                if (Environment.Is64BitOperatingSystem && !File.Exists(Path.Combine(GetSystemDir(true), marker)))
+                    return false;
+
+                return true;
             }
             catch
             {
                 return false;
             }
+        }
+
+        private static string GetSystemDir(bool wow64)
+        {
+            string windir = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
+
+            if (wow64)
+                return Path.Combine(windir, "SysWOW64");
+
+            if (!Environment.Is64BitProcess && Environment.Is64BitOperatingSystem)
+                return Path.Combine(windir, "Sysnative");
+
+            return Path.Combine(windir, "System32");
         }
 
         public static bool IsDokanyInstalled()
