@@ -129,6 +129,8 @@ namespace RetroBuild
                     CopyTemplateFiles(options);
                     Console.WriteLine("=====================");
                     SetVersion(options);
+                    Console.WriteLine("=====================");
+                    CleanBuild(options);
 
                     break;
                 case "2":
@@ -841,6 +843,18 @@ namespace RetroBuild
             string sdl3TargetPath = Path.Combine(buildPath, "emulationstation", "SDL3.dll");
             Logger.LogInfo($"Copying SDL3 from {sdl3Path} to {sdl3TargetPath}");
             File.Copy(sdl3Path, sdl3TargetPath, true);
+
+            // Remove the SDL3 dll of the other architecture from the build
+            string unusedSdl3 = Path.Combine(buildPath, "system", "tools", options.Architecture == "win32" ? "SDL3_x64.dll" : "SDL3_x86.dll");
+            try
+            {
+                if (File.Exists(unusedSdl3))
+                {
+                    File.Delete(unusedSdl3);
+                    Logger.LogInfo("Removed unused SDL3 dll: " + unusedSdl3);
+                }
+            }
+            catch (Exception ex) { Logger.Log("[WARNING] Failed to remove " + unusedSdl3 + ": " + ex.Message); }
         }
 
         static void GetLibretroCores(BuilderOptions options)
@@ -1116,6 +1130,48 @@ namespace RetroBuild
                 doc.Save(settingsFile);
 
                 Logger.LogInfo($"Update type set to: {branch}");
+            }
+        }
+
+        static void CleanBuild(BuilderOptions options)
+        {
+            string task = "clean_build";
+            Logger.LogLabel(task);
+
+            Console.WriteLine(":: REMOVING BUILD-ONLY FILES...");
+
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string buildPath = Path.Combine(rootPath, "build");
+            string cleanupFile = Path.Combine(buildPath, "system", "configgen", "build_cleanup.lst");
+
+            if (!File.Exists(cleanupFile))
+            {
+                Logger.LogInfo("Missing 'build_cleanup.lst' file.");
+                return;
+            }
+
+            foreach (var line in File.ReadAllLines(cleanupFile))
+            {
+                if (string.IsNullOrWhiteSpace(line) || line.TrimStart().StartsWith("#"))
+                    continue;
+
+                string target = Path.Combine(buildPath, Methods.NormalizePath(line));
+
+                try
+                {
+                    if (File.Exists(target))
+                        File.Delete(target);
+                    else if (Directory.Exists(target))
+                        Directory.Delete(target, true);
+                    else
+                    {
+                        Logger.LogInfo("Not found, skipped: " + target);
+                        continue;
+                    }
+
+                    Logger.LogInfo("Removed from build: " + target);
+                }
+                catch (Exception ex) { Logger.Log("[WARNING] Failed to remove " + target + ": " + ex.Message); }
             }
         }
     }
