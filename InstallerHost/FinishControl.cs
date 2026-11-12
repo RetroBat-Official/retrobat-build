@@ -255,7 +255,7 @@ namespace InstallerHost
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Unable to open link: " + ex.Message);
+                    MessageBox.Show(Texts.GetString("LinkFail") + ex.Message);
                 }
             }
         }
