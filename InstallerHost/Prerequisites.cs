@@ -356,7 +356,7 @@ namespace InstallerHost
             if (e.Result is Exception ex)
             {
                 Logger.Log("Installation error: " + ex.Message);
-                MessageBox.Show(Texts.GetString("InstallFail") + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Texts.GetString("InstallFail") + ex.Message, Texts.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 btnNext.Enabled = true;
                 btnBack.Enabled = true;
@@ -469,7 +469,7 @@ namespace InstallerHost
                 catch (Exception ex)
                 {
                     Logger.Log("DirectX installation failed: " + ex.Message);
-                    MessageBox.Show("DirectX installation failed:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(Texts.GetString("DXFail") + ex.Message, Texts.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
                 try { Directory.Delete(tempRoot, true); } catch { }
@@ -528,7 +528,7 @@ namespace InstallerHost
                 catch (Exception ex)
                 {
                     Logger.Log($"Failed to install {zipFileName}: {ex.Message}");
-                    MessageBox.Show($"Error installing {zipFileName}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(Texts.GetString("PrereqFail", zipFileName, ex.Message), Texts.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 UpdateProgressBarSafe();
             }
@@ -588,7 +588,7 @@ namespace InstallerHost
                 catch (Exception ex)
                 {
                     Logger.Log($"Failed to install {zipFileName}: {ex.Message}");
-                    MessageBox.Show($"Error installing {zipFileName}:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(Texts.GetString("PrereqFail", zipFileName, ex.Message), Texts.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
                 UpdateProgressBarSafe();
             }
@@ -643,7 +643,7 @@ namespace InstallerHost
                     catch (Exception ex)
                     {
                         Logger.Log("WinFsp installation failed: " + ex.Message);
-                        MessageBox.Show("WinFsp installation failed:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(Texts.GetString("WinFspFail") + ex.Message, Texts.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }

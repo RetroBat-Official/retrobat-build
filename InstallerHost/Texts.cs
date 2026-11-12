@@ -119,7 +119,10 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                         text = "Select the installation folder:";
                         break;
                     case "FolderNotEmpty":
-                        text = "The selected folder is not empty. Please choose an empty folder or a new folder.";
+                        text = "The selected folder is not empty. Files with the same name will be replaced.\n\nDo you want to continue?";
+                        break;
+                    case "RetroBatDetected":
+                        text = "A RetroBat installation was detected in this folder.\n\nIf you continue, all RetroBat settings (EmulationStation, controllers, emulators) will be reset to default and some saves (MAME, Naomi, Atomiswave NVRAM) will be overwritten. Your games are kept.\n\nTo update RetroBat, use the update option from the RetroBat menu instead.\n\nDo you want to continue?";
                         break;
                     case "LicenseText":
                         text = licence;
@@ -143,7 +146,19 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                         text = "The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters.";
                         break;
                     case "InstallCompleteDescription":
-                        text = "Retrobat has been installer to your computer.\n\nPress finish to close this wizard";
+                        text = "RetroBat has been installed on your computer.\n\nClick Finish to close this wizard.";
+                        break;
+                    case "DXFail":
+                        text = "DirectX installation failed:\n";
+                        break;
+                    case "WinFspFail":
+                        text = "WinFsp installation failed:\n";
+                        break;
+                    case "PrereqFail":
+                        text = "Error installing {0}:\n{1}";
+                        break;
+                    case "LinkFail":
+                        text = "Unable to open link: ";
                         break;
                     default:
                         text = key;
@@ -176,7 +191,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallTitle", "Целева папка" },
             { "InstallInfo", "Програмата за инсталиране ще инсталира RetroBat в папката по-долу.\n\nЗа да продължите, щракнете върху „Напред“. Ако искате да изберете друга папка, щракнете върху „Преглед“." },
             { "InstallFolderHint", "Програмата изисква поне 3.38 GB свободно дисково пространство.\n\nНе използвай папки с специални символи." },
-            { "FolderNotEmpty", "Избраната папка не е празна. Моля, изберете празна папка или създайте нова." },
+            { "FolderNotEmpty", "Избраната папка не е празна. Файловете със същото име ще бъдат заменени.\n\nИскате ли да продължите?" },
+            { "RetroBatDetected", "В тази папка е открита инсталация на RetroBat.\n\nАко продължите, всички настройки на RetroBat (EmulationStation, контролери, емулатори) ще бъдат върнати по подразбиране, а някои записи (NVRAM на MAME, Naomi, Atomiswave) ще бъдат презаписани. Игрите ви ще бъдат запазени.\n\nЗа да обновите RetroBat, използвайте вместо това опцията за обновяване от менюто на RetroBat.\n\nИскате ли да продължите?" },
             { "ValidFolder", "Моля, изберете валидна папка за инсталиране." },
             { "FailedFolder", "Неуспешно създаване на инсталационна папка: " },
             { "ExtractFail", "Неуспешно извличане на данните на инсталатора: " },
@@ -189,6 +205,12 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Error", "Грешка" },
             { "StartupError", "Възникна грешка при стартиране. Вижте файла с логове за повече информация." },
             { "PrerequisiteIntro", "Изберете компонентите за инсталиране, преди да продължите." },
+            { "All prerequisites installed", "Всички необходими компоненти са инсталирани" },
+            { "InstallCompleteDescription", "RetroBat е инсталиран на вашия компютър.\n\nНатиснете Готово, за да затворите този съветник." },
+            { "DXFail", "Инсталирането на DirectX е неуспешно:\n" },
+            { "WinFspFail", "Инсталирането на WinFsp е неуспешно:\n" },
+            { "PrereqFail", "Грешка при инсталиране на {0}:\n{1}" },
+            { "LinkFail", "Връзката не може да бъде отворена: " },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Наследена версия)" },
             { "dokanyText", "Dokan (използва се за монтиране на XBOX образи с CXBX)" },
@@ -221,7 +243,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallInfo", "L'assistant va installer RetroBat dans le dossier suivant.\nPour continuer, cliquez sur Suivant. Si vous souhaitez choisir un dossier différent, cliquez sur Parcourir." },
             { "InstallFolderHint", "Le programme requiert au moins 3,38 Go d'espace disque disponible.\n\nN'utilisez pas de dossier avec des espaces ou des caractères spéciaux !" },
             {  "InstallCompleteDescription", "Retrobat a été installé sur votre ordinateur.\n\nAppuyez sur terminer pour fermer cet assistant." },
-            { "FolderNotEmpty", "Le dossier sélectionné n'est pas vide. Veuillez choisir un dossier vide ou créez un nouveau dossier." },
+            { "FolderNotEmpty", "Le dossier sélectionné n'est pas vide. Les fichiers portant le même nom seront remplacés.\n\nVoulez-vous continuer ?" },
+            { "RetroBatDetected", "Une installation de RetroBat a été détectée dans ce dossier.\n\nSi vous continuez, tous les paramétrages de RetroBat (EmulationStation, manettes, émulateurs) seront réinitialisés et certaines sauvegardes (NVRAM MAME, Naomi, Atomiswave) seront écrasées. Vos jeux sont conservés.\n\nPour mettre à jour RetroBat, utilisez plutôt l'option de mise à jour du menu RetroBat.\n\nVoulez-vous continuer ?" },
             { "ValidFolder", "Veuillez sélectionner un dossier valide." },
             { "FailedFolder", "Erreur lors de la création du dossier: " },
             { "ExtractFail", "Erreur lors de l'extraction des fichiers: " },
@@ -234,6 +257,11 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Error", "Erreur" },
             { "StartupError", "Erreur au lancement de l'application, consultez le log." },
             { "PrerequisiteIntro", "Sélectionnez les prérequis à installer." },
+            { "All prerequisites installed", "Tous les prérequis sont installés" },
+            { "DXFail", "Échec de l'installation de DirectX :\n" },
+            { "WinFspFail", "Échec de l'installation de WinFsp :\n" },
+            { "PrereqFail", "Erreur lors de l'installation de {0} :\n{1}" },
+            { "LinkFail", "Impossible d'ouvrir le lien : " },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
             { "dokanyText", "Dokan (permet de monter les images Xbox avec CXBX)" },
@@ -265,7 +293,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallTitle", "Zielordner" },
             { "InstallInfo", "RetroBat wird im unten angegebenen Ordner installiert.\n\nZum Fortfahren auf Weiter klicken, für einen anderen Ordner auf Durchsuchen." },
             { "InstallFolderHint", "Das Programm benötigt mindestens 3,38 GB freien Speicherplatz.\n\nVermeiden Sie Ordner mit Leerzeichen oder Sonderzeichen." },
-            { "FolderNotEmpty", "Der gewählte Ordner ist nicht leer. Bitte wähle einen leeren oder neuen Ordner." },
+            { "FolderNotEmpty", "Der gewählte Ordner ist nicht leer. Dateien mit gleichem Namen werden ersetzt.\n\nMöchtest du fortfahren?" },
+            { "RetroBatDetected", "In diesem Ordner wurde eine RetroBat-Installation erkannt.\n\nWenn du fortfährst, werden alle RetroBat-Einstellungen (EmulationStation, Controller, Emulatoren) auf die Standardwerte zurückgesetzt und einige Spielstände (NVRAM von MAME, Naomi, Atomiswave) überschrieben. Deine Spiele bleiben erhalten.\n\nUm RetroBat zu aktualisieren, verwende stattdessen die Update-Option im RetroBat-Menü.\n\nMöchtest du fortfahren?" },
             { "ValidFolder", "Bitte wähle einen gültigen Installationsordner." },
             { "FailedFolder", "Erstellen des Installationsordners fehlgeschlagen: " },
             { "ExtractFail", "Entpacken der Installationsdaten fehlgeschlagen: " },
@@ -278,6 +307,12 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Error", "Fehler" },
             { "StartupError", "Startfehler aufgetreten. Siehe Logdatei für Details." },
             { "PrerequisiteIntro", "Wähle die zu installierenden Komponenten aus, bevor du fortfährst." },
+            { "All prerequisites installed", "Alle Voraussetzungen sind installiert" },
+            { "InstallCompleteDescription", "RetroBat wurde auf deinem Computer installiert.\n\nKlicke auf Fertigstellen, um diesen Assistenten zu schließen." },
+            { "DXFail", "DirectX-Installation fehlgeschlagen:\n" },
+            { "WinFspFail", "WinFsp-Installation fehlgeschlagen:\n" },
+            { "PrereqFail", "Fehler bei der Installation von {0}:\n{1}" },
+            { "LinkFail", "Link konnte nicht geöffnet werden: " },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Altversion)" },
             { "dokanyText", "Dokan (zum Einbinden von XBOX-Images mit CXBX)" },
@@ -309,7 +344,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallTitle", "Cartella di destinazione" },
             { "InstallInfo", "Il programma di installazione installerà RetroBat nella cartella indicata di seguito.\n\nPer continuare, fai clic su Avanti. Se vuoi specificare un'altra cartella, fai clic su Sfoglia." },
             { "InstallFolderHint", "Il programma richiede almeno 3,38 GB di spazio libero su disco.\n\nNon utilizzare cartelle con spazi o caratteri speciali." },
-            { "FolderNotEmpty", "La cartella selezionata non è vuota. Scegli una cartella vuota o una nuova cartella." },
+            { "FolderNotEmpty", "La cartella selezionata non è vuota. I file con lo stesso nome verranno sostituiti.\n\nVuoi continuare?" },
+            { "RetroBatDetected", "È stata rilevata un'installazione di RetroBat in questa cartella.\n\nSe continui, tutte le impostazioni di RetroBat (EmulationStation, controller, emulatori) verranno ripristinate ai valori predefiniti e alcuni salvataggi (NVRAM MAME, Naomi, Atomiswave) verranno sovrascritti. I tuoi giochi vengono mantenuti.\n\nPer aggiornare RetroBat, usa invece l'opzione di aggiornamento del menu RetroBat.\n\nVuoi continuare?" },
             { "ValidFolder", "Seleziona una cartella di installazione valida." },
             { "FailedFolder", "Impossibile creare la cartella di installazione: " },
             { "ExtractFail", "Impossibile estrarre i dati dell’installatore: " },
@@ -322,6 +358,12 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Error", "Errore" },
             { "StartupError", "Si è verificato un errore di avvio. Consultare il file di registro per i dettagli." },
             { "PrerequisiteIntro", "Seleziona i componenti da installare prima di continuare." },
+            { "All prerequisites installed", "Tutti i prerequisiti sono installati" },
+            { "InstallCompleteDescription", "RetroBat è stato installato sul tuo computer.\n\nFai clic su Fine per chiudere questa procedura guidata." },
+            { "DXFail", "Installazione di DirectX non riuscita:\n" },
+            { "WinFspFail", "Installazione di WinFsp non riuscita:\n" },
+            { "PrereqFail", "Errore durante l'installazione di {0}:\n{1}" },
+            { "LinkFail", "Impossibile aprire il link: " },
             { "vcText", "Microsoft Visual C++ Redistributable (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Eredità)" },
             { "dokanyText", "Dokan (usato per montare immagini XBOX con CXBX)" },
@@ -353,7 +395,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallTitle", "Folder docelowy" },
             { "InstallInfo", "Program instalacyjny zainstaluje RetroBat w poniższym folderze.\n\nAby kontynuować, kliknij Dalej. Jeśli chcesz wybrać inny folder, kliknij Przeglądaj." },
             { "InstallFolderHint", "Program wymaga co najmniej 3,38 GB wolnego miejsca na dysku.\n\nNie używaj folderów zawierających spacje lub znaki specjalne." },
-            { "FolderNotEmpty", "Wybrany folder nie jest pusty. Wybierz pusty folder lub nowy folder." },
+            { "FolderNotEmpty", "Wybrany folder nie jest pusty. Pliki o tej samej nazwie zostaną zastąpione.\n\nCzy chcesz kontynuować?" },
+            { "RetroBatDetected", "W tym folderze wykryto instalację RetroBat.\n\nJeśli będziesz kontynuować, wszystkie ustawienia RetroBat (EmulationStation, kontrolery, emulatory) zostaną przywrócone do domyślnych, a niektóre zapisy (NVRAM MAME, Naomi, Atomiswave) zostaną nadpisane. Twoje gry zostaną zachowane.\n\nAby zaktualizować RetroBat, użyj zamiast tego opcji aktualizacji w menu RetroBat.\n\nCzy chcesz kontynuować?" },
             { "ValidFolder", "Wybierz prawidłowy folder instalacyjny." },
             { "FailedFolder", "Nie udało się utworzyć folderu instalacyjnego: " },
             { "ExtractFail", "Nie udało się rozpakować danych instalatora: " },
@@ -366,6 +409,12 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Error", "Błąd" },
             { "StartupError", "Wystąpił błąd uruchamiania. Szczegółowe informacje znajdują się w pliku dziennika." },
             { "PrerequisiteIntro", "Przed kontynuowaniem wybierz komponenty do zainstalowania." },
+            { "All prerequisites installed", "Wszystkie wymagane składniki są zainstalowane" },
+            { "InstallCompleteDescription", "RetroBat został zainstalowany na Twoim komputerze.\n\nKliknij Zakończ, aby zamknąć tego kreatora." },
+            { "DXFail", "Instalacja DirectX nie powiodła się:\n" },
+            { "WinFspFail", "Instalacja WinFsp nie powiodła się:\n" },
+            { "PrereqFail", "Błąd podczas instalacji {0}:\n{1}" },
+            { "LinkFail", "Nie można otworzyć linku: " },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
             { "dokanyText", "Dokan (używany do montowania obrazów XBOX za pomocą CXBX)" },
@@ -397,7 +446,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "InstallTitle", "Carpeta de destino" },
             { "InstallInfo", "El programa de instalación instalará RetroBat en la carpeta indicada a continuación.\n\nPara continuar, haga click en Siguiente. Si desea especificar otra carpeta, haga click en Examinar" },
             { "InstallFolderHint", "El programa requiere al menos 3.38 GB de espacio libre en el disco.\n\nNo uses carpetas con espacios ni caracteres especiales." },
-            { "FolderNotEmpty", "La carpeta seleccionada no está vacía. Por favor elija una carpeta vacía o cree una nueva." },
+            { "FolderNotEmpty", "La carpeta seleccionada no está vacía. Los archivos con el mismo nombre serán reemplazados.\n\n¿Desea continuar?" },
+            { "RetroBatDetected", "Se ha detectado una instalación de RetroBat en esta carpeta.\n\nSi continúa, todos los ajustes de RetroBat (EmulationStation, mandos, emuladores) se restablecerán por defecto y algunas partidas guardadas (NVRAM de MAME, Naomi, Atomiswave) se sobrescribirán. Sus juegos se conservan.\n\nPara actualizar RetroBat, utilice en su lugar la opción de actualización del menú de RetroBat.\n\n¿Desea continuar?" },
             { "ValidFolder", "Por favor seleccione una carpeta de instalación válida." },
             { "FailedFolder", "Fallo al crear la carpeta de instalación: " },
             { "ExtractFail", "Fallo al extraer los datos del instalador: " },
@@ -410,6 +460,12 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Error", "Error" },
             { "StartupError", "Ocurrió un error de inicio. Consulte el archivo de registro para más detalles." },
             { "PrerequisiteIntro", "Seleccione los componentes que desea instalar antes de continuar." },
+            { "All prerequisites installed", "Todos los requisitos previos están instalados" },
+            { "InstallCompleteDescription", "RetroBat se ha instalado en su equipo.\n\nPulse Finalizar para cerrar este asistente." },
+            { "DXFail", "Error al instalar DirectX:\n" },
+            { "WinFspFail", "Error al instalar WinFsp:\n" },
+            { "PrereqFail", "Error al instalar {0}:\n{1}" },
+            { "LinkFail", "No se puede abrir el enlace: " },
             { "vcText", "Microsoft Visual C++ Redistributables (2005–2022, x86 + x64)" },
             { "dx9text", "DirectX 9 (Legacy)" },
             { "dokanyText", "Dokan (usado para montar imágenes de XBOX con CXBX)" },

@@ -226,9 +226,18 @@ namespace InstallerHost
             {
                 if (Directory.EnumerateFileSystemEntries(selectedPath).Any())
                 {
-                    Logger.Log("[WARNING] Installation folder not empty.");
-                 //   MessageBox.Show(Texts.GetString("FolderNotEmpty"));
-                //    return;
+                    // Existing RetroBat install: user settings will be overwritten
+                    bool retrobatDetected = File.Exists(Path.Combine(selectedPath, "system", "version.info")) || File.Exists(Path.Combine(selectedPath, "retrobat.exe"));
+                    Logger.Log(retrobatDetected ? "[WARNING] Existing RetroBat installation detected." : "[WARNING] Installation folder not empty.");
+
+                    var answer = MessageBox.Show(this, Texts.GetString(retrobatDetected ? "RetroBatDetected" : "FolderNotEmpty"), Texts.GetString("WindowsTitle").Trim(),
+                        MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2);
+
+                    if (answer != DialogResult.Yes)
+                    {
+                        Logger.Log("[INFO] Installation in non-empty folder cancelled by user.");
+                        return;
+                    }
                 }
             }
             else
