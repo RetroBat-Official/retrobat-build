@@ -144,7 +144,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\wget.exe" />
     <EmbeddedResource Include="resources\7za.exe" />
   </ItemGroup>
   <ItemGroup>

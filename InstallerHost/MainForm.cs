@@ -7,15 +7,28 @@ namespace InstallerHost
     {
         private UserControl currentControl;
 
-        public MainForm() : base()
+        private string _prerequisitesToInstall;
+
+        public MainForm(string prerequisitesToInstall = null) : base()
         {
-            this.DoubleBuffered = true;                        
+            this.DoubleBuffered = true;
+            _prerequisitesToInstall = prerequisitesToInstall;
         }
 
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-            ShowWelcome();          
+
+            // Instance started as administrator by the prerequisites page: install them and exit
+            if (_prerequisitesToInstall != null)
+            {
+                _prerequisite = new PrerequisiteControl(this);
+                ShowControl(_prerequisite);
+                _prerequisite.InstallAndExit(_prerequisitesToInstall);
+                return;
+            }
+
+            ShowWelcome();
         }
 
         private void ShowControl(UserControl control)

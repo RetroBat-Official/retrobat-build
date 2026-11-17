@@ -42,8 +42,13 @@ namespace InstallerHost
             };
             CultureInfo windowsCulture = CultureInfo.CurrentUICulture;
 
+            // Set when the setup restarts itself as administrator, only to install the prerequisites
+            string prerequisites = null;
+
             for (int i = 0; i < args.Length - 1; i++)
             {
+                if (args[i].Equals("-prerequisites", StringComparison.OrdinalIgnoreCase))
+                    prerequisites = args[i + 1];
                 if (args[i].Equals("-lang", StringComparison.OrdinalIgnoreCase))
                 {
                     try
@@ -76,7 +81,7 @@ namespace InstallerHost
             try
             {
                 Logger.Log("Running RetroBat Installer.");
-                Application.Run(new MainForm());
+                Application.Run(new MainForm(prerequisites));
             }
             catch (Exception ex)
             {
