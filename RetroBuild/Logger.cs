@@ -23,8 +23,14 @@ namespace RetroBuild
             }
         }
 
+        // Messages logged with the [ERROR] tag: if any, the build is reported as failed
+        public static readonly List<string> Errors = new List<string>();
+
         public static void Log(string message)
         {
+            if (message.Contains("[ERROR]"))
+                Errors.Add(message.Trim());
+
             string timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             string formatted = $"{timestamp} {message}";
 

@@ -160,6 +160,9 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                     case "LinkFail":
                         text = "Unable to open link: ";
                         break;
+                    case "SetupCorrupted":
+                        text = "This setup file is incomplete or damaged. The download probably did not finish.\n\nDelete this file and download RetroBat again from https://www.retrobat.org";
+                        break;
                     default:
                         text = key;
                         break;
@@ -220,7 +223,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Extracting", "Извличане" },
             { "InstallDX", "Инсталиране на DirectX..." },
             { "Installing", "Инсталиране" },
-            { "WaitingSelect", "Изчакване на избор..." }
+            { "WaitingSelect", "Изчакване на избор..." },
+            { "SetupCorrupted", "Този инсталационен файл е непълен или повреден. Изтеглянето вероятно не е завършило.\n\nИзтрийте този файл и изтеглете RetroBat отново от https://www.retrobat.org" },
         };
 
         private static Dictionary<string, string> frenchStrings = new Dictionary<string, string> // OK
@@ -271,7 +275,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Extracting", "Extraction de" },
             { "InstallDX", "Installation de DirectX..." },
             { "Installing", "Installation de" },
-            { "WaitingSelect", "En attente des choix..." }
+            { "WaitingSelect", "En attente des choix..." },
+            { "SetupCorrupted", "Ce fichier d'installation est incomplet ou endommagé. Le téléchargement ne s'est probablement pas terminé.\n\nSupprimez ce fichier et téléchargez à nouveau RetroBat depuis https://www.retrobat.org" },
         };
 
         private static Dictionary<string, string> germanStrings = new Dictionary<string, string>
@@ -322,7 +327,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Extracting", "Wird entpackt" },
             { "InstallDX", "DirectX wird installiert…" },
             { "Installing", "Wird installiert" },
-            { "WaitingSelect", "Warte auf Auswahl…" }
+            { "WaitingSelect", "Warte auf Auswahl…" },
+            { "SetupCorrupted", "Diese Setup-Datei ist unvollständig oder beschädigt. Der Download wurde wahrscheinlich nicht abgeschlossen.\n\nLöschen Sie diese Datei und laden Sie RetroBat erneut von https://www.retrobat.org herunter." },
         };
 
         private static Dictionary<string, string> italianStrings = new Dictionary<string, string>
@@ -373,7 +379,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Extracting", "Estrazione in corso" },
             { "InstallDX", "Installazione di DirectX..." },
             { "Installing", "Installazione in corso" },
-            { "WaitingSelect", "In attesa della selezione..." }
+            { "WaitingSelect", "In attesa della selezione..." },
+            { "SetupCorrupted", "Questo file di installazione è incompleto o danneggiato. Probabilmente il download non è stato completato.\n\nElimina questo file e scarica di nuovo RetroBat da https://www.retrobat.org" },
         };
 
         private static Dictionary<string, string> polishStrings = new Dictionary<string, string> //OK
@@ -424,7 +431,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Extracting", "Rozpakowywanie" },
             { "InstallDX", "Instalowanie DirectX..." },
             { "Installing", "Instalowanie" },
-            { "WaitingSelect", "Oczekiwanie na wybór..." }
+            { "WaitingSelect", "Oczekiwanie na wybór..." },
+            { "SetupCorrupted", "Ten plik instalacyjny jest niekompletny lub uszkodzony. Pobieranie prawdopodobnie nie zostało ukończone.\n\nUsuń ten plik i pobierz RetroBat ponownie ze strony https://www.retrobat.org" },
         };
 
         private static Dictionary<string, string> spanishStrings = new Dictionary<string, string> //OK
@@ -475,7 +483,8 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "Extracting", "Extrayendo" },
             { "InstallDX", "Instalando DirectX..." },
             { "Installing", "Instalando" },
-            { "WaitingSelect", "Esperando la selección..." }
+            { "WaitingSelect", "Esperando la selección..." },
+            { "SetupCorrupted", "Este archivo de instalación está incompleto o dañado. Es probable que la descarga no haya terminado.\n\nElimina este archivo y vuelve a descargar RetroBat desde https://www.retrobat.org" },
         };
         #endregion
     }
