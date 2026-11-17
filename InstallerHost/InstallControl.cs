@@ -272,8 +272,13 @@ namespace InstallerHost
                     if (!SetupPayload.Find() || !SetupPayload.Verify(percent => worker.ReportProgress(percent / 10)))
                         throw new Exception(Texts.GetString("SetupCorrupted"));
 
-                    using (var stream = GetEmbeddedZipStream())
-                        ExtractZipStreamToFolder(stream, destinationPath);                    
+                    if (SetupPayload.Is7z)
+                        SetupPayload.Extract7z(destinationPath, percent => worker.ReportProgress(10 + percent * 9 / 10));
+                    else
+                    {
+                        using (var stream = GetEmbeddedZipStream())
+                            ExtractZipStreamToFolder(stream, destinationPath);
+                    }
                 }
                 catch (Exception ex)
                 {
