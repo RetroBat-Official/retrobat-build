@@ -15,26 +15,10 @@ namespace RetroBuild
             string rootPath = AppDomain.CurrentDomain.BaseDirectory;
             string buildPath = rootPath;
 
-            // Find your ZIP archive
-            string zipName = $"retrobat-v{options.RetrobatVersion}-{options.Branch}-{options.Architecture}.zip";
-            string zipPath = Path.Combine(rootPath, zipName);
-
-            if (!File.Exists(zipPath))
-            {
-                Logger.Log("[INFO] zip not found, creating zip first.");
-                try { Program.CreateZipFolderSharpZip(options); }
-                catch (Exception ex)
-                {
-                    Logger.Log("[ERROR] Exception creating ZIP: " + ex.Message);
-                }
-            }
-
-            if (!File.Exists(zipPath))
-            {
-                Logger.Log("[ERROR] No .zip file found at: " + zipPath);
-                return;
-            }
-            Logger.LogInfo("Found zip file: " + zipPath);
+            // Archive embedded in the setup: 7z (smaller) or the zip that is also used for updates
+            bool use7z = options.InstallerFormat == "7z";
+            string archiveName = $"retrobat-v{options.RetrobatVersion}-{options.Branch}-{options.Architecture}" + (use7z ? ".7z" : ".zip");
+            string archivePath = Path.Combine(rootPath, archiveName);
 
             string installerHostExePath = Path.Combine(rootPath, "InstallerHost.exe");
 
@@ -44,6 +28,29 @@ namespace RetroBuild
                 return;
             }
             Logger.LogInfo("Found InstallerHost.exe at: " + installerHostExePath);
+
+            if (use7z)
+            {
+                // Always rebuilt and deleted afterwards: the setup never embeds the archive of a previous build
+                if (!Program.Create7zArchive(options, archivePath))
+                    return;
+            }
+            else if (!File.Exists(archivePath))
+            {
+                Logger.Log("[INFO] zip not found, creating zip first.");
+                try { Program.CreateZipFolderSharpZip(options); }
+                catch (Exception ex)
+                {
+                    Logger.Log("[ERROR] Exception creating ZIP: " + ex.Message);
+                }
+            }
+
+            if (!File.Exists(archivePath))
+            {
+                Logger.Log("[ERROR] No archive found at: " + archivePath);
+                return;
+            }
+            Logger.LogInfo("Found archive: " + archivePath);
 
             try
             {
@@ -59,21 +66,21 @@ namespace RetroBuild
                         installerStream.CopyTo(outputStream);
                     }
 
-                    // Write ZIP
-                    using (var zipStream = new FileStream(zipPath, FileMode.Open, FileAccess.Read))
+                    // Write archive
+                    using (var archiveStream = new FileStream(archivePath, FileMode.Open, FileAccess.Read))
                     {
-                        zipStream.CopyTo(outputStream);
+                        archiveStream.CopyTo(outputStream);
                     }
 
-                    // Write footer, read by SetupPayload.cs in InstallerHost: ZIP length (8 bytes) + ZIP sha256 (32 bytes) + signature (8 bytes)
-                    byte[] zipLengthBytes = BitConverter.GetBytes(new FileInfo(zipPath).Length);
-                    outputStream.Write(zipLengthBytes, 0, zipLengthBytes.Length);
+                    // Write footer, read by SetupPayload.cs in InstallerHost: archive length (8 bytes) + archive sha256 (32 bytes) + signature (8 bytes)
+                    byte[] archiveLengthBytes = BitConverter.GetBytes(new FileInfo(archivePath).Length);
+                    outputStream.Write(archiveLengthBytes, 0, archiveLengthBytes.Length);
 
-                    byte[] zipHash;
-                    using (var zipStream = File.OpenRead(zipPath))
+                    byte[] archiveHash;
+                    using (var archiveStream = File.OpenRead(archivePath))
                     using (var sha = SHA256.Create())
-                        zipHash = sha.ComputeHash(zipStream);
-                    outputStream.Write(zipHash, 0, zipHash.Length);
+                        archiveHash = sha.ComputeHash(archiveStream);
+                    outputStream.Write(archiveHash, 0, archiveHash.Length);
 
                     byte[] signature = Encoding.ASCII.GetBytes("RBSETUP2");
                     outputStream.Write(signature, 0, signature.Length);
@@ -95,11 +102,16 @@ namespace RetroBuild
                         File.WriteAllText(shaFile, sha256);
                 }
 
-                Logger.LogInfo("Created final installer executable: " + finalInstallerPath);
+                Logger.LogInfo("Created final installer executable: " + finalInstallerPath + " (" + new FileInfo(finalInstallerPath).Length + " bytes)");
             }
             catch (Exception ex)
             {
                 Logger.Log("[ERROR] Exception creating installer: " + ex.Message);
+            }
+            finally
+            {
+                if (use7z)
+                    try { File.Delete(archivePath); } catch { }
             }
         }
     }

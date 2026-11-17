@@ -74,6 +74,8 @@ namespace RetroBuild
         public bool GetSystem { get; set; }
         public bool GetWiimotegun { get; set; }
         public string SevenZipPath { get; set; }
+        public string InstallerFormat { get; set; }
+        public string Installer7zPath { get; set; }
         public string WgetPath { get; set; }
         public string CurlPath { get; set; }
         public string RetrobatFTPPath { get; set; }
@@ -113,6 +115,9 @@ namespace RetroBuild
             opt.GetSystem = parser.Get(section, "get_system") == "1";
             opt.GetWiimotegun = parser.Get(section, "get_wiimotegun") == "1";
             opt.SevenZipPath = Methods.PathCombineExeDir(parser.Get(section, "7za_path", "system\\tools\\7za.exe"));
+            opt.InstallerFormat = parser.Get(section, "installer_format", "zip").Trim().ToLowerInvariant() == "7z" ? "7z" : "zip";
+            string installer7zPath = parser.Get(section, "installer_7z_path", "").Trim();
+            opt.Installer7zPath = installer7zPath == "" ? null : Methods.PathCombineExeDir(installer7zPath);
             opt.WgetPath = Methods.PathCombineExeDir(parser.Get(section, "wget_path", "system\\tools\\wget.exe"));
             opt.CurlPath = Methods.PathCombineExeDir(parser.Get(section, "curl_path", "system\\tools\\curl.exe"));
             opt.RetrobatFTPPath = parser.Get(section, "retrobat_ftp", "http://www.retrobat.ovh/repo/");

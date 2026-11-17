@@ -21,7 +21,7 @@ namespace RetroBuild
         // False when an option is given on the command line: no menu, no key press
         private static bool _interactive = true;
 
-        // Usage: RetroBuild.exe [1|2|3|all], without argument the menu is shown
+        // Usage: RetroBuild.exe [1|2|3|4|all], without argument the menu is shown
         static int Main(string[] args)
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
@@ -99,8 +99,9 @@ namespace RetroBuild
                 Console.WriteLine("---------------------------------------------------\n");
                 Console.WriteLine("=====================\n");
                 Console.WriteLine("1 - Download and configure");
-                Console.WriteLine("2 - Create archive");
-                Console.WriteLine("3 - Create installer (need archive created first)");
+                Console.WriteLine("2 - Create update archive (zip)");
+                Console.WriteLine("3 - Create installer (zip + installer exe)");
+                Console.WriteLine("4 - Create installer (7z + installer exe, smaller)");
                 Console.WriteLine("Q - Quit\n");
                 Console.Write("Please type your choice here: ");
 
@@ -118,6 +119,11 @@ namespace RetroBuild
                         CreateArchive(options);
                         break;
                     case "3":
+                        options.InstallerFormat = "zip";
+                        CreateSetup(options);
+                        break;
+                    case "4":
+                        options.InstallerFormat = "7z";
                         CreateSetup(options);
                         break;
                     case "ALL":
@@ -132,7 +138,7 @@ namespace RetroBuild
                         Console.WriteLine("Exiting...");
                         return 0;
                     default:
-                        Logger.Log("[ERROR] Unknown option: " + choice + " (expected 1, 2, 3 or all).");
+                        Logger.Log("[ERROR] Unknown option: " + choice + " (expected 1, 2, 3, 4 or all).");
                         break;
                 }
             }
@@ -959,31 +965,22 @@ namespace RetroBuild
 
                 try
                 {
-                    int i = 0;
-                    bool success = false;
-                    for (i = 0; i < 5; i++)
-                    {
-                        success = Methods.DownloadAndExtractArchive_Wget(coreZipFile, targetCorePath, options);
-                        if (success)
-                        {
-                            Logger.LogInfo("Libretro Core " + core + " copied to: " + targetCorePath);
-                            break;
-                        }
-                        else
-                            Thread.Sleep(4000);
-                        i++;
-                    }
-                    
-                    if (!success)
+                    if (DownloadWithRetry(coreZipFile, targetCorePath, options, 5))
+                        Logger.LogInfo("Libretro Core " + core + " copied to: " + targetCorePath);
+                    else
                     {
                         Logger.LogInfo($"[WARNING] Failed to download or extract core: {core} from FTP, looking on RetroArch buildbot");
                         coreZipFile = options.RetroArchURL + "/nightly/windows/x86_64/latest/" + core + "_libretro.dll.zip";
-                        Methods.DownloadAndExtractArchive_Wget(coreZipFile, targetCorePath, options);
+
+                        if (DownloadWithRetry(coreZipFile, targetCorePath, options, 1))
+                            Logger.LogInfo("Libretro Core " + core + " copied from RetroArch buildbot to: " + targetCorePath);
+                        else
+                            Logger.Log("[ERROR] Libretro core not downloaded: " + core);
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Logger.Log($"[ERROR] Error downloading RetroArch core.");
+                    Logger.Log("[ERROR] Error downloading RetroArch core " + core + ": " + ex.Message);
                 }
             }
         }
@@ -1047,32 +1044,37 @@ namespace RetroBuild
 
                 try
                 {
-                    int i = 0;
-                    bool success = false;
-
-                    for (i = 0; i < 5; i++)
-                    {
-                        success = Methods.DownloadAndExtractArchive_Wget(emuZipFile, targetPath, options);
-                        if (success)
-                        {
-                            Logger.LogInfo("Emulator " + emu + " copied to: " + targetPath);
-                            break;
-                        }
-                        else
-                            Thread.Sleep(4000);
-                        i++;
-                    }
-
-                    if (!success)
-                    {
-                        Logger.LogInfo($"[WARNING] Failed to download or extract emulator: {emu} from FTP.");
-                    }
+                    if (DownloadWithRetry(emuZipFile, targetPath, options, 5))
+                        Logger.LogInfo("Emulator " + emu + " copied to: " + targetPath);
+                    else
+                        Logger.Log("[ERROR] Emulator not downloaded: " + emu);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    Logger.Log($"[ERROR] Error downloading Emulator.");
+                    Logger.Log("[ERROR] Error downloading emulator " + emu + ": " + ex.Message);
                 }
             }
+        }
+
+        /// <summary>
+        /// Downloads and extracts an archive, with several attempts.
+        /// The errors logged by the attempts are not kept as build errors: the caller logs one error if all attempts fail.
+        /// </summary>
+        static bool DownloadWithRetry(string url, string targetPath, BuilderOptions options, int attempts)
+        {
+            int errorsBefore = Logger.Errors.Count;
+            bool success = false;
+
+            for (int i = 0; i < attempts && !success; i++)
+            {
+                if (i > 0)
+                    Thread.Sleep(4000);
+
+                success = Methods.DownloadAndExtractArchive_Wget(url, targetPath, options);
+            }
+
+            Logger.Errors.RemoveRange(errorsBefore, Logger.Errors.Count - errorsBefore);
+            return success;
         }
 
         public static void CreateZipFolderSharpZip(BuilderOptions options)
@@ -1153,6 +1155,81 @@ namespace RetroBuild
             }
 
             Logger.LogInfo($"ZIP created at: {zipPath}");
+        }
+
+        /// <summary>
+        /// Creates the 7z archive embedded in the setup (LZMA2, solid). Returns false on failure.
+        /// </summary>
+        public static bool Create7zArchive(BuilderOptions options, string archivePath)
+        {
+            string task = "create_7zarchive";
+            Logger.LogLabel(task);
+
+            Console.WriteLine(":: CREATE 7Z ARCHIVE...");
+
+            string rootPath = AppDomain.CurrentDomain.BaseDirectory;
+            string sourceFolder = Path.Combine(rootPath, "build");
+
+            if (!Directory.Exists(sourceFolder))
+            {
+                Logger.Log("[ERROR] Source folder does not exist.");
+                return false;
+            }
+
+            // A 256 MB dictionary stores the many identical files (bezels) only once, but the 32-bit 7za.exe
+            // cannot allocate it: use installer_7z_path, else the installed 64-bit 7-Zip, else 7za.exe with 64 MB
+            string sevenZip = options.Installer7zPath;
+            string dictionary = "256m";
+
+            if (string.IsNullOrEmpty(sevenZip) || !File.Exists(sevenZip))
+            {
+                string programFiles = Environment.GetEnvironmentVariable("ProgramW6432") ?? Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                sevenZip = Path.Combine(programFiles, "7-Zip", "7z.exe");
+
+                if (!File.Exists(sevenZip))
+                {
+                    sevenZip = options.SevenZipPath;
+                    dictionary = "64m";
+                    Logger.Log("[WARNING] 64-bit 7-Zip not found, using 7za.exe with a 64 MB dictionary (bigger setup).");
+                }
+            }
+
+            Logger.LogInfo("Using 7-Zip: " + sevenZip + " (dictionary: " + dictionary + ")");
+
+            try
+            {
+                if (File.Exists(archivePath))
+                    File.Delete(archivePath);
+
+                string source = Path.Combine(sourceFolder, "*");
+
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = sevenZip,
+                    Arguments = $"a -t7z -m0=lzma2 -mx=9 -md={dictionary} -ms=on -mmt=on -bso0 -bsp1 \"{archivePath}\" \"{source}\"",
+                    UseShellExecute = false
+                };
+
+                // Not redirected: 7-Zip shows its progress in the console
+                using (var process = Process.Start(startInfo))
+                {
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
+                    {
+                        Logger.Log("[ERROR] 7-Zip failed with exit code " + process.ExitCode + ".");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("[ERROR] Exception creating 7z archive: " + ex.Message);
+                return false;
+            }
+
+            Logger.LogInfo($"7z created at: {archivePath} ({new FileInfo(archivePath).Length} bytes)");
+            return true;
         }
 
         public static string GetRelativePath(string basePath, string fullPath)
