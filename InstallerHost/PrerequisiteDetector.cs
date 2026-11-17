@@ -13,6 +13,9 @@ namespace InstallerHost
         private static readonly string[] Architectures = { "x86", "x64" };
         private static readonly string[] Versions = { "2005", "2008", "2010", "2012", "2013", "2015_2022" };
 
+        // Version of the VC++ v14 runtime hosted in the prerequisites, to update together with the archives
+        private static readonly Version MinimumVC14Version = new Version(14, 52, 37029);
+
         /// <summary>
         /// Checks if all VC++ redistributables (2005 → 2022) are installed for both x86 and x64.
         /// Returns false immediately if any one is missing.
@@ -29,6 +32,23 @@ namespace InstallerHost
             }
 
             return true; // all found
+        }
+
+        /// <summary>
+        /// True if the VC++ redistributable of a prerequisite archive (for example "vcredist2010_x86.zip") is already installed.
+        /// </summary>
+        public static bool IsVCppInstalled(string zipFileName)
+        {
+            string arch = zipFileName.Contains("x64") ? "x64" : "x86";
+
+            foreach (var version in Versions)
+            {
+                // The archive of version "2015_2022" is named "vcredist2015_2017_2019_2022"
+                if (zipFileName.StartsWith("vcredist" + version.Substring(0, 4)))
+                    return IsVersionInstalled(version, arch);
+            }
+
+            return false;
         }
 
         private static bool IsVersionInstalled(string version, string arch)
@@ -60,7 +80,12 @@ namespace InstallerHost
                 using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
                 using (var key = baseKey.OpenSubKey(path, RegistryKeyPermissionCheck.ReadSubTree))
                 {
-                    if ((int?)key?.GetValue("Installed") == 1)
+                    if ((int?)key?.GetValue("Installed") != 1)
+                        continue;
+
+                    // An older runtime is reported as missing, so that it gets updated
+                    var installed = new Version(Convert.ToInt32(key.GetValue("Major", 0)), Convert.ToInt32(key.GetValue("Minor", 0)), Convert.ToInt32(key.GetValue("Bld", 0)));
+                    if (installed >= MinimumVC14Version)
                         return true;
                 }
             }
@@ -70,9 +95,6 @@ namespace InstallerHost
         private static bool IsInstalledFromUninstall(string version, string arch)
         {
             string[] uninstallPaths = { @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", @"SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall" };
-
-            if (version == "2005")
-                version = "";
 
             foreach (var path in uninstallPaths)
             {
@@ -85,20 +107,29 @@ namespace InstallerHost
                     {
                         using (var subKey = key.OpenSubKey(subName))
                         {
-                            string displayName = subKey?.GetValue("DisplayName")?.ToString();
-
-                            if (!string.IsNullOrEmpty(displayName) &&
-                                displayName.Contains($"Microsoft Visual C++ {version}") &&
-                                displayName.Contains(arch))
-                            {
+                            if (IsVCppName(subKey?.GetValue("DisplayName")?.ToString(), version, arch))
                                 return true;
-                            }
                         }
                     }
                 }
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// True if an installed program name is the VC++ redistributable of this version and architecture.
+        /// </summary>
+        private static bool IsVCppName(string displayName, string version, string arch)
+        {
+            if (string.IsNullOrEmpty(displayName) || !displayName.Contains("Microsoft Visual C++ " + version))
+                return false;
+
+            // The 2005 x86 package has no architecture in its name: "Microsoft Visual C++ 2005 Redistributable"
+            if (version == "2005" && arch == "x86")
+                return !displayName.Contains("x64");
+
+            return displayName.Contains(arch);
         }
 
         public static bool IsDirectXJun2010Installed()

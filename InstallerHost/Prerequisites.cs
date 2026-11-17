@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -66,33 +68,33 @@ namespace InstallerHost
 
         private readonly Dictionary<string, InstallerInfo> vcRedistResources = new Dictionary<string, InstallerInfo>
         {
-            { "vcredist2005_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") },
-            { "vcredist2005_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") },
-            { "vcredist2008_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
-            { "vcredist2008_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
-            { "vcredist2010_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2010_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2012_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2012_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2013_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2013_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2015_2017_2019_2022_x64.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
-            { "vcredist2015_2017_2019_2022_x86.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") }
+            { "vcredist2005_x64.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/q") },
+            { "vcredist2005_x86.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/q") },
+            { "vcredist2008_x64.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
+            { "vcredist2008_x86.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/qb") },
+            { "vcredist2010_x64.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2010_x86.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2012_x64.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2012_x86.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2013_x64.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2013_x86.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2015_2017_2019_2022_x64.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") },
+            { "vcredist2015_2017_2019_2022_x86.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/passive /norestart") }
         };
 
         private readonly Dictionary<string, InstallerInfo> dxRedistResources = new Dictionary<string, InstallerInfo>
         {
-            { "directx_Jun2010_redist.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/q") }
+            { "directx_Jun2010_redist.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/q") }
         };
 
         private readonly Dictionary<string, InstallerInfo> dokanResources = new Dictionary<string, InstallerInfo>
         {
-            { "DokanSetup.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "/quiet") }
+            { "DokanSetup.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "/quiet") }
         };
 
         private readonly Dictionary<string, InstallerInfo> winFSPResources = new Dictionary<string, InstallerInfo>
         {
-            { "winfsp.zip", new InstallerInfo("http://retrobat.ovh/repo/win64/prerequisites/", "") }
+            { "winfsp.zip", new InstallerInfo("https://retrobat.ovh/repo/win64/prerequisites/", "") }
         };
 
         private void InitializeComponent()
@@ -265,11 +267,107 @@ namespace InstallerHost
             mainForm.ShowLicense();
         }
 
+        // True in the instance started as administrator: it closes when the prerequisites are installed
+        private bool exitWhenDone = false;
+
+        private static bool IsElevated()
+        {
+            using (var identity = WindowsIdentity.GetCurrent())
+                return new WindowsPrincipal(identity).IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        // Names of the prerequisites to install, separated by commas
+        private string GetSelection()
+        {
+            var selection = new List<string>();
+
+            if (chkVCpp.Enabled && chkVCpp.Checked)
+                selection.Add("vc");
+            if (chkDirectX.Enabled && chkDirectX.Checked)
+                selection.Add("directx");
+            if (chkDokany.Enabled && chkDokany.Checked)
+                selection.Add("dokany");
+            if (chkwinFSP.Enabled && chkwinFSP.Checked)
+                selection.Add("winfsp");
+
+            return string.Join(",", selection);
+        }
+
+        /// <summary>
+        /// Instance started as administrator: installs the prerequisites selected in the first instance, then exits.
+        /// </summary>
+        public void InstallAndExit(string selection)
+        {
+            var names = selection.Split(',');
+
+            if (chkVCpp.Enabled)
+                chkVCpp.Checked = names.Contains("vc");
+            if (chkDirectX.Enabled)
+                chkDirectX.Checked = names.Contains("directx");
+            if (chkDokany.Enabled)
+                chkDokany.Checked = names.Contains("dokany");
+            if (chkwinFSP.Enabled)
+                chkwinFSP.Checked = names.Contains("winfsp");
+
+            btnBack.Visible = false;
+            exitWhenDone = true;
+            BtnNext_Click(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Starts a second instance of the setup as administrator (one UAC prompt) and waits for it.
+        /// </summary>
+        private void InstallElevated()
+        {
+            string arguments = "-prerequisites " + GetSelection() + " -lang " + CultureInfo.CurrentUICulture.Name;
+
+            var worker = new BackgroundWorker();
+
+            worker.DoWork += (s, e) =>
+            {
+                var startInfo = new ProcessStartInfo(Application.ExecutablePath, arguments) { UseShellExecute = true, Verb = "runas" };
+
+                using (var process = Process.Start(startInfo))
+                {
+                    mainForm.Invoke(new Action(() => mainForm.Hide()));
+                    process.WaitForExit();
+                }
+            };
+
+            worker.RunWorkerCompleted += (s, e) =>
+            {
+                mainForm.Show();
+                mainForm.Activate();
+
+                btnNext.Enabled = true;
+                btnBack.Enabled = true;
+                btnCancel.Enabled = true;
+
+                if (e.Error != null)
+                {
+                    // UAC prompt refused: the user can try again, or untick the prerequisites to continue without them
+                    Logger.Log("[WARNING] Prerequisites not installed: " + e.Error.Message);
+                    UpdateStatusLabelSafe(Texts.GetString("WaitingSelect"));
+                    return;
+                }
+
+                UpdatePrerequisiteCheckboxes();
+                UpdateStatusLabelSafe(Texts.GetString("InstallComplete"));
+                installationComplete = true;
+            };
+
+            worker.RunWorkerAsync();
+        }
+
         private void BtnNext_Click(object sender, EventArgs e)
         {
-            if (!(chkDirectX.Enabled && chkDirectX.Checked) && !(chkVCpp.Enabled && chkVCpp.Checked) && !(chkDokany.Enabled && chkDokany.Checked) && !(chkwinFSP.Enabled && chkwinFSP.Checked))
+            if (GetSelection() == "")
             {
-                mainForm.ShowInstall();
+                if (exitWhenDone)
+                    Application.Exit();
+                else
+                    mainForm.ShowInstall();
+
                 return;
             }
 
@@ -281,6 +379,13 @@ namespace InstallerHost
 
                 statusLabel.Text = Texts.GetString("DownloadAndInstall");
                 statusLabel.Visible = true;
+
+                // Administrator rights are only needed here: a second instance of the setup is started as administrator
+                if (!IsElevated() && !exitWhenDone)
+                {
+                    InstallElevated();
+                    return;
+                }
 
                 int totalSteps = 0;
                 if (chkDirectX.Enabled && chkDirectX.Checked)
@@ -371,12 +476,13 @@ namespace InstallerHost
                 btnCancel.Enabled = true;
                 progressBar.Value = progressBar.Maximum;
             }
+
+            if (exitWhenDone)
+                Application.Exit();
         }
 
         private void InstallDirectX()
         {
-            string wgetPath = ExtractWgetExecutable();
-
             string tempRoot = Path.Combine(Path.GetTempPath(), "DXDownloads");
             if (!Directory.Exists(tempRoot))
                 Directory.CreateDirectory(tempRoot);
@@ -418,7 +524,7 @@ namespace InstallerHost
                     UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
 
                     Logger.Log($"Downloading ZIP from {fullUrl}...");
-                    DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
+                    DownloadFile(fullUrl, zipLocalPath);
                     Logger.Log("Download complete.");
 
                     ExtractZipToFolder(zipLocalPath, extractPath);
@@ -478,8 +584,6 @@ namespace InstallerHost
 
         private void InstallVCppAll()
         {
-            string wgetPath = ExtractWgetExecutable();
-
             string tempRoot = Path.Combine(Path.GetTempPath(), "VCDownloads");
             if (!Directory.Exists(tempRoot))
                 Directory.CreateDirectory(tempRoot);
@@ -488,6 +592,14 @@ namespace InstallerHost
             {
                 string zipFileName = kvp.Key;
                 InstallerInfo info = kvp.Value;
+
+                // Only the missing versions are downloaded and installed
+                if (PrerequisiteDetector.IsVCppInstalled(zipFileName))
+                {
+                    Logger.Log("Already installed, skipped: " + zipFileName);
+                    UpdateProgressBarSafe();
+                    continue;
+                }
 
                 string zipLocalPath = Path.Combine(tempRoot, zipFileName);
                 string extractPath = Path.Combine(tempRoot, Path.GetFileNameWithoutExtension(zipFileName));
@@ -498,7 +610,7 @@ namespace InstallerHost
                     UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
 
                     Logger.Log($"Downloading ZIP from {fullUrl}...");
-                    DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
+                    DownloadFile(fullUrl, zipLocalPath);
                     Logger.Log("Download and extraction complete.");
 
                     ExtractZipToFolder(zipLocalPath, extractPath);
@@ -538,8 +650,6 @@ namespace InstallerHost
 
         private void InstallDokany()
         {
-            string wgetPath = ExtractWgetExecutable();
-
             string tempRoot = Path.Combine(Path.GetTempPath(), "dokanyDownloads");
             if (!Directory.Exists(tempRoot))
                 Directory.CreateDirectory(tempRoot);
@@ -558,7 +668,7 @@ namespace InstallerHost
                     UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
 
                     Logger.Log($"Downloading ZIP from {fullUrl}...");
-                    DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
+                    DownloadFile(fullUrl, zipLocalPath);
                     Logger.Log("Download and extraction complete.");
 
                     ExtractZipToFolder(zipLocalPath, extractPath);
@@ -598,7 +708,6 @@ namespace InstallerHost
 
         private void InstallWinFsp()
         {
-            string wgetPath = ExtractWgetExecutable();
             string tempRoot = Path.Combine(Path.GetTempPath(), "winfspDownloads");
             if (!Directory.Exists(tempRoot))
                 Directory.CreateDirectory(tempRoot);
@@ -616,7 +725,7 @@ namespace InstallerHost
                     {
                         UpdateStatusLabelSafe(Texts.GetString("Downloading") + " " + zipFileName + "...");
                         Logger.Log($"Downloading {fullUrl}...");
-                        DownloadWithWget(wgetPath, fullUrl, zipLocalPath);
+                        DownloadFile(fullUrl, zipLocalPath);
 
                         ExtractZipToFolder(zipLocalPath, extractPath);
                         Logger.Log("Extraction complete.");
@@ -697,28 +806,6 @@ namespace InstallerHost
             }
         }
 
-        private string ExtractWgetExecutable()
-        {
-            string tempPath = Path.Combine(Path.GetTempPath(), "wget.exe");
-            var resourceName = "InstallerHost.resources.wget.exe";
-
-            if (!File.Exists(tempPath))
-            {
-                using (var stream = typeof(PrerequisiteControl).Assembly.GetManifestResourceStream(resourceName))
-                {
-                    if (stream == null)
-                        throw new Exception("wget.exe resource not found.");
-
-                    using (var fileStream = new FileStream(tempPath, FileMode.Create, FileAccess.Write))
-                    {
-                        stream.CopyTo(fileStream);
-                    }
-                }
-            }
-
-            return tempPath;
-        }
-
         private void ExtractZipToFolder(string zipFilePath, string destinationFolder, Action<int> progress = null)
         {
             using (FileStream fs = File.OpenRead(zipFilePath))
@@ -767,33 +854,45 @@ namespace InstallerHost
             }
         }
 
-        private void DownloadWithWget(string wgetPath, string url, string outputPath)
+        /// <summary>
+        /// Downloads a file, with 3 attempts. Throws if the download fails or is incomplete.
+        /// </summary>
+        private void DownloadFile(string url, string outputPath)
         {
-            try
+            // TLS 1.2 is not enabled by default on older Windows versions
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
+            for (int attempt = 1; ; attempt++)
             {
-                using (var process = new Process())
+                try
                 {
-                    process.StartInfo.FileName = wgetPath;
-                    process.StartInfo.Arguments = $"\"{url}\" -O \"{outputPath}\" --no-check-certificate";
-                    process.StartInfo.CreateNoWindow = true;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardError = true;
+                    var request = (HttpWebRequest)WebRequest.Create(url);
+                    request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)";
+                    request.Timeout = 30000;
+                    request.ReadWriteTimeout = 30000;
 
-                    process.OutputDataReceived += (s, e) => { if (e.Data != null) Logger.Log("wget stdout: " + e.Data); };
-                    process.ErrorDataReceived += (s, e) => { if (e.Data != null) Logger.Log("wget stderr: " + e.Data); };
+                    using (var response = request.GetResponse())
+                    using (var input = response.GetResponseStream())
+                    using (var output = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+                    {
+                        input.CopyTo(output);
 
-                    process.Start();
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
+                        if (response.ContentLength > 0 && output.Length != response.ContentLength)
+                            throw new IOException("Incomplete download (" + output.Length + " of " + response.ContentLength + " bytes).");
+                    }
 
-                    process.WaitForExit();
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log("[WARNING] Download attempt " + attempt + " failed for " + url + ": " + ex.Message);
 
-                    if (process.ExitCode != 0)
-                        throw new Exception($"wget failed with exit code {process.ExitCode}");
+                    if (attempt >= 3)
+                        throw;
+
+                    System.Threading.Thread.Sleep(2000);
                 }
             }
-            catch { Logger.Log("Error Downloading" + url); }
         }
 
         private void UpdateStatusLabelSafe(string text)
