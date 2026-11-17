@@ -83,6 +83,7 @@
     <Compile Include="Prerequisites.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="SetupPayload.cs" />
     <Compile Include="Texts.cs" />
     <Compile Include="WelcomeControl.cs">
       <SubType>UserControl</SubType>

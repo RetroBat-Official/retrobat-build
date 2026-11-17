@@ -268,6 +268,10 @@ namespace InstallerHost
                 {
                     string destinationPath = txtFolder.Text;
 
+                    // Check the embedded archive before writing anything
+                    if (!SetupPayload.Find() || !SetupPayload.Verify(percent => worker.ReportProgress(percent / 10)))
+                        throw new Exception(Texts.GetString("SetupCorrupted"));
+
                     using (var stream = GetEmbeddedZipStream())
                         ExtractZipStreamToFolder(stream, destinationPath);                    
                 }
@@ -297,6 +301,7 @@ namespace InstallerHost
 
                 if (completeArgs.Result is Exception ex)
                 {
+                    Logger.Log("[ERROR] Installation failed: " + ex);
 #if DEBUG
                     if (MessageBox.Show(this, Texts.GetString("InstallFail") + ex.Message, null, MessageBoxButtons.OKCancel, MessageBoxIcon.Error) == DialogResult.OK)
                         mainForm.ShowFinish(txtFolder.Text);
@@ -323,29 +328,9 @@ namespace InstallerHost
 
         private Stream GetEmbeddedZipStream()
         {
-            string exePath = Application.ExecutablePath;
-
-            var fs = new FileStream(exePath, FileMode.Open, FileAccess.Read);
-            if (fs.Length < 8)
-                throw new Exception("Invalid installer: file too small.");
-
-            // Read ZIP length stored in the last 8 bytes
-            fs.Seek(-8, SeekOrigin.End);
-            byte[] lengthBytes = new byte[8];
-            int read = fs.Read(lengthBytes, 0, 8);
-            if (read != 8)
-                throw new Exception("Failed to read zip length footer.");
-
-            long zipLength = BitConverter.ToInt64(lengthBytes, 0);
-            long zipStart = fs.Length - zipLength - 8;
-
-            if (zipLength <= 0 || zipStart < 0)
-                throw new Exception("Invalid ZIP length in installer footer.");
-
-            // Copy exactly zipLength bytes to output ZIP
-            fs.Seek(zipStart, SeekOrigin.Begin);
-
-            return new SubStream(fs, zipStart, zipLength);
+            // The archive has been located by SetupPayload.Find()
+            var fs = new FileStream(Application.ExecutablePath, FileMode.Open, FileAccess.Read);
+            return new SubStream(fs, SetupPayload.Start, SetupPayload.Length);
         }
 
         class SubStream : Stream
@@ -458,7 +443,8 @@ namespace InstallerHost
 
                             if (totalSize > 0)
                             {
-                                int percent = (int)((extractedSize * 100) / totalSize);
+                                // The first 10% of the progress bar is the archive check
+                                int percent = 10 + (int)((extractedSize * 90) / totalSize);
                                 if (percent != lastPercent)
                                 {
                                     worker?.ReportProgress(percent);

@@ -18,11 +18,15 @@ namespace RetroBuild
 {
     class Program
     {
-        static void Main()
+        // False when an option is given on the command line: no menu, no key press
+        private static bool _interactive = true;
+
+        // Usage: RetroBuild.exe [1|2|3|all], without argument the menu is shown
+        static int Main(string[] args)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
             {
-                var requestedAssemblyName = new AssemblyName(args.Name).Name;
+                var requestedAssemblyName = new AssemblyName(resolveArgs.Name).Name;
                 if (requestedAssemblyName == "ICSharpCode.SharpZipLib")
                 {
                     var currentAssembly = Assembly.GetExecutingAssembly();
@@ -40,6 +44,9 @@ namespace RetroBuild
                 }
                 return null;
             };
+
+            string choice = args.Length > 0 ? args[0].Trim().ToUpper() : null;
+            _interactive = choice == null;
 
             // Start logging in build.log
             string exeName = AppDomain.CurrentDomain.FriendlyName;
@@ -64,95 +71,149 @@ namespace RetroBuild
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error loading config: " + ex.Message);
                 Logger.Log("[ERROR] Error loading config file: " + ex.Message);
-                return;
+                return Finish();
             }
 
             // Check existence of required tools
             if (!File.Exists(options.SevenZipPath))
-            {
                 Logger.Log("[ERROR] 7za.exe not found at: " + options.SevenZipPath);
-                return;
-            }
 
             if (!File.Exists(options.WgetPath))
-            {
                 Logger.Log("[ERROR] wget.exe not found at: " + options.WgetPath);
-                return;
-            }
 
             if (!File.Exists(options.CurlPath))
-            {
                 Logger.Log("[ERROR] curl.exe not found at: " + options.CurlPath);
-                return;
-            }
 
-            Console.Clear();
-            Console.WriteLine("RetroBat Builder Menu");
-            Console.WriteLine("---------------------------------------------------");
-            Console.WriteLine("This executable is made to help download all the required software for RetroBat.");
-            Console.WriteLine("Use the 'build.ini' file to set options for building.");
-            Console.WriteLine("Option 1 must always be done first, as it will download all the required files.");
-            Console.WriteLine("---------------------------------------------------\n");
-            Console.WriteLine("=====================\n");
-            Console.WriteLine("1 - Download and configure");
-            Console.WriteLine("2 - Create archive");
-            Console.WriteLine("3 - Create installer (need archive created first)");
-            Console.WriteLine("Q - Quit\n");
-            Console.Write("Please type your choice here: ");
+            if (Logger.Errors.Count > 0)
+                return Finish();
 
-            var choice = Console.ReadLine()?.Trim().ToUpper();
-
-            switch (choice)
+            if (_interactive)
             {
-                case "1":
-                    Logger.Log("Option selected: Download and configure.");
-                    Logger.Log("Starting log.\n");
-                    Console.WriteLine("=====================");
-                    GetPackages(options);
-                    Console.WriteLine("=====================");
-                    CreateTree(options);
-                    Console.WriteLine("=====================");
-                    CreateEmulatorFolders(options);
-                    Console.WriteLine("=====================");
-                    CreateSystemFolders(options);
-                    Console.WriteLine("=====================");
-                    GetLibretroCores(options);
-                    Console.WriteLine("=====================");
-                    GetEmulators(options);
-                    Console.WriteLine("=====================");
-                    CopyESFiles(options);
-                    Console.WriteLine("=====================");
-                    CreateVersionFile(options);
-                    Console.WriteLine("=====================");
-                    CopyTemplateFiles(options);
-                    Console.WriteLine("=====================");
-                    SetVersion(options);
-                    Console.WriteLine("=====================");
-                    CleanBuild(options);
+                Console.Clear();
+                Console.WriteLine("RetroBat Builder Menu");
+                Console.WriteLine("---------------------------------------------------");
+                Console.WriteLine("This executable is made to help download all the required software for RetroBat.");
+                Console.WriteLine("Use the 'build.ini' file to set options for building.");
+                Console.WriteLine("Option 1 must always be done first, as it will download all the required files.");
+                Console.WriteLine("---------------------------------------------------\n");
+                Console.WriteLine("=====================\n");
+                Console.WriteLine("1 - Download and configure");
+                Console.WriteLine("2 - Create archive");
+                Console.WriteLine("3 - Create installer (need archive created first)");
+                Console.WriteLine("Q - Quit\n");
+                Console.Write("Please type your choice here: ");
 
-                    break;
-                case "2":
-                    Logger.Log("Option selected: Create archive.");
-                    Logger.Log("Starting log.\n");
-                    Console.WriteLine("=====================");
-                    CreateZipFolderSharpZip(options);
-                    break;
-                case "3":
-                    Logger.Log("Option selected: Create installer.");
-                    Logger.Log("Starting log.\n");
-                    Console.WriteLine("=====================");
-                    Installer.CreateInstaller(options);
-                    break;
-                case "Q":
-                    Console.WriteLine("Exiting...");
-                    return;
+                choice = Console.ReadLine()?.Trim().ToUpper();
             }
 
-            Logger.Log("[INFO] Build finished succesfully.\n");
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
+            try
+            {
+                switch (choice)
+                {
+                    case "1":
+                        DownloadAndConfigure(options);
+                        break;
+                    case "2":
+                        CreateArchive(options);
+                        break;
+                    case "3":
+                        CreateSetup(options);
+                        break;
+                    case "ALL":
+                        // Each step runs only if the previous ones logged no error
+                        DownloadAndConfigure(options);
+                        if (Logger.Errors.Count == 0)
+                            CreateArchive(options);
+                        if (Logger.Errors.Count == 0)
+                            CreateSetup(options);
+                        break;
+                    case "Q":
+                        Console.WriteLine("Exiting...");
+                        return 0;
+                    default:
+                        Logger.Log("[ERROR] Unknown option: " + choice + " (expected 1, 2, 3 or all).");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log("[ERROR] Unexpected error: " + ex);
+            }
+
+            return Finish();
+        }
+
+        static void DownloadAndConfigure(BuilderOptions options)
+        {
+            Logger.Log("Option selected: Download and configure.");
+            Logger.Log("Starting log.\n");
+            Console.WriteLine("=====================");
+            GetPackages(options);
+            Console.WriteLine("=====================");
+            CreateTree(options);
+            Console.WriteLine("=====================");
+            CreateEmulatorFolders(options);
+            Console.WriteLine("=====================");
+            CreateSystemFolders(options);
+            Console.WriteLine("=====================");
+            GetLibretroCores(options);
+            Console.WriteLine("=====================");
+            GetEmulators(options);
+            Console.WriteLine("=====================");
+            CopyESFiles(options);
+            Console.WriteLine("=====================");
+            CreateVersionFile(options);
+            Console.WriteLine("=====================");
+            CopyTemplateFiles(options);
+            Console.WriteLine("=====================");
+            SetVersion(options);
+            Console.WriteLine("=====================");
+            CleanBuild(options);
+        }
+
+        static void CreateArchive(BuilderOptions options)
+        {
+            Logger.Log("Option selected: Create archive.");
+            Logger.Log("Starting log.\n");
+            Console.WriteLine("=====================");
+            CreateZipFolderSharpZip(options);
+        }
+
+        static void CreateSetup(BuilderOptions options)
+        {
+            Logger.Log("Option selected: Create installer.");
+            Logger.Log("Starting log.\n");
+            Console.WriteLine("=====================");
+            Installer.CreateInstaller(options);
+        }
+
+        // Prints the build result and returns the exit code: 0 = success, 1 = at least one [ERROR] line was logged
+        static int Finish()
+        {
+            if (Logger.Errors.Count == 0)
+                Logger.Log("[INFO] Build finished successfully.\n");
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Logger.Log("[FAILED] Build finished with " + Logger.Errors.Count + " error(s):");
+                foreach (string error in Logger.Errors)
+                    Console.WriteLine("  " + error);
+                Console.ResetColor();
+            }
+
+            Pause();
+            return Logger.Errors.Count == 0 ? 0 : 1;
+        }
+
+        // Waits for a key in menu mode only, so that a scripted build never blocks
+        static void Pause()
+        {
+            if (!_interactive)
+                return;
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey(true);
         }
 
         static void GetPackages(BuilderOptions options)
@@ -173,7 +234,7 @@ namespace RetroBuild
                     catch (Exception ex)
                     { 
                         Logger.Log("[ERROR] Failed to delete content of build path: " + ex.Message);
-                        Console.ReadKey();
+                        Pause();
                         return;
                     }
                     
@@ -181,7 +242,7 @@ namespace RetroBuild
                     catch (Exception ex)
                     {
                         Logger.Log("[ERROR] Failed to create build directory: " + ex.Message);
-                        Console.ReadKey();
+                        Pause();
                         return;
                     }
                 }
@@ -193,7 +254,7 @@ namespace RetroBuild
                 catch (Exception ex)
                 {
                     Logger.Log("[ERROR] Failed to create build directory: " + ex.Message);
-                    Console.ReadKey();
+                    Pause();
                     return;
                 }
             }
@@ -400,7 +461,7 @@ namespace RetroBuild
                 catch (Exception ex)
                 {
                     Logger.Log("[ERROR] Failed to create build directory: " + ex.Message);
-                    Console.ReadKey();
+                    Pause();
                     return;
                 }
             }
@@ -454,7 +515,7 @@ namespace RetroBuild
                 catch (Exception ex)
                 {
                     Logger.Log("[ERROR] Failed to create build directory: " + ex.Message);
-                    Console.ReadKey();
+                    Pause();
                     return;
                 }
             }
@@ -508,7 +569,7 @@ namespace RetroBuild
                 catch (Exception ex)
                 {
                     Logger.Log("[ERROR] Failed to create build directory: " + ex.Message);
-                    Console.ReadKey();
+                    Pause();
                     return;
                 }
             }
@@ -587,7 +648,7 @@ namespace RetroBuild
                 catch (Exception ex)
                 {
                     Logger.Log("[ERROR] Failed to create build directory: " + ex.Message);
-                    Console.ReadKey();
+                    Pause();
                     return;
                 }
             }
@@ -720,7 +781,7 @@ namespace RetroBuild
                 catch (Exception ex)
                 {
                     Logger.Log("[ERROR] Failed to create translations directory: " + ex.Message);
-                    Console.ReadKey();
+                    Pause();
                     return;
                 }
             }

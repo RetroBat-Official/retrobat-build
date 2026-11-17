@@ -65,9 +65,18 @@ namespace RetroBuild
                         zipStream.CopyTo(outputStream);
                     }
 
-                    // Write ZIP length (as 8 bytes)
+                    // Write footer, read by SetupPayload.cs in InstallerHost: ZIP length (8 bytes) + ZIP sha256 (32 bytes) + signature (8 bytes)
                     byte[] zipLengthBytes = BitConverter.GetBytes(new FileInfo(zipPath).Length);
                     outputStream.Write(zipLengthBytes, 0, zipLengthBytes.Length);
+
+                    byte[] zipHash;
+                    using (var zipStream = File.OpenRead(zipPath))
+                    using (var sha = SHA256.Create())
+                        zipHash = sha.ComputeHash(zipStream);
+                    outputStream.Write(zipHash, 0, zipHash.Length);
+
+                    byte[] signature = Encoding.ASCII.GetBytes("RBSETUP2");
+                    outputStream.Write(signature, 0, signature.Length);
                 }
 
                 // Writing sha256

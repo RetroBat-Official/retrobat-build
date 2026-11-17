@@ -63,6 +63,16 @@ namespace InstallerHost
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+#if !DEBUG
+            // Incomplete or damaged download: tell the user before the wizard starts
+            if (!SetupPayload.Find())
+            {
+                Logger.Log("[ERROR] Setup archive not found, file size: " + new FileInfo(Application.ExecutablePath).Length + " bytes.");
+                MessageBox.Show(Texts.GetString("SetupCorrupted"), Texts.GetString("Error"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+#endif
+
             try
             {
                 Logger.Log("Running RetroBat Installer.");
