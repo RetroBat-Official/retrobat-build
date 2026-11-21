@@ -143,7 +143,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
                         text = "The installer program will install RetroBat in the folder below.\n\nTo continue, click Next. If you want to specify another folder, Click Browse.";
                         break;
                     case "InstallFolderHint":
-                        text = "The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters.";
+                        text = "The program requires at least 3.38 GB of free disk space.\n\nDo not use folders with spaces or special characters, do not install in long path or directly in root folder.";
                         break;
                     case "InstallCompleteDescription":
                         text = "RetroBat has been installed on your computer.\n\nClick Finish to close this wizard.";
@@ -193,7 +193,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "SelectFolder", "Изберете папката за инсталиране:" },
             { "InstallTitle", "Целева папка" },
             { "InstallInfo", "Програмата за инсталиране ще инсталира RetroBat в папката по-долу.\n\nЗа да продължите, щракнете върху „Напред“. Ако искате да изберете друга папка, щракнете върху „Преглед“." },
-            { "InstallFolderHint", "Програмата изисква поне 3.38 GB свободно дисково пространство.\n\nНе използвай папки с специални символи." },
+            { "InstallFolderHint", "Програмата изисква поне 3,38 GB свободно дисково пространство.\n\nНе използвайте папки с интервали или специални знаци, не инсталирайте в дълъг път или директно в основната папка на диска." },
             { "FolderNotEmpty", "Избраната папка не е празна. Файловете със същото име ще бъдат заменени.\n\nИскате ли да продължите?" },
             { "RetroBatDetected", "В тази папка е открита инсталация на RetroBat.\n\nАко продължите, всички настройки на RetroBat (EmulationStation, контролери, емулатори) ще бъдат върнати по подразбиране, а някои записи (NVRAM на MAME, Naomi, Atomiswave) ще бъдат презаписани. Игрите ви ще бъдат запазени.\n\nЗа да обновите RetroBat, използвайте вместо това опцията за обновяване от менюто на RetroBat.\n\nИскате ли да продължите?" },
             { "ValidFolder", "Моля, изберете валидна папка за инсталиране." },
@@ -245,7 +245,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "SelectFolder", "Répertoire d'installation:" },
             { "InstallTitle", "Dossier de destination" },
             { "InstallInfo", "L'assistant va installer RetroBat dans le dossier suivant.\nPour continuer, cliquez sur Suivant. Si vous souhaitez choisir un dossier différent, cliquez sur Parcourir." },
-            { "InstallFolderHint", "Le programme requiert au moins 3,38 Go d'espace disque disponible.\n\nN'utilisez pas de dossier avec des espaces ou des caractères spéciaux !" },
+            { "InstallFolderHint", "Le programme nécessite au moins 3,38 Go d'espace disque libre.\n\nN'utilisez pas de dossiers contenant des espaces ou des caractères spéciaux, \n\nn'installez pas dans un chemin trop long ni directement à la racine du disque." },
             {  "InstallCompleteDescription", "Retrobat a été installé sur votre ordinateur.\n\nAppuyez sur terminer pour fermer cet assistant." },
             { "FolderNotEmpty", "Le dossier sélectionné n'est pas vide. Les fichiers portant le même nom seront remplacés.\n\nVoulez-vous continuer ?" },
             { "RetroBatDetected", "Une installation de RetroBat a été détectée dans ce dossier.\n\nSi vous continuez, tous les paramétrages de RetroBat (EmulationStation, manettes, émulateurs) seront réinitialisés et certaines sauvegardes (NVRAM MAME, Naomi, Atomiswave) seront écrasées. Vos jeux sont conservés.\n\nPour mettre à jour RetroBat, utilisez plutôt l'option de mise à jour du menu RetroBat.\n\nVoulez-vous continuer ?" },
@@ -297,7 +297,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "SelectFolder", "Installationsordner auswählen:" },
             { "InstallTitle", "Zielordner" },
             { "InstallInfo", "RetroBat wird im unten angegebenen Ordner installiert.\n\nZum Fortfahren auf Weiter klicken, für einen anderen Ordner auf Durchsuchen." },
-            { "InstallFolderHint", "Das Programm benötigt mindestens 3,38 GB freien Speicherplatz.\n\nVermeiden Sie Ordner mit Leerzeichen oder Sonderzeichen." },
+            { "InstallFolderHint", "Das Programm benötigt mindestens 3,38 GB freien Speicherplatz.\n\nVerwenden Sie keine Ordner mit Leerzeichen oder Sonderzeichen, installieren Sie nicht in einem langen Pfad oder direkt im Stammverzeichnis." },
             { "FolderNotEmpty", "Der gewählte Ordner ist nicht leer. Dateien mit gleichem Namen werden ersetzt.\n\nMöchtest du fortfahren?" },
             { "RetroBatDetected", "In diesem Ordner wurde eine RetroBat-Installation erkannt.\n\nWenn du fortfährst, werden alle RetroBat-Einstellungen (EmulationStation, Controller, Emulatoren) auf die Standardwerte zurückgesetzt und einige Spielstände (NVRAM von MAME, Naomi, Atomiswave) überschrieben. Deine Spiele bleiben erhalten.\n\nUm RetroBat zu aktualisieren, verwende stattdessen die Update-Option im RetroBat-Menü.\n\nMöchtest du fortfahren?" },
             { "ValidFolder", "Bitte wähle einen gültigen Installationsordner." },
@@ -349,7 +349,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "SelectFolder", "Seleziona la cartella di installazione:" },
             { "InstallTitle", "Cartella di destinazione" },
             { "InstallInfo", "Il programma di installazione installerà RetroBat nella cartella indicata di seguito.\n\nPer continuare, fai clic su Avanti. Se vuoi specificare un'altra cartella, fai clic su Sfoglia." },
-            { "InstallFolderHint", "Il programma richiede almeno 3,38 GB di spazio libero su disco.\n\nNon utilizzare cartelle con spazi o caratteri speciali." },
+            { "InstallFolderHint", "Il programma richiede almeno 3,38 GB di spazio libero su disco.\n\nNon utilizzare cartelle con spazi o caratteri speciali, non installare in un percorso lungo o direttamente nella cartella principale del disco." },
             { "FolderNotEmpty", "La cartella selezionata non è vuota. I file con lo stesso nome verranno sostituiti.\n\nVuoi continuare?" },
             { "RetroBatDetected", "È stata rilevata un'installazione di RetroBat in questa cartella.\n\nSe continui, tutte le impostazioni di RetroBat (EmulationStation, controller, emulatori) verranno ripristinate ai valori predefiniti e alcuni salvataggi (NVRAM MAME, Naomi, Atomiswave) verranno sovrascritti. I tuoi giochi vengono mantenuti.\n\nPer aggiornare RetroBat, usa invece l'opzione di aggiornamento del menu RetroBat.\n\nVuoi continuare?" },
             { "ValidFolder", "Seleziona una cartella di installazione valida." },
@@ -401,7 +401,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "SelectFolder", "Wybierz folder instalacyjny:" },
             { "InstallTitle", "Folder docelowy" },
             { "InstallInfo", "Program instalacyjny zainstaluje RetroBat w poniższym folderze.\n\nAby kontynuować, kliknij Dalej. Jeśli chcesz wybrać inny folder, kliknij Przeglądaj." },
-            { "InstallFolderHint", "Program wymaga co najmniej 3,38 GB wolnego miejsca na dysku.\n\nNie używaj folderów zawierających spacje lub znaki specjalne." },
+            { "InstallFolderHint", "Program wymaga co najmniej 3,38 GB wolnego miejsca na dysku.\n\nNie używaj folderów ze spacjami lub znakami specjalnymi, nie instaluj w długiej ścieżce ani bezpośrednio w katalogu głównym dysku." },
             { "FolderNotEmpty", "Wybrany folder nie jest pusty. Pliki o tej samej nazwie zostaną zastąpione.\n\nCzy chcesz kontynuować?" },
             { "RetroBatDetected", "W tym folderze wykryto instalację RetroBat.\n\nJeśli będziesz kontynuować, wszystkie ustawienia RetroBat (EmulationStation, kontrolery, emulatory) zostaną przywrócone do domyślnych, a niektóre zapisy (NVRAM MAME, Naomi, Atomiswave) zostaną nadpisane. Twoje gry zostaną zachowane.\n\nAby zaktualizować RetroBat, użyj zamiast tego opcji aktualizacji w menu RetroBat.\n\nCzy chcesz kontynuować?" },
             { "ValidFolder", "Wybierz prawidłowy folder instalacyjny." },
@@ -453,7 +453,7 @@ See https://creativecommons.org/licenses/by-nc-sa/4.0.";
             { "SelectFolder", "Seleccione la carpeta de instalación:" },
             { "InstallTitle", "Carpeta de destino" },
             { "InstallInfo", "El programa de instalación instalará RetroBat en la carpeta indicada a continuación.\n\nPara continuar, haga click en Siguiente. Si desea especificar otra carpeta, haga click en Examinar" },
-            { "InstallFolderHint", "El programa requiere al menos 3.38 GB de espacio libre en el disco.\n\nNo uses carpetas con espacios ni caracteres especiales." },
+            { "InstallFolderHint", "El programa requiere al menos 3,38 GB de espacio libre en disco.\n\nNo utilice carpetas con espacios o caracteres especiales, no instale en una ruta larga ni directamente en la carpeta raíz." },
             { "FolderNotEmpty", "La carpeta seleccionada no está vacía. Los archivos con el mismo nombre serán reemplazados.\n\n¿Desea continuar?" },
             { "RetroBatDetected", "Se ha detectado una instalación de RetroBat en esta carpeta.\n\nSi continúa, todos los ajustes de RetroBat (EmulationStation, mandos, emuladores) se restablecerán por defecto y algunas partidas guardadas (NVRAM de MAME, Naomi, Atomiswave) se sobrescribirán. Sus juegos se conservan.\n\nPara actualizar RetroBat, utilice en su lugar la opción de actualización del menú de RetroBat.\n\n¿Desea continuar?" },
             { "ValidFolder", "Por favor seleccione una carpeta de instalación válida." },
